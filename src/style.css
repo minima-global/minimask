@@ -1,0 +1,85 @@
+@font-face {
+	font-family: Manrope;
+	src: url('./Manrope-Regular.ttf');
+}
+
+body {
+	font-family: Manrope; 
+	font-size: 16;
+	margin: 8;   /* Remove body margins */
+	width:280;
+	height:360;
+}
+
+/* LOGON BUTTONS */
+.logonbtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 12px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+  width:160;
+}
+
+/* Darker background on mouse-over */
+.logonbtn:hover {
+  background-color: RoyalBlue;
+}
+
+.logonbtn:active {
+  background-color: red;
+}
+
+.logonbtn:disabled {
+  background-color: RoyalBlue;
+}
+
+/* Normal buttons */
+.mybtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 12px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.mybtn:hover {
+  background-color: RoyalBlue;
+}
+
+.mybtn:active {
+  background-color: red;
+}
+
+.mybtn:disabled {
+  background-color: RoyalBlue;
+}
+
+/* Menu buttons */
+.menubtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 12px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.menubtn:hover {
+  background-color: RoyalBlue;
+}
+
+.menubtn:active {
+  background-color: green;
+}
+
+.menubtn:disabled {
+  background-color: RoyalBlue;
+}

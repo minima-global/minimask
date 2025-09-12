@@ -1,0 +1,48 @@
+<html>
+<head>
+	<title>MiniMask Extension</title>
+	
+	<!-- Load the CSS Style sheet -->
+	<link rel="stylesheet" href="../style.css">
+	
+	<!-- Generic JS -->
+	<script type="text/javascript" src="./generic.js"></script>
+		
+</head>
+	
+<body>
+	
+<center>
+	
+	<table border=1 width=100% height=100%>
+		<tr>
+			<td colspan=2 style="width:100%"><img src="../images/minima.png" height=20>&nbsp;Minima Wallet</td>
+			<td>iCON</td>
+		</tr>
+		<tr height=100%>
+			<td colspan=3>
+				<div id='outerdiv' style="width:100%;height:100%;overflow-x:hidden;">
+					<iframe src="balance.html" width="100%" height=100% frameborder="0" id='inneriframe' scrolling=no> </iframe>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td style="width:33%">
+				<button style="width:100%;" class="menubtn" id="id_wallet_balance">Balance</button>
+			</td>
+			<td style="width:33%">
+				<button style="width:100%;" class="menubtn" id="id_wallet_send">Send</button>					
+			</td>
+			<td style="width:33%">
+				<button style="width:100%;" class="menubtn" id="id_wallet_receive">Receive</button>				
+			</td>
+		</tr>
+		
+	<table>		
+	<!--<script src="createwallet.js"></script>-->
+
+</center>	
+
+</body>
+
+</html>

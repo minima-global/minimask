@@ -1,0 +1,59 @@
+<html>
+
+<body>
+
+	Hello..	
+
+	<button onclick='getBlock();'>Click Me</button>
+	
+<script type="text/javascript">
+	
+	/*function getBlock(){
+		MINIMASK.meg.block(function(resp){
+			console.log(JSON.stringify(resp));
+		});
+	}*/
+	
+	console.log("LOCAL STORAGE : "+localStorage.getItem("key"));
+	
+	function windowReceiveMessage(evt) {
+		console.log("Window rec : "+evt.data);
+	}
+
+	window.addEventListener("message", windowReceiveMessage, false);
+	
+	setTimeout(function(){
+		window.parent.postMessage("from window", "*");
+	},1000);
+
+	
+	window.onload = function () {
+		
+		//Initialise MiniMask
+		//MINIMASK.init();
+		
+		// do the work after everything was loaded (DOM, media elements)
+		//testerFunction();
+		
+		//httpPostAsync("http://127.0.0.1:10005/","block",function(resp){
+		//	console.log("RESP : "+resp);
+		//});
+		
+		// On the webpage
+	    /*chrome.runtime.sendMessage(
+	      { greeting: "Hello from the webpage!" },
+	      function(response) {
+	        // This function handles the response from the extension
+	        console.log(response); // e.g., "Hello, I'm the extension!"
+	      }
+	    );*/
+		
+		
+	}
+	
+</script>
+		
+</body>	
+
+
+</html>
