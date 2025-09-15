@@ -8,29 +8,36 @@
 	
 <script type="text/javascript">
 	
-	/*function getBlock(){
+	function getBlock(){
 		MINIMASK.meg.block(function(resp){
-			console.log(JSON.stringify(resp));
+			console.log("RESP : "+JSON.stringify(resp));
 		});
-	}*/
-	
-	console.log("LOCAL STORAGE : "+localStorage.getItem("key"));
-	
-	function windowReceiveMessage(evt) {
-		console.log("Window rec : "+evt.data);
 	}
-
-	window.addEventListener("message", windowReceiveMessage, false);
 	
-	setTimeout(function(){
+	
+	/*function windowReceiveMessage(evt) {
+		console.log("Window rec : "+JSON.stringify(evt.data));
+	}
+	window.addEventListener("message", windowReceiveMessage, false);
+	*/
+	/*setTimeout(function(){
 		window.parent.postMessage("from window", "*");
-	},1000);
+	},1000);*/
 
 	
 	window.onload = function () {
 		
 		//Initialise MiniMask
-		//MINIMASK.init();
+		MINIMASK.init(function(msg){
+			
+			if(msg.event == "MINIMASK_INIT"){
+			
+			}else if(msg.event == "MINIMASK_LOGIN"){
+						
+			}else if(msg.event == "MINIMASK_LOGOUT"){
+				
+			}
+		});
 		
 		// do the work after everything was loaded (DOM, media elements)
 		//testerFunction();
@@ -48,7 +55,20 @@
 	      }
 	    );*/
 		
-		
+		/*chrome.runtime.sendMessage("ihinanbfadhadhhnnadikcmdlnhbocci", 
+					{ greeting: "Hello from the webpage!" }, (response) => {
+			  console.log('sendExtMessage response ', response);
+			  
+			  //Send the reply back..
+			  //callback(response);
+			});
+		*/
+		/*chrome.runtime.sendMessage("ihinanbfadhadhhnnadikcmdlnhbocci", 
+					{ greeting: "Hello from the webpage!" },
+		      function(response) {
+		        // This function handles the response from the extension
+		        console.log(response); // e.g., "Hello, I'm the extension!"
+		      });*/
 	}
 	
 </script>

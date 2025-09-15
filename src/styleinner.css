@@ -9,6 +9,11 @@ body {
 	margin: 8;   /* Remove body margins */
 }
 
+.smallgreytext{
+	font-size: 12px; 
+	color:#777777;
+}
+
 /* LOGON BUTTONS */
 .logonbtn {
   background-color: DodgerBlue; /* Blue background */

@@ -1,9 +1,27 @@
 
 /**
+ * Listen for ther Extension ID
+ */
+function windowReceiveMessage(evt) {
+	console.log("Window rec : "+JSON.stringify(evt.data));
+	
+	if(evt.data.event == "MINIMASK_EXTENSION_ID"){
+		MINIMASK.EXTENSION_ID = evt.data.data;
+		console.log("Extension ID set "+MINIMASK.EXTENSION_ID);
+		
+		//Removce listener as not used anymore..
+		window.removeEventListener("message", windowReceiveMessage,false);
+	}
+}
+window.addEventListener("message", windowReceiveMessage, false);
+
+/**
  * Main MinimMask Object for all interaction
  */
 var MINIMASK = {
 
+	EXTENSION_ID : "",
+	
 	//Main MEG Host
 	mainhost : "http://127.0.0.1:10005/",
 	
@@ -20,35 +38,20 @@ var MINIMASK = {
 	},
 	
 	/**
-	 * Set the MiniMask MEG Host
-	 */
-	setMegHost : function(host){
-		mainhost = host;
-	},
-	
-	/**
-	 * Account functionality
-	 */
-	account : {
-		
-		//Get the Users Public key
-		getPublicKey : function(){
-			return "0x00";
-		}
-	},
-	
-	/**
 	 * Call the MEG functions
 	 */
 	meg : {
 		
 		block : function(callback){
+			
+			var msg 		= {};
+			msg.request 	= "block";
+			
 			//Send via POST
-			minimaskHttpPostAsync(MINIMASK.mainhost, "block", callback);	
+			sendExtensionMessage(msg, callback);	
 		},
 	}
 }
-
 
 function minimaskHttpPostAsync(theUrl, params, callback){
 	//Do we log it..
@@ -65,7 +68,7 @@ function minimaskHttpPostAsync(theUrl, params, callback){
         	
         	//Send it to the callback function..
         	if(callback){
-        		callback(JSON.parse(xmlHttp.responseText));
+        		callback(JSON.parsende(xmlHttp.responseText));
         	}
         }
     }
@@ -74,6 +77,14 @@ function minimaskHttpPostAsync(theUrl, params, callback){
     //xmlHttp.setRequestHeader('Content-Type', 'application/json');    
 	xmlHttp.send(encodeURIComponent(params));
 	//xmlHttp.send(params);
+}
+
+function sendExtensionMessage(msg, callback){
+	chrome.runtime.sendMessage(MINIMASK.EXTENSION_ID,msg,
+      	function(response) {
+        	callback(response); 
+    	}
+	);
 }
 
 //Test function

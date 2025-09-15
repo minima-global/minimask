@@ -11,6 +11,11 @@ body {
 	height:360;
 }
 
+.smallgreytext{
+	font-size: 12px; /* Set a font size */
+	color:grey;
+}
+
 /* LOGON BUTTONS */
 .logonbtn {
   background-color: DodgerBlue; /* Blue background */

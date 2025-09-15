@@ -3,9 +3,18 @@ const user = {
   username: 'demo-user'
 };
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+/*chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // 2. A page requested user data, respond with a copy of `user`
-  if (message === 'get-user-data') {
+  //if (message === 'get-user-data') {
     sendResponse(user);
-  }
-});
+  //}
+});*/
+
+
+chrome.runtime.onMessageExternal.addListener(
+  function(request, sender, sendResponse) {
+    
+	console.log("GOT MESSAGE : "+request);
+	
+	sendResponse(request);
+  });
