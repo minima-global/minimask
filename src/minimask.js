@@ -37,6 +37,8 @@ var MINIMASK = {
 		
 	},
 	
+	
+	
 	/**
 	 * Call the MEG functions
 	 */
@@ -50,33 +52,8 @@ var MINIMASK = {
 			//Send via POST
 			sendExtensionMessage(msg, callback);	
 		},
-	}
-}
-
-function minimaskHttpPostAsync(theUrl, params, callback){
-	//Do we log it..
-	console.log("POST_RPC:"+theUrl+" PARAMS:"+params);
-	
-	var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        
-		console.log("State:"+xmlHttp.readyState+" Status:"+xmlHttp.status);
 		
-		if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-			//Do we log it..
-        	console.log("RESPONSE:"+xmlHttp.responseText);
-        	
-        	//Send it to the callback function..
-        	if(callback){
-        		callback(JSON.parsende(xmlHttp.responseText));
-        	}
-        }
-    }
-    xmlHttp.open("POST", theUrl, true); // true for asynchronous 
-	xmlHttp.overrideMimeType('text/plain; charset=UTF-8');
-    //xmlHttp.setRequestHeader('Content-Type', 'application/json');    
-	xmlHttp.send(encodeURIComponent(params));
-	//xmlHttp.send(params);
+	}
 }
 
 function sendExtensionMessage(msg, callback){

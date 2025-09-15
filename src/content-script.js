@@ -38,10 +38,9 @@ setTimeout(function(){
 },10);
 
 //Send a message
-/*chrome.runtime.sendMessage('get-user-data', (response) => {
-  console.log('received user data', response);
-});*/
-
+chrome.runtime.sendMessage('get-user-data', (response) => {
+  console.log('content : received user data', response);
+});
 
 /**
  * Send a message to the backend..

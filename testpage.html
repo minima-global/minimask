@@ -9,9 +9,14 @@
 <script type="text/javascript">
 	
 	function getBlock(){
-		MINIMASK.meg.block(function(resp){
-			console.log("RESP : "+JSON.stringify(resp));
+		
+		chrome.runtime.sendMessage( "ihinanbfadhadhhnnadikcmdlnhbocci", 'get-user-data', (response) => {
+		  console.log('received user data', response);
 		});
+		
+		/*MINIMASK.meg.block(function(resp){
+			console.log("RESP : "+JSON.stringify(resp));
+		});*/
 	}
 	
 	
