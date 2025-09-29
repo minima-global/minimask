@@ -1,15 +1,33 @@
+/**
+ * MEG Host details
+ */
+MINIMASK_MEG_HOST 		= "http://127.0.0.1:8080/";
+MINIMASK_MEG_USER 		= "apicaller";
+MINIMASK_MEG_PASSWORD 	= "apicaller";
+
 // Example of a simple user data object
 const user = {
   username: 'demo-user'
 };
 
+function servicelog(str){
+	console.log("service.js > "+str);
+}
+
+/**
+ * Listen for messages
+ */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  
+  servicelog(JSON.stringify(message));
+
+  //Make a request
+  //makePostRequest(MINIMASK_MEG_HOST+"/wallet/block",{},);	
   // 2. A page requested user data, respond with a copy of `user`
   //if (message === 'get-user-data') {
-    sendResponse(user);
+  sendResponse(user);
   //}
 });
-
 
 /*chrome.runtime.onMessageExternal.addListener(
 	function(request, sender, sendResponse) {

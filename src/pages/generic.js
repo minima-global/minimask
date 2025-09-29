@@ -25,9 +25,9 @@ function jumpToPage(page){
 
 //console.log("ID : "+chrome.runtime.id );
 
-chrome.storage.local.get(["key"]).then((result) => {
+/*chrome.storage.local.get(["key"]).then((result) => {
   console.log("Value is " + result.key);
-});
+});*/
 
 // 1. Send a message to the service worker requesting the user's data
 //chrome.runtime.sendMessage('get-user-data', (response) => {

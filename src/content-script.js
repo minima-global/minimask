@@ -10,24 +10,30 @@ function injectScript (src) {
     s.onload = () => s.remove();
     (document.head || document.documentElement).append(s);
 	
-	console.log("Loaded MiniMask Extension");
+	console.log("Loaded MiniMask Extension into page");
 }
 
 injectScript('minimask.js');
 
 
 function ReceiveMessage(evt) {
-	console.log("Content rec : "+evt.data);
-	
-	sendExtMessage("hello",function(){
-		
+	console.log("Content-Js rec : "+JSON.stringify(evt.data));
+
+	//Send message to service-worker
+	chrome.runtime.sendMessage(evt.data, (response) => {
+	  console.log('sendMessage : received user data', response);
 	});
+		
+	/*sendExtMessage("hello",function(){
+		
+	});*/
 }
 
-//window.addEventListener("message", ReceiveMessage);
+//Listen for messages
+window.addEventListener("message", ReceiveMessage);
 
 //console.log("EXT ID : "+chrome.runtime.id);
-setTimeout(function(){
+/*setTimeout(function(){
 	
 	var EXT_ID 		= {};
 	EXT_ID.event 	= "MINIMASK_EXTENSION_ID";
@@ -41,11 +47,12 @@ setTimeout(function(){
 chrome.runtime.sendMessage('get-user-data', (response) => {
   console.log('content : received user data', response);
 });
+*/
 
 /**
  * Send a message to the backend..
  */
-function sendExtMessage(extmessage, callback){
+/*function sendExtMessage(extmessage, callback){
 	console.log('sendExtMessage : '+extmessage);
 	
 	chrome.runtime.sendMessage(extmessage, (response) => {
@@ -54,7 +61,7 @@ function sendExtMessage(extmessage, callback){
 	  //Send the reply back..
 	  callback(response);
 	});
-}
+}*/
 
 //Test function
 //function testerFunction(){

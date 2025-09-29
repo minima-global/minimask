@@ -8,18 +8,6 @@
 	
 <script type="text/javascript">
 	
-	function getBlock(){
-		
-		chrome.runtime.sendMessage( "ihinanbfadhadhhnnadikcmdlnhbocci", 'get-user-data', (response) => {
-		  console.log('received user data', response);
-		});
-		
-		/*MINIMASK.meg.block(function(resp){
-			console.log("RESP : "+JSON.stringify(resp));
-		});*/
-	}
-	
-	
 	/*function windowReceiveMessage(evt) {
 		console.log("Window rec : "+JSON.stringify(evt.data));
 	}
@@ -29,8 +17,76 @@
 		window.parent.postMessage("from window", "*");
 	},1000);*/
 
+	async function makePostRequest(url, params, callback){
+		
+		let headers = new Headers();
+		headers.append('Authorization', 'Basic ' + btoa("apicaller:apicaller"));
+		
+		const response = await fetch(url, {
+		  method: "POST",
+		  headers: headers,
+		  body: JSON.stringify(params),
+		  // …
+		});
+		
+		if (!response.ok) {
+	      
+	    }
+
+		//Wait for the response
+	    const result = await response.text();
+		
+		//Send result back
+		callback(result) ;
+	}
 	
+	
+	async function getData() {
+	  const url = "http://127.0.0.1:8080/wallet/block";
+	  try {
+	    const response = await fetch(url);
+	    if (!response.ok) {
+	      throw new Error(`Response status: ${response.status}`);
+	    }
+
+	    const result = await response.json();
+	    console.log(result);
+	  } catch (error) {
+	    console.error(error.message);
+	  }
+	}
+	
+	//Wait for page to load
 	window.onload = function () {
+		
+		var ff = makePostRequest("http://127.0.0.1:8080/wallet/block",{}, function(res){
+			console.log("REQ : "+res);	
+		});
+		
+		
+		//Initialise MiniMask
+		/*MINIMASK.init(function(msg){
+			
+			if(msg.event == "MINIMASK_INIT"){
+			
+				console.log("MiniMask Inited");
+				
+			}else if(msg.event == "MINIMASK_LOGIN"){
+						
+			}else if(msg.event == "MINIMASK_LOGOUT"){
+				
+			}
+		});*/
+		
+		var msg  		= {};
+		msg.function 	= "block";
+		
+		//Send a message
+		//window.parent.postMessage(msg, "*");	
+		
+	}
+	
+	/*window.onload = function () {
 		
 		//Initialise MiniMask
 		MINIMASK.init(function(msg){
@@ -73,8 +129,8 @@
 		      function(response) {
 		        // This function handles the response from the extension
 		        console.log(response); // e.g., "Hello, I'm the extension!"
-		      });*/
-	}
+		      });
+	}*/
 	
 </script>
 		

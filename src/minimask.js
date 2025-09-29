@@ -1,8 +1,8 @@
 
 /**
- * Listen for ther Extension ID
+ * Listen for the Extension ID
  */
-function windowReceiveMessage(evt) {
+/*function windowReceiveMessage(evt) {
 	console.log("Window rec : "+JSON.stringify(evt.data));
 	
 	if(evt.data.event == "MINIMASK_EXTENSION_ID"){
@@ -14,29 +14,33 @@ function windowReceiveMessage(evt) {
 	}
 }
 window.addEventListener("message", windowReceiveMessage, false);
+*/
 
 /**
  * Main MinimMask Object for all interaction
  */
 var MINIMASK = {
 
-	EXTENSION_ID : "",
+	//Main MEG Host
+	mainmeghost : "http://127.0.0.1:8080/",
+	
+	//Main MEG Host Username
+	mainmegusername : "http://127.0.0.1:8080/",
 	
 	//Main MEG Host
-	mainhost : "http://127.0.0.1:10005/",
-	
+	mainmeghost : "http://127.0.0.1:8080/",
+			
 	/**
 	 * MINIMASK Startup
 	 */
-	init : function(){
+	init : function(callback){
 		
 		//Log a little..
 		console.log("Initialising MiniMask..");
 		
 		//Is logging enabled.. via the URL
-		
+		callback(createMiniMessage("MINIMASK_INIT"));
 	},
-	
 	
 	
 	/**
@@ -56,7 +60,21 @@ var MINIMASK = {
 	}
 }
 
-function sendExtensionMessage(msg, callback){
+function createMiniMessage(evt){
+	return createMiniMessage(evt,{});
+}
+
+function createMiniMessage(evt, data){
+	
+	//Create the message
+	var msg 	= {};
+	msg.event 	= evt;
+	msg.data 	= data;
+	
+	return msg;
+}
+
+/*function sendExtensionMessage(msg, callback){
 	chrome.runtime.sendMessage(MINIMASK.EXTENSION_ID,msg,
       	function(response) {
         	callback(response); 
@@ -67,4 +85,4 @@ function sendExtensionMessage(msg, callback){
 //Test function
 function testerFunction(){
 	console.log("Running tester function injected code..!");
-}
+}*/
