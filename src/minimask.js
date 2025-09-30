@@ -3,6 +3,8 @@
  * Message handling
  */
 
+var MINIMASK_LOGGING = false;
+
 var MINIMASK_REQUESTS = [];
 
 function windowReceiveMessage(evt) {
@@ -16,7 +18,9 @@ function windowReceiveMessage(evt) {
 		return;
 	}
 	
-	console.log("MiniMask Response : "+JSON.stringify(evt.data));
+	if(MINIMASK_LOGGING){
+		console.log("MiniMask Response : "+JSON.stringify(evt.data));	
+	}
 	
 	//Get the randid..
 	var randid 	= msg.randid;
@@ -51,8 +55,6 @@ window.top.addEventListener("message", windowReceiveMessage, false);
 
 function postMessageToServiceWorker(action, callback){
 	
-	//console.log("minimaskPostMessage "+JSON.stringify(action));
-	
 	//Create a JSON message to capture the reply
 	var request 		= {};
 	request.randid		= Math.floor(Math.random() * 1000000000); 
@@ -86,54 +88,35 @@ var MINIMASK = {
 		console.log("Initialising MiniMask..");
 		
 		//Is logging enabled.. via the URL
-		callback(createMiniMessage("MINIMASK_INIT"));
+		if(callback){
+			callback();	
+		}
 	},
 	
 	
 	/**
 	 * Call the MEG functions
 	 */
-	meg : {
-		
-		block : function(callback){
+	create : function(callback){
 			
-			var msg 		= {};
-			msg.request 	= "block";
-			
-			//Send via POST
-			sendExtensionMessage(msg, callback);	
-		},
+		var msg  		= {};
+		msg.function 	= "create";
 		
+		//Run a function..
+		postMessageToServiceWorker(msg, function(resp){
+			callback(resp);
+		});	
+	},
+	
+	block : function(callback){
+		
+		var msg  		= {};
+		msg.function 	= "block";
+		
+		//Run a function..
+		postMessageToServiceWorker(msg, function(resp){
+			callback(resp);
+		});	
 	}
 }
 
-
-
-
-
-function createMiniMessage(evt){
-	return createMiniMessage(evt,{});
-}
-
-function createMiniMessage(evt, data){
-	
-	//Create the message
-	var msg 	= {};
-	msg.event 	= evt;
-	msg.data 	= data;
-	
-	return msg;
-}
-
-/*function sendExtensionMessage(msg, callback){
-	chrome.runtime.sendMessage(MINIMASK.EXTENSION_ID,msg,
-      	function(response) {
-        	callback(response); 
-    	}
-	);
-}
-
-//Test function
-function testerFunction(){
-	console.log("Running tester function injected code..!");
-}*/

@@ -1,7 +1,15 @@
 /**
+ * MEG Host details
+ */
+MINIMASK_MEG_HOST 		= "http://127.0.0.1:8080/";
+MINIMASK_MEG_USER 		= "apicaller";
+MINIMASK_MEG_PASSWORD 	= "apicaller";
+
+
+
+/**
  * MinimMask injected JS code
  */
-
 console.log("Content Script loaded..");
 		
 function injectScript (src) {
@@ -15,6 +23,23 @@ function injectScript (src) {
 
 injectScript('minimask.js');
 
+function createServiceWorkerURL(msg){
+
+	var ret 	= {};
+	ret.url 	= "";
+	ret.params 	= {};
+	
+	if(msg.action.function ==  "create"){
+		ret.url = MINIMASK_MEG_HOST+"wallet/create";
+	
+	}else if(msg.action.function ==  "block"){
+		ret.url = MINIMASK_MEG_HOST+"wallet/block";
+		
+	}
+	
+	return ret;	
+}
+
 
 function contentjsReceiveMessage(evt) {
 	
@@ -27,18 +52,23 @@ function contentjsReceiveMessage(evt) {
 		return;
 	}
 	
-	console.log("Content-Js ReceiveMessage : "+JSON.stringify(evt.data));
+	console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));
 
+	var call = createServiceWorkerURL(msg);
+	
+	console.log("Content-Js URL : "+JSON.stringify(call));
+
+	
 	//Send message to service-worker
-	chrome.runtime.sendMessage(msg, (response) => {
+	chrome.runtime.sendMessage(call, (response) => {
 	  	
-		var msg 		= {};
-		msg.minitype	= "MINIMASK_RESPONSE";
-		msg.randid		= evt.data.randid;
-		msg.data 		= response;
+		var resp 		= {};
+		resp.minitype	= "MINIMASK_RESPONSE";
+		resp.randid		= msg.randid;
+		resp.data 		= response;
 		
 		//Send this to the top window.. origin /
-		window.top.postMessage(msg);	  
+		window.top.postMessage(resp);	  
 	});
 }
 

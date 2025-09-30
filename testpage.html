@@ -8,26 +8,27 @@
 	
 <script type="text/javascript">
 	
-	/*function windowReceiveMessage(evt) {
-		console.log("Window rec : "+JSON.stringify(evt.data));
-	}
-	window.addEventListener("message", windowReceiveMessage, false);
-	*/
-	/*setTimeout(function(){
-		window.parent.postMessage("from window", "*");
-	},1000);*/
-	
 	function getBlock(){
+		MINIMASK.block(function(resp){
+			console.log("BLOCK : "+JSON.stringify(resp));	
+		});
 		
-		var msg  		= {};
-		msg.function 	= "block";
-		
-		//Run a function..
-		postMessageToServiceWorker(msg, function(resp){
-			console.log("getBlock RESP : "+JSON.stringify(resp));
+		MINIMASK.create(function(resp){
+			console.log("CREATE : "+JSON.stringify(resp));	
 		});
 	}
 	
+		
+	//Wait for page to load
+	window.onload = function () {
+		
+		//Initialise MiniMask
+		MINIMASK.init(function(){});
+		
+		//testerFunction();
+		getBlock();	
+	}
+
 	/*async function makePostRequest(url, params, callback){
 		
 		let headers = new Headers();
@@ -51,78 +52,6 @@
 		callback(result) ;
 	}*/
 		
-	//Wait for page to load
-	window.onload = function () {
-		
-		/*var ff = makePostRequest("http://127.0.0.1:8080/wallet/block",{}, function(res){
-			console.log("REQ : "+res);	
-		});*/
-		
-		
-		//Initialise MiniMask
-		MINIMASK.init(function(msg){
-			
-			if(msg.event == "MINIMASK_INIT"){
-			
-				console.log("MiniMask Inited");
-				
-			}else if(msg.event == "MINIMASK_LOGIN"){
-						
-			}else if(msg.event == "MINIMASK_LOGOUT"){
-				
-			}
-		});
-		
-		//testerFunction();
-		getBlock();	
-	}
-	
-	/*window.onload = function () {
-		
-		//Initialise MiniMask
-		MINIMASK.init(function(msg){
-			
-			if(msg.event == "MINIMASK_INIT"){
-			
-			}else if(msg.event == "MINIMASK_LOGIN"){
-						
-			}else if(msg.event == "MINIMASK_LOGOUT"){
-				
-			}
-		});
-		
-		// do the work after everything was loaded (DOM, media elements)
-		//testerFunction();
-		
-		//httpPostAsync("http://127.0.0.1:10005/","block",function(resp){
-		//	console.log("RESP : "+resp);
-		//});
-		
-		// On the webpage
-	    /*chrome.runtime.sendMessage(
-	      { greeting: "Hello from the webpage!" },
-	      function(response) {
-	        // This function handles the response from the extension
-	        console.log(response); // e.g., "Hello, I'm the extension!"
-	      }
-	    );*/
-		
-		/*chrome.runtime.sendMessage("ihinanbfadhadhhnnadikcmdlnhbocci", 
-					{ greeting: "Hello from the webpage!" }, (response) => {
-			  console.log('sendExtMessage response ', response);
-			  
-			  //Send the reply back..
-			  //callback(response);
-			});
-		*/
-		/*chrome.runtime.sendMessage("ihinanbfadhadhhnnadikcmdlnhbocci", 
-					{ greeting: "Hello from the webpage!" },
-		      function(response) {
-		        // This function handles the response from the extension
-		        console.log(response); // e.g., "Hello, I'm the extension!"
-		      });
-	}*/
-	
 </script>
 		
 </body>	
