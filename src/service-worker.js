@@ -17,36 +17,27 @@ function servicelog(str){
 /**
  * Listen for messages
  */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
-  servicelog(JSON.stringify(message));
-
-  //Make a request
-  //makePostRequest(MINIMASK_MEG_HOST+"/wallet/block",{},);	
-  // 2. A page requested user data, respond with a copy of `user`
-  //if (message === 'get-user-data') {
-  sendResponse(user);
-  //}
+  	servicelog(JSON.stringify(request));
+	
+	makePostRequest("http://127.0.0.1:8080/wallet/block",{}, function(res){
+		console.log("Post Response : "+JSON.stringify(res));
+	
+		sendResponse(res);
+	});
+ 
+	return true;
 });
 
-/*chrome.runtime.onMessageExternal.addListener(
-	function(request, sender, sendResponse) {
-    	console.log("GOT MESSAGE : "+request);
-	
-		//sendResponse(makePostRequest());
-		
-		makePostRequest("https://spartacusrex.com", {}, function(resp){
-			sendResponse(resp);
-		});		
-  	}
-);*/
-
 async function makePostRequest(url, params, callback){
+		
+	let headers = new Headers();
+	headers.append('Authorization', 'Basic ' + btoa("apicaller:apicaller"));
+	
 	const response = await fetch(url, {
 	  method: "POST",
-	 // headers: {
-	  //    Authorization: `Bearer ${apiKey}`,
-	   // },
+	  headers: headers,
 	  body: JSON.stringify(params),
 	  // …
 	});
@@ -55,7 +46,10 @@ async function makePostRequest(url, params, callback){
       
     }
 
-    const result = await response.text();
+	//Wait for the response
+    //const result = await response.text();
+	const result = await response.json();
 	
+	//Send result back
 	callback(result) ;
 }

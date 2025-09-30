@@ -16,8 +16,19 @@
 	/*setTimeout(function(){
 		window.parent.postMessage("from window", "*");
 	},1000);*/
-
-	async function makePostRequest(url, params, callback){
+	
+	function getBlock(){
+		
+		var msg  		= {};
+		msg.function 	= "block";
+		
+		//Run a function..
+		postMessageToServiceWorker(msg, function(resp){
+			console.log("getBlock RESP : "+JSON.stringify(resp));
+		});
+	}
+	
+	/*async function makePostRequest(url, params, callback){
 		
 		let headers = new Headers();
 		headers.append('Authorization', 'Basic ' + btoa("apicaller:apicaller"));
@@ -38,34 +49,18 @@
 		
 		//Send result back
 		callback(result) ;
-	}
-	
-	
-	async function getData() {
-	  const url = "http://127.0.0.1:8080/wallet/block";
-	  try {
-	    const response = await fetch(url);
-	    if (!response.ok) {
-	      throw new Error(`Response status: ${response.status}`);
-	    }
-
-	    const result = await response.json();
-	    console.log(result);
-	  } catch (error) {
-	    console.error(error.message);
-	  }
-	}
-	
+	}*/
+		
 	//Wait for page to load
 	window.onload = function () {
 		
-		var ff = makePostRequest("http://127.0.0.1:8080/wallet/block",{}, function(res){
+		/*var ff = makePostRequest("http://127.0.0.1:8080/wallet/block",{}, function(res){
 			console.log("REQ : "+res);	
-		});
+		});*/
 		
 		
 		//Initialise MiniMask
-		/*MINIMASK.init(function(msg){
+		MINIMASK.init(function(msg){
 			
 			if(msg.event == "MINIMASK_INIT"){
 			
@@ -76,14 +71,10 @@
 			}else if(msg.event == "MINIMASK_LOGOUT"){
 				
 			}
-		});*/
+		});
 		
-		var msg  		= {};
-		msg.function 	= "block";
-		
-		//Send a message
-		//window.parent.postMessage(msg, "*");	
-		
+		//testerFunction();
+		getBlock();	
 	}
 	
 	/*window.onload = function () {

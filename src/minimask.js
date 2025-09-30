@@ -1,34 +1,81 @@
 
 /**
- * Listen for the Extension ID
+ * Message handling
  */
-/*function windowReceiveMessage(evt) {
-	console.log("Window rec : "+JSON.stringify(evt.data));
+
+var MINIMASK_REQUESTS = [];
+
+function windowReceiveMessage(evt) {
 	
-	if(evt.data.event == "MINIMASK_EXTENSION_ID"){
-		MINIMASK.EXTENSION_ID = evt.data.data;
-		console.log("Extension ID set "+MINIMASK.EXTENSION_ID);
-		
-		//Removce listener as not used anymore..
-		window.removeEventListener("message", windowReceiveMessage,false);
+	//What was the message
+	var msg = event.data;
+	
+	if(!msg){
+		return;
+	}else if(msg.minitype != "MINIMASK_RESPONSE"){
+		return;
 	}
+	
+	console.log("MiniMask Response : "+JSON.stringify(evt.data));
+	
+	//Get the randid..
+	var randid 	= msg.randid;
+	
+	//Now cycle..
+	var len 	= MINIMASK_REQUESTS.length;
+	var found 	= false;
+	for(var i=0;i<len;i++){
+		var datauri = MINIMASK_REQUESTS[i];
+		if(datauri.randid == randid){
+			found 	= true;
+			
+			//Call back..
+			if(datauri.callback){
+				datauri.callback(msg.data);
+			}
+		}
+	}
+	
+	if(!found){
+		MDS.log("MinWEB Request not found : "+JSON.stringify(msg));
+	}
+	
+	//Now remove that elemnt
+	MINIMASK_REQUESTS = MINIMASK_REQUESTS.filter(function(item) {
+	    return item.randid !== randid;
+	});
+	
 }
-window.addEventListener("message", windowReceiveMessage, false);
-*/
+window.top.addEventListener("message", windowReceiveMessage, false);
+
+
+function postMessageToServiceWorker(action, callback){
+	
+	//console.log("minimaskPostMessage "+JSON.stringify(action));
+	
+	//Create a JSON message to capture the reply
+	var request 		= {};
+	request.randid		= Math.floor(Math.random() * 1000000000); 
+	request.callback 	= callback;
+	
+	//Push to our stack of requests
+	MINIMASK_REQUESTS.push(request);
+	
+	//Make a postable message
+	var msg 		= {};
+	msg.minitype	= "MINIMASK_REQUEST";
+	msg.randid		= request.randid;
+	msg.action 		= action;
+	
+	//Send this to the top window.. origin /
+	window.top.postMessage(msg);
+}
+
 
 /**
  * Main MinimMask Object for all interaction
  */
 var MINIMASK = {
-
-	//Main MEG Host
-	mainmeghost : "http://127.0.0.1:8080/",
-	
-	//Main MEG Host Username
-	mainmegusername : "http://127.0.0.1:8080/",
-	
-	//Main MEG Host
-	mainmeghost : "http://127.0.0.1:8080/",
 			
 	/**
 	 * MINIMASK Startup
@@ -59,6 +106,10 @@ var MINIMASK = {
 		
 	}
 }
+
+
+
+
 
 function createMiniMessage(evt){
 	return createMiniMessage(evt,{});
