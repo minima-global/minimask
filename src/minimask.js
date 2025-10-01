@@ -93,7 +93,9 @@ var MINIMASK = {
 		}
 	},
 	
-	
+	/**
+	 * Access the private account
+	 */
 	account : {
 		
 		balance : function(callback){
@@ -114,22 +116,38 @@ var MINIMASK = {
 			});
 		},
 		
+		send : function(amount, address, tokenid, callback){
+			var msg = _createSimpleMessage("account_send");
+			
+			msg.params.amount  = ""+amount;
+			msg.params.address = address;
+			msg.params.tokenid = tokenid;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		}
+		
 	},
 	
 	/**
-	 * Call the MEG functions
+	 * Call the MEG functions directly
 	 */
-	create : function(callback){
-		postMessageToServiceWorker(_createSimpleMessage("create"), function(resp){
-			callback(resp);
-		});	
-	},
-	
-	block : function(callback){
-		postMessageToServiceWorker(_createSimpleMessage("block"), function(resp){
-			callback(resp);
-		});
+	meg : {
+		
+		create : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("create"), function(resp){
+				callback(resp);
+			});	
+		},
+		
+		block : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("block"), function(resp){
+				callback(resp);
+			});
+		}	
 	}
+	
 }
 
 function _createSimpleMessage(func){

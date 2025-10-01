@@ -8,6 +8,9 @@ MINIMASK_MEG_PASSWORD 		= "apicaller";
 MINIMASK_ACCOUNT_ADDRESS 	= "MxG085TPR16EJF558GCVUW8F985D1J4CU1CDCRQAG9MVTT00G76E0QCJ8H4BEH5";
 MINIMASK_ACCOUNT_PUBLICKEY 	= "0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597";
 
+MINIMASK_ACCOUNT_PRIVATEKEY	= "0x0EC144D5CC79FF1DA66CE0C1046A9F7AE35579234CE1A4F3C04CC1B103D2D32E";
+MINIMASK_ACCOUNT_SCRIPT 	= "RETURN SIGNEDBY(0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597)";
+
 /**
  * Convert Command to actual function
  */
@@ -31,8 +34,21 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "account_balance"){
 			ret.webcall 		= true;
 			ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
-			ret.params.address 	= MINIMASK_ACCOUNT_ADDRESS;
 			
+			ret.params.address 	= MINIMASK_ACCOUNT_ADDRESS;
+	
+	}else if(msg.command ==  "account_send"){
+			ret.webcall 			= true;
+			ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
+			
+			ret.params.amount 		= msg.params.amount;
+			ret.params.toaddress 	= msg.params.address;
+			ret.params.tokenid 		= msg.params.tokenid;
+			ret.params.fromaddress 	= MINIMASK_ACCOUNT_ADDRESS;
+			ret.params.publickey 	= MINIMASK_ACCOUNT_PUBLICKEY;
+			ret.params.privatekey 	= MINIMASK_ACCOUNT_PRIVATEKEY;
+			ret.params.script 		= MINIMASK_ACCOUNT_SCRIPT;				
+						
 	//NOT WEB CALLS
 	}else if(msg.command ==  "account_getaddress"){
 		ret.data.address = MINIMASK_ACCOUNT_ADDRESS;

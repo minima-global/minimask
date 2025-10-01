@@ -52,8 +52,12 @@
 			console.log("TESTPAGE CREATE : "+JSON.stringify(resp));	
 		});*/
 		
-		MINIMASK.account.balance(function(resp){
+		/*MINIMASK.account.balance(function(resp){
 			console.log("TESTPAGE BALANCE : "+JSON.stringify(resp));	
+		});*/
+		
+		MINIMASK.account.send("0.001", "0xFF", "0x00", function(resp){
+			console.log("TESTPAGE SEND : "+JSON.stringify(resp));	
 		});
 	}
 	
