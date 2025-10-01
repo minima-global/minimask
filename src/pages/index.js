@@ -10,3 +10,4 @@ addButtonOnClick('id_btn_newwallet', function(e) {
 addButtonOnClick('id_btn_restorewallet', function(e) {
 	jumpToPage("createwallet.html");
 });
+

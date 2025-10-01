@@ -17,6 +17,37 @@ function jumpToPage(page){
 	location.href=page;
 }
 
+function testerFunction(){
+	console.log('Tester Function');
+}
+
+/**
+ * Make a POST request
+ */
+async function makeGenericPostRequest(url, params, userpass, callback){
+		
+	let headers = new Headers();
+	headers.append('Authorization', 'Basic ' + btoa(userpass));
+	
+	const response = await fetch(url, {
+	  method: "POST",
+	  headers: headers,
+	  body: JSON.stringify(params),
+	  // …
+	});
+	
+	if (!response.ok) {
+      
+    }
+
+	//Wait for the response
+    //const result = await response.text();
+	const result = await response.json();
+	
+	//Send result back
+	callback(result) ;
+}
+
 //console.log('This is a popup.js!');
 
 /*chrome.storage.local.set({ key: chrome.runtime.id }).then(() => {

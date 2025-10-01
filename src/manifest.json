@@ -16,7 +16,7 @@
   "content_scripts": [
      {
        "matches": ["<all_urls>"],
-       "js": ["content-script.js"],
+       "js": ["./pages/generic.js","content-script.js"],
 	   "all_frames": true,
 	   "run_at": "document_end"
      }
@@ -24,8 +24,5 @@
    "web_accessible_resources": [{
        "resources": ["minimask.js"],
        "matches": ["<all_urls>"]
-   }],
-   "externally_connectable": {
-     "matches": ["<all_urls>"]
-   }
+   }]
 }

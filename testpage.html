@@ -1,5 +1,9 @@
 <html>
-
+<head>
+	<title>MiniMask Extension</title>
+	
+		
+</head>
 <body>
 
 	Hello..	
@@ -8,13 +12,48 @@
 	
 <script type="text/javascript">
 	
-	function getBlock(){
-		MINIMASK.block(function(resp){
-			console.log("BLOCK : "+JSON.stringify(resp));	
+	/**
+	 * Make a POST request
+	 */
+	async function makeGenericPostRequest(url, params, userpass, callback){
+			
+		let headers = new Headers();
+		headers.append('Authorization', 'Basic ' + btoa(userpass));
+		headers.append('Content-Type', 'application/x-www-form-urlencoded');
+		
+		var dat = {};
+		dat.address = "0xFF";	
+		
+		const response = await fetch(url, {
+		  method: "POST",
+		  headers: headers,
+		  body: "address=0xFF",
+		  // …
 		});
 		
-		MINIMASK.create(function(resp){
-			console.log("CREATE : "+JSON.stringify(resp));	
+		if (!response.ok) {
+	      
+	    }
+
+		//Wait for the response
+	    //const result = await response.text();
+		const result = await response.json();
+		
+		//Send result back
+		callback(result) ;
+	}
+	
+	function getBlock(){
+		/*MINIMASK.block(function(resp){
+			console.log("TESTPAGE BLOCK : "+JSON.stringify(resp));	
+		});*/
+		
+		/*MINIMASK.create(function(resp){
+			console.log("TESTPAGE CREATE : "+JSON.stringify(resp));	
+		});*/
+		
+		MINIMASK.account.balance(function(resp){
+			console.log("TESTPAGE BALANCE : "+JSON.stringify(resp));	
 		});
 	}
 	
@@ -26,7 +65,11 @@
 		MINIMASK.init(function(){});
 		
 		//testerFunction();
-		getBlock();	
+		getBlock();
+		
+		/*makeGenericPostRequest("http://127.0.0.1:8080/wallet/balance",{},"apicaller:apicaller",function(resp){
+			console.log("TEST POST : "+JSON.stringify(resp));
+		});*/	
 	}
 
 	/*async function makePostRequest(url, params, callback){
