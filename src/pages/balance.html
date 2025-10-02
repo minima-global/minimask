@@ -7,22 +7,29 @@
 	
 	<!-- Generic JS -->
 	<script type="text/javascript" src="./generic.js"></script>
-	<script type="text/javascript" src="./balance.js"></script>
-		
+			
 </head>
 	
 <body>
-	
+
+<style>
+	table {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	td {
+		border: 1px solid white;
+	  	background-color: #eeeeee;
+	  	padding: 2;
+	}
+</style>
+		
 <h3>Balance</h3>    
 <center>
 	
-	<table style="width:100%;background-color:red;">
-		<tr>
-			<td> Hello</td>
-			
-		</tr>	
-	</table>
+	<table id="id_balance_table" style="width:100%;"></table>
 	
+	<script type="text/javascript" src="./balance.js"></script>
 	
 </center>	
 

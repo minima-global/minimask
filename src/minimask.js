@@ -145,6 +145,15 @@ var MINIMASK = {
 			postMessageToServiceWorker(_createSimpleMessage("block"), function(resp){
 				callback(resp);
 			});
+		},
+		
+		scanchain : function(depth, callback){
+			var msg = _createSimpleMessage("scanchain");
+			msg.params.depth  = depth;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
 		}	
 	}
 	

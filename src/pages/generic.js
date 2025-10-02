@@ -21,6 +21,13 @@ function testerFunction(){
 	console.log('Tester Function');
 }
 
+function _createSimpleMessage(func){
+	var msg  		= {};
+	msg.command 	= func;
+	msg.params 		= {};
+	return msg;
+}
+
 /**
  * Make a POST request
  */

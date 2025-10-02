@@ -11,17 +11,67 @@
 </head>
 	
 <body>
+
+<style>
+	table {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	td {
+		border: 1px solid white;
+	  	background-color: #eeeeee;
+	  	padding: 2;
+	}
+	
+	.overlay-box {
+		width: 250px;
+		height: 80px;
+		
+		border : 1px solid red; 
+		border-radius: 20px;
+			
+		position:absolute;
+	    top:50%;
+	    left:50%;
+	    transform:translate(-50%, -50%);
+	    background: #eeeeee; 
+		opacity: .9;
+	    z-index: 1000;
+		
+		display:none;
+	}
+	
+</style>
 	
 <h3>Send</h3>
 <center>
-	    
 	
-	<table style="width:100%;background-color:red;">
+	
+	<table style="width:100%;">
 		<tr>
-			<td> Hello</td>
-			
-		</tr>	
+			<td nowrap>Token : </td>
+			<td><select id="select_token"></td>
+		</tr>
+		
+		<tr>
+			<td nowrap>Amount : </td>
+			<td><input id="send_amount" type=text></td>
+		</tr>
+		
+		<tr>
+			<td nowrap>Address : </td>
+			<td><input id="send_address" type=text></td>
+		</tr>
+		
 	</table>
+	<br>
+	<button class="mybtn" id="id_btn_send">Send Funds</button>
+	
+	<div id="send_wait" class="overlay-box">
+		<br>Sending.. pls wait..
+	</div>
+		
+	<script type="text/javascript" src="./send.js"></script>
 	
 </center>	
 

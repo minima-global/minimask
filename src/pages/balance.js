@@ -2,12 +2,44 @@
  * Load the balance
  */
 
-var ret 	= {};
-ret.url = "http://127.0.0.1:8080/"+"wallet/block";
-ret.params 	= {};
+function setBalance(resp){
+		
+	var baltable = document.getElementById("id_balance_table");
+	for(var i=0;i<resp.data.length;i++){
+		var balance = resp.data[i];
+		
+		var row 	= baltable.insertRow();
+		var cell1 	= row.insertCell(0);
+		var cell2 	= row.insertCell(1);
+		
+		//The name
+		var name;
+		if(balance.tokenid=="0x00"){
+			name = document.createTextNode("Minima");
+		}else{
+			name = document.createTextNode(balance.token.name);
+		}
+		cell1.appendChild(name);
+		   
+		//The amount
+		cell2.style.textAlign 	= "right";
+		
+		if(balance.unconfirmed == "0"){
+			cell2.innerHTML 		= balance.confirmed;	
+		}else{
+			cell2.innerHTML 		= balance.confirmed+" ("+balance.unconfirmed+")";
+		}
+		
+	}
+	
+}
 
-/*chrome.runtime.sendMessage(ret, (response) => {
-		  	
-	console.log("BALANCE : "+JSON.stringify(response));
-		  
-});*/
+function getBalance(){
+	//Send a message to Service-Worker
+	chrome.runtime.sendMessage(_createSimpleMessage("account_balance"), (resp) => {
+		setBalance(resp); 		  
+	});
+}
+
+//Set the balance
+getBalance();

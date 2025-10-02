@@ -6,9 +6,25 @@
 </head>
 <body>
 
+	<style>
+		table {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		td {
+			border: 1px solid white;
+		  	background-color: red;
+		  	padding: 2;
+		}
+	</style>
+	
 	Hello..	
-
+	
 	<button onclick='getBlock();'>Click Me</button>
+	
+	
+	<br><br>
+	<table id="id_balance_table" style="width:200;background-color:red;"></table>
 	
 <script type="text/javascript">
 	
@@ -43,6 +59,31 @@
 		callback(result) ;
 	}
 	
+	function setBalance(resp){
+		
+		var baltable = document.getElementById("id_balance_table");
+		for(var i=0;i<resp.data.length;i++){
+			var balance = resp.data[i];
+			
+			var row 	= baltable.insertRow();
+			var cell1 	= row.insertCell(0);
+			var cell2 	= row.insertCell(1);
+			
+			//The name
+			var name;
+			if(balance.tokenid=="0x00"){
+				name = document.createTextNode("Minima");
+			}else{
+				name = document.createTextNode(balance.token.name);
+			}
+			cell1.appendChild(name);
+			   
+			//The amount
+			cell2.innerHTML = balance.confirmed;
+		}
+		
+	}
+	
 	function getBlock(){
 		/*MINIMASK.block(function(resp){
 			console.log("TESTPAGE BLOCK : "+JSON.stringify(resp));	
@@ -52,13 +93,15 @@
 			console.log("TESTPAGE CREATE : "+JSON.stringify(resp));	
 		});*/
 		
-		/*MINIMASK.account.balance(function(resp){
-			console.log("TESTPAGE BALANCE : "+JSON.stringify(resp));	
-		});*/
-		
-		MINIMASK.account.send("0.001", "0xFF", "0x00", function(resp){
-			console.log("TESTPAGE SEND : "+JSON.stringify(resp));	
+		MINIMASK.account.balance(function(resp){
+			console.log("TESTPAGE BALANCE : "+JSON.stringify(resp));
+			
+			setBalance(resp);
 		});
+		
+		/*MINIMASK.account.send("0.001", "0xFF", "0x00", function(resp){
+			console.log("TESTPAGE SEND : "+JSON.stringify(resp));	
+		});*/
 	}
 	
 		

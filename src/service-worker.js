@@ -5,24 +5,27 @@ MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
 MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
+
 MINIMASK_ACCOUNT_ADDRESS 	= "MxG085TPR16EJF558GCVUW8F985D1J4CU1CDCRQAG9MVTT00G76E0QCJ8H4BEH5";
 MINIMASK_ACCOUNT_PUBLICKEY 	= "0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597";
-
 MINIMASK_ACCOUNT_PRIVATEKEY	= "0x0EC144D5CC79FF1DA66CE0C1046A9F7AE35579234CE1A4F3C04CC1B103D2D32E";
 MINIMASK_ACCOUNT_SCRIPT 	= "RETURN SIGNEDBY(0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597)";
+
+var SERVICE_LOGGING = true;
 
 /**
  * Convert Command to actual function
  */
 function convertMessageToAction(msg){
 
-	var ret 	= {};
+	var ret 		= {};
 	
-	ret.webcall = false;
-	ret.url 	= "";
-	ret.params 	= {};
-	ret.data	= {};
+	ret.webcall 	= false;
+	ret.url 		= "";
+	ret.params 		= {};
+	ret.response	= {};
 	
+	//WEBCALL functions
 	if(msg.command ==  "create"){
 		ret.webcall = true;
 		ret.url 	= MINIMASK_MEG_HOST+"wallet/create";
@@ -51,13 +54,16 @@ function convertMessageToAction(msg){
 						
 	//NOT WEB CALLS
 	}else if(msg.command ==  "account_getaddress"){
-		ret.data.address = MINIMASK_ACCOUNT_ADDRESS;
+		ret.status 		 = true;
+		ret.response.address = MINIMASK_ACCOUNT_ADDRESS;
 	
 	}else if(msg.command ==  "account_getpublickey"){
-		ret.data.publickey = MINIMASK_ACCOUNT_PUBLICKEY;
+		ret.status 		 = true;
+		ret.response.publickey = MINIMASK_ACCOUNT_PUBLICKEY;
 			
 	}else{
-		ret.data.error = "Unknown command : "+msg.command;
+		ret.status 	= false;
+		ret.error 	= "Unknown command : "+msg.command;
 	}
 	
 	return ret;	
@@ -67,25 +73,54 @@ function convertMessageToAction(msg){
  * Listen for messages
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  	console.log("Service Worker Received Command : "+JSON.stringify(request));
+  	if(SERVICE_LOGGING){
+		console.log("Service Worker Received Command : "+JSON.stringify(request));	
+	}
 	
 	//Convert to a function
 	var action = convertMessageToAction(request);
 	
-	console.log("Service Worker Converted Command : "+JSON.stringify(action));
+	if(SERVICE_LOGGING){
+		console.log("Service Worker Converted Command : "+JSON.stringify(action));
+	}
 		
 	//Is it a webcall..
 	if(action.webcall){
 		var userpass = MINIMASK_MEG_USER+":"+MINIMASK_MEG_PASSWORD;
 		makePostRequest(action.url, action.params, userpass, function(res){
-			console.log("Post Response : "+JSON.stringify(res));
-			sendResponse(res);
+			if(SERVICE_LOGGING){
+				console.log("Post Response : "+JSON.stringify(res));
+			}
+			
+			//ONLY send back the response
+			var resp 	= {};
+			resp.status = res.status;
+			
+			//Success or fail
+			if(!resp.status){
+				resp.error = res.error;
+			}else{
+				resp.data	= res.response;	
+			}
+			
+			sendResponse(resp);
 		});
 		
 		return true;	
 	}else{
+		//ONLY send back the response
+		var resp 	= {};
+		resp.status = action.status;
+		
+		//Success or fail
+		if(!resp.status){
+			resp.error = action.error;
+		}else{
+			resp.data	= action.response;	
+		}
+		
 		//No webcall required.. just send answer back
-		sendResponse(action.data);
+		sendResponse(resp);
 	}
 });
 
