@@ -17,11 +17,5 @@ addButtonOnClick('id_wallet_receive', function(e) {
 });
 
 addButtonOnClick('id_img_settings', function(e) {
-	
-	//Send an internal Message
-	/*chrome.runtime.sendMessage('get-user-data', (response) => {
-	  console.log('wallet.js : received user data', response);
-	});*/
-	
 	getElement("mainiframe").src="./settings.html";
 });

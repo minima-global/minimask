@@ -10,3 +10,8 @@ getElement('id_btn_proceedwallet').addEventListener('click', function(e) {
 getElement('id_btn_cancelwallet').addEventListener('click', function(e) {
 	jumpToPage("index.html");
 });
+
+//Set a random key
+callSimpleServiceWorker("random", function(resp){
+	getElement("id_seed_phrase").innerHTML = "<b>"+resp.data.keycode+"</b>";
+});

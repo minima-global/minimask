@@ -7,13 +7,11 @@ body {
 	font-family: Manrope; 
 	font-size: 16;
 	margin: 8;   /* Remove body margins */
-	width:380;
-	height:400;
 }
 
 .smallgreytext{
-	font-size: 12px; /* Set a font size */
-	color:grey;
+	font-size: 12px; 
+	color:#777777;
 }
 
 /* LOGON BUTTONS */
@@ -63,46 +61,4 @@ body {
 
 .mybtn:disabled {
   background-color: RoyalBlue;
-}
-
-/* Menu buttons */
-.menubtn {
-  background-color: DodgerBlue; /* Blue background */
-  border: none; /* Remove borders */
-  border-radius: 4px;
-  color: white; /* White text */
-  padding: 6px 8px; /* Some padding */
-  font-size: 12px; /* Set a font size */
-  cursor: pointer; /* Mouse pointer on hover */
-}
-
-/* Darker background on mouse-over */
-.menubtn:hover {
-  background-color: RoyalBlue;
-}
-
-.menubtn:active {
-  background-color: green;
-}
-
-.menubtn:disabled {
-  background-color: RoyalBlue;
-}
-
-.overlay-box {
-	width: 250px;
-	height: 80px;
-	
-	border : 1px solid red; 
-	border-radius: 20px;
-		
-	position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    background: #eeeeee; 
-	opacity: .9;
-    z-index: 1000;
-	
-	display:none;
 }

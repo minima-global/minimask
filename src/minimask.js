@@ -87,6 +87,13 @@ var MINIMASK = {
 		//Log a little..
 		console.log("Initialising MiniMask..");
 		
+		/*postMessageToServiceWorker(_createSimpleMessage("minimask_init"), function(resp){
+			//Is logging enabled.. via the URL
+			if(callback){
+				callback(resp);	
+			}
+		});*/
+		
 		//Is logging enabled.. via the URL
 		if(callback){
 			callback();	
@@ -143,6 +150,12 @@ var MINIMASK = {
 		
 		block : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("block"), function(resp){
+				callback(resp);
+			});
+		},
+		
+		random : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("random"), function(resp){
 				callback(resp);
 			});
 		},

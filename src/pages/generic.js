@@ -28,6 +28,12 @@ function _createSimpleMessage(func){
 	return msg;
 }
 
+function callSimpleServiceWorker(func, callback){
+	//Send a message to Service-Worker
+	chrome.runtime.sendMessage(_createSimpleMessage(func), (resp) => {
+		callback(resp);
+	});
+}
 /**
  * Make a POST request
  */

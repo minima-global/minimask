@@ -4,7 +4,7 @@
   "version": "1.0",
   "manifest_version": 3,
   "action": {
-    "default_popup": "./pages/wallet.html",
+    "default_popup": "./pages/start.html",
     "default_icon": "./images/minima.png"
   },
   "background": {

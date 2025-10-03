@@ -28,7 +28,7 @@ function contentjsReceiveMessage(evt) {
 	}
 	
 	console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));
-
+	
 	//Content can send messages to Service Worker
 	chrome.runtime.sendMessage(msg.action, (response) => {
 		  	
