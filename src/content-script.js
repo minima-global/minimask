@@ -43,4 +43,4 @@ function contentjsReceiveMessage(evt) {
 }
 
 //Listen for messages
-window.top.addEventListener("message", contentjsReceiveMessage);
+window.parent.addEventListener("message", contentjsReceiveMessage);

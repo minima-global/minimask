@@ -50,7 +50,7 @@ function windowReceiveMessage(evt) {
 	});
 	
 }
-window.top.addEventListener("message", windowReceiveMessage, false);
+window.parent.addEventListener("message", windowReceiveMessage, false);
 
 
 function postMessageToServiceWorker(action, callback){
