@@ -59,18 +59,20 @@ function convertMessageToAction(msg){
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
 	}else if(msg.command ==  "account_send"){
-		
+			
+			//Set the main params
+			ret.params.amount 		= msg.params.amount;
+			ret.params.toaddress 	= msg.params.address;
+			ret.params.tokenid 		= msg.params.tokenid;
+					
 			//Is this internal.. ?
 			if(msg.external){
-				ret.pending = true;	
+				ret.pending = true;
+				return ret;	
 			}
 		
 			ret.webcall 			= true;
 			ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
-			
-			ret.params.amount 		= msg.params.amount;
-			ret.params.toaddress 	= msg.params.address;
-			ret.params.tokenid 		= msg.params.tokenid;
 			ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 			ret.params.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
 			ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;

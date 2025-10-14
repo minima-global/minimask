@@ -10,10 +10,21 @@ function acceptPending(id, callback){
 	var pending = PENDING_LIST[id];
 	
 	//Send this amount..
-	//..
+	var msg 			= _createSimpleMessage("account_send");
 	
-	//Remove from list..
-	cancelPending(id);
+	//Sent internally.. no pending
+	msg.external 		= false;
+	
+	msg.params.amount 	= pending.params.amount;
+	msg.params.address	= pending.params.toaddress;
+	msg.params.tokenid 	= pending.params.tokenid;
+	
+	chrome.runtime.sendMessage(msg, (resp) => {
+		alert("Funds Sent!");
+		
+		//Remove from list..
+		cancelPending(id);
+	});
 }
 
 function cancelPending(id, callback){
@@ -34,7 +45,7 @@ function cancelPending(id, callback){
 function shrinkAddress(addr){
 	var strlen = addr.length;
 	if(strlen > 16){
-		return addr.substring(0,16)+" .. "+addr.substring(strlen-16,strlen);
+		return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
 	}
 	
 	return addr;
@@ -53,29 +64,35 @@ function setPendingList(pendinglist, callback){
 		var pending = pendinglist[i];
 		
 		var comm = '<table width=100%>'+
-				'<tr style="background-color: #eeeeee;">'+
-					'<td style="text-align:right" nowrap>Token : </td>'+
-					'<td style="width:100%">'+pending.params.tokenid+'</td>'+
-				'</tr>'+
-				
-				'<tr style="background-color: #eeeeee;">'+
-					'<td style="text-align:right" nowrap>Amount : </td>'+
-					'<td>'+pending.params.amount+'</td>'+
-				'</tr>'+
-				
-				'<tr style="background-color: #eeeeee;">'+
-					'<td style="text-align:right" nowrap>Address : </td>'+
-					'<td>'+
-						'<div style="overflow-wrap: break-word;font-size:10;">'+shrinkAddress(pending.params.toaddress)+'</div>'+
-					'</td>'+
-				'</tr>'+
-				'<tr>'+
-					'<td colspan=2 style="text-align:right;" nowrap>'+
-						'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
-					   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
-					'</td>'+
-				'</tr>'+
-			'</table>';
+								
+			'<tr style="background-color: #eeeeee;">'+
+				'<td style="text-align:right" nowrap>From : </td>'+
+				'<td style="font-size:10;" nowrap>'+shrinkAddress(pending.sender.url)+'</td>'+
+			'</tr>'+
+								
+			'<tr style="background-color: #eeeeee;">'+
+				'<td style="text-align:right" nowrap>Token : </td>'+
+				'<td style="width:100%">'+pending.params.tokenid+'</td>'+
+			'</tr>'+
+			
+			'<tr style="background-color: #eeeeee;">'+
+				'<td style="text-align:right" nowrap>Amount : </td>'+
+				'<td>'+pending.params.amount+'</td>'+
+			'</tr>'+
+			
+			'<tr style="background-color: #eeeeee;">'+
+				'<td style="text-align:right" nowrap>Address : </td>'+
+				'<td nowrap>'+
+					'<div style="font-size:10;">'+shrinkAddress(pending.params.toaddress)+'</div>'+
+				'</td>'+
+			'</tr>'+
+			'<tr>'+
+				'<td colspan=2 style="text-align:right;" nowrap>'+
+					'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
+				   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
+				'</td>'+
+			'</tr>'+
+		'</table>';
 		
 		total += comm+"<br>";
 	}
