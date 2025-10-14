@@ -105,7 +105,16 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "account_remove_pending"){
 		ret.internal 		= true;
 		ret.params.removeid	= msg.params.removeid;
-					
+	
+	}else if(msg.command ==  "account_get_key_uses"){
+			ret.internal 			= true;
+			ret.params.publickey	= msg.params.publickey;
+	
+	}else if(msg.command ==  "account_set_key_uses"){
+			ret.internal 			= true;
+			ret.params.publickey	= msg.params.publickey;
+			ret.params.amount		= msg.params.amount;
+									
 	//UNKNOWN	
 	}else{
 		ret.status 	= false;
@@ -233,6 +242,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				sendResponse(resp);
 			});	
 		
+		
+		}else if(action.command == "account_get_key_uses"){
+			
+			getKeyUse(action.params.publickey, function(res){
+				
+				resp.data = res;
+				sendResponse(resp);
+			});	
+				
+		}else if(action.command == "account_set_key_uses"){
+				
+			setKeyUses(action.params.publickey, action.params.amount, function(res){
+				resp.data = res;
+				sendResponse(resp);
+			});	
 		}
 		
 		return true;
@@ -347,6 +371,58 @@ function retrieveUserDetails(callback){
 	});
 }
 
+/**
+ * Key Uses
+ */
+function setKeyUses(publickey, amount, callback){
+	
+	getAllKeyUses(function(allkeys){
+		
+		console.log("allkeys : "+JSON.stringify(allkeys));
+		
+		//Get the array
+		var karr = allkeys.key_uses;
+		
+		console.log("karr : "+JSON.stringify(karr));
+				
+		//Set for this public key		
+		karr[""+publickey] = amount;
+		
+		console.log("karr after: "+JSON.stringify(karr));
+				
+		console.log("NEW allkeys : "+JSON.stringify(allkeys));
+				
+		chrome.storage.session.set({ key_uses : karr }).then(() => {
+			if(callback){
+				callback(allkeys);	
+			}
+		});	
+	});
+}
+
+function getAllKeyUses(callback){
+	chrome.storage.session.get({ key_uses : {} }).then((result) => {
+	  	callback(result);	
+	});
+}
+
+function getKeyUse(publickey, callback){
+	getAllKeyUses(function(allkeys){
+		
+		var karr = allkeys.key_uses;
+		
+		//Does sit exist
+		if(karr[""+publickey]){
+			callback(karr[""+publickey]);
+		}
+		
+		callback(0);
+	});
+}
+
+/**
+ * Pending Txns
+ */
 function getPendingTxns(callback){
 	chrome.storage.session.get({ pending_txns : [] }).then((result) => {
 	  	callback(result);	

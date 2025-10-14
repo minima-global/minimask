@@ -120,6 +120,27 @@ var MINIMASK = {
 			});
 		},
 		
+		getkeyuses : function(publickey, callback){
+			var msg = _createSimpleMessage("account_get_key_uses");
+			msg.params.publickey  = publickey;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		setkeyuses : function(publickey, amount, callback){
+			var msg = _createSimpleMessage("account_set_key_uses");
+			msg.params.publickey  	= publickey;
+			msg.params.amount  		= amount;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		
+		
 		balance : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_balance"), function(resp){
 				callback(resp);
