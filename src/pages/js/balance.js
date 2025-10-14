@@ -42,9 +42,9 @@ function getBalance(){
 }
 
 //Add button for rfefresh
-addButtonOnClick('id_btn_refresh', function(e) {
-	jumpToPage("balance.html");
-});
+//addButtonOnClick('id_btn_refresh', function(e) {
+//	jumpToPage("balance.html");
+//});
 
 //Set the balance
 getBalance();

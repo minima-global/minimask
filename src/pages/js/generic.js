@@ -7,9 +7,16 @@ function getElement(id){
 	return document.getElementById(id);
 }
 
-//Add the onckick even to a button
+//Add the onclick event to a button
 function addButtonOnClick(id, func){
 	return getElement(id).addEventListener('click',func);
+}
+
+//Add the onclick event to a button with parameters
+function addButtonOnClickWithParams(id, func, param){
+	return document.getElementById(id).addEventListener('click',function(){
+		func(param);
+	});
 }
 
 //Jump to a page..

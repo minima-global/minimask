@@ -27,10 +27,16 @@ function contentjsReceiveMessage(evt) {
 		return;
 	}
 	
+	//This is an external request
+	msg.action.external = true;
+	
+	//Log it..
 	console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));
 	
 	//Content can send messages to Service Worker
 	chrome.runtime.sendMessage(msg.action, (response) => {
+		
+		console.log("Content-Js ReceiveResponse : "+JSON.stringify(response));
 		  	
 		var resp 		= {};
 		resp.minitype	= "MINIMASK_RESPONSE";
@@ -38,9 +44,9 @@ function contentjsReceiveMessage(evt) {
 		resp.data 		= response;
 		
 		//Send this to the top window.. origin /
-		window.top.postMessage(resp);	  
+		window.postMessage(resp);	  
 	});
 }
 
 //Listen for messages
-window.parent.addEventListener("message", contentjsReceiveMessage);
+window.addEventListener("message", contentjsReceiveMessage);

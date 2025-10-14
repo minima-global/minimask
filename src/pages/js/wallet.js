@@ -19,3 +19,7 @@ addButtonOnClick('id_wallet_receive', function(e) {
 addButtonOnClick('id_img_settings', function(e) {
 	getElement("mainiframe").src="./settings.html";
 });
+
+addButtonOnClick('id_img_pending', function(e) {
+	getElement("mainiframe").src="./pending.html";
+});

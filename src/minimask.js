@@ -50,7 +50,7 @@ function windowReceiveMessage(evt) {
 	});
 	
 }
-window.parent.addEventListener("message", windowReceiveMessage, false);
+window.addEventListener("message", windowReceiveMessage, false);
 
 
 function postMessageToServiceWorker(action, callback){
@@ -70,7 +70,7 @@ function postMessageToServiceWorker(action, callback){
 	msg.action 		= action;
 	
 	//Send this to the top window.. origin /
-	window.top.postMessage(msg);
+	window.postMessage(msg);
 }
 
 
@@ -104,6 +104,21 @@ var MINIMASK = {
 	 * Access the private account
 	 */
 	account : {
+		
+		pending : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("account_pending"), function(resp){
+				callback(resp);
+			});
+		},
+		
+		removepending : function(id, callback){
+			var msg = _createSimpleMessage("account_remove_pending");
+			msg.params.removeid  = id;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
 		
 		balance : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_balance"), function(resp){

@@ -17,7 +17,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY 	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
-var SERVICE_LOGGING = false;
+var SERVICE_LOGGING = true;
 
 /**
  * Load the 
@@ -30,8 +30,11 @@ function convertMessageToAction(msg){
 
 	var ret 		= {};
 	
+	ret.command		= msg.command;
 	ret.webcall 	= false;
 	ret.internal 	= false;
+	ret.pending 	= false;
+	
 	ret.url 		= "";
 	ret.params 		= {};
 	ret.response	= {};
@@ -56,6 +59,12 @@ function convertMessageToAction(msg){
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
 	}else if(msg.command ==  "account_send"){
+		
+			//Is this internal.. ?
+			if(msg.external){
+				ret.pending = true;	
+			}
+		
 			ret.webcall 			= true;
 			ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
 			
@@ -88,6 +97,13 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "minimask_extension_logout"){
 		ret.internal 		= true;	
 					
+	}else if(msg.command ==  "account_pending"){
+		ret.internal 		= true;
+	
+	}else if(msg.command ==  "account_remove_pending"){
+		ret.internal 		= true;
+		ret.params.removeid	= msg.params.removeid;
+					
 	//UNKNOWN	
 	}else{
 		ret.status 	= false;
@@ -105,22 +121,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		console.log("Service Worker Received Command : "+JSON.stringify(request));	
 	}
 	
-	console.log("SENDER : "+JSON.stringify(sender));
-	
 	//Convert to a function
-	var action = convertMessageToAction(request);
+	var action 		= convertMessageToAction(request);
+	
+	//Set the sender
+	action.sender	= sender;
 	
 	if(SERVICE_LOGGING){
 		console.log("Service Worker Converted Command : "+JSON.stringify(action));
 	}
+	
+	//Send back response	
+	var resp 		= {};
+	resp.pending 	= false;
+			
+	if(action.pending){
 		
-	//Is it a webcall..
-	if(action.internal){
+		//console.log("Service Worker PENDING command : "+JSON.stringify(action));
 		
-		var resp 	= {};
+		addPendingTxn(action, function(res){
+			//console.log("ALL PENDING : "+JSON.stringify(res));
+			
+			//Send Back..
+			resp.status 	= false;
+			resp.pending 	= true;
+			resp.error 		= "Added to pending..";
+			
+			sendResponse(resp);
+		});
+		
+		return true;
+		
+	}else if(action.internal){
+		
 		resp.status = true;
 					
-		if(request.command == "account_generate"){
+		if(action.command == "account_generate"){
 			
 			makePostRequest(MINIMASK_MEG_HOST+"wallet/seedphrase", action.params, function(res){
 				
@@ -145,9 +181,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				}							
 			});
 			
-			return true;
-				
-		}else if(request.command == "minimask_extension_init"){
+		}else if(action.command == "minimask_extension_init"){
 			
 			console.log("Try Logon..");
 			
@@ -170,22 +204,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				sendResponse(resp);				
 			});
 			
-			return true;
-		
-		}else if(request.command == "minimask_extension_logout"){
+		}else if(action.command == "minimask_extension_logout"){
 			
 			storeUserDetails({}, function(){
-				retrieveUserDetails(function(details){
+				clearPendingTxns(function(){
 					MINIMASK_USER_DETAILS = {};
-					sendResponse(resp);
-				});		
+					sendResponse(resp);	
+				});
 			});	
 			
-			return true;
+		}else if(action.command == "account_pending"){
+			
+			getPendingTxns(function(allpending){
+				resp.data = allpending;
+				sendResponse(resp);
+			});
+			
+			
+		}else if(action.command == "account_remove_pending"){
+			
+			removePendingTxn(action.params.removeid, function(allpending){
+				
+				console.log("REMOVED PENDING and send response : "+JSON.stringify(allpending));
+				
+				resp.data = allpending;
+				sendResponse(resp);
+			});	
+		
 		}
 		
-	}else if(action.webcall){
+		return true;
 		
+	}else if(action.webcall){
+			
 		//Call MEG
 		makePostRequest(action.url, action.params, function(res){
 			if(SERVICE_LOGGING){
@@ -193,7 +244,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			}
 			
 			//ONLY send back the response
-			var resp 	= {};
 			resp.status = res.status;
 			
 			//Success or fail
@@ -206,10 +256,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			sendResponse(resp);
 		});
 		
-		return true;	
+		return true;
+			
 	}else{
 		//ONLY send back the response
-		var resp 	= {};
 		resp.status = action.status;
 		
 		//Success or fail
@@ -293,6 +343,54 @@ function retrieveUserDetails(callback){
 	chrome.storage.session.get(["user_details"]).then((result) => {
 	  	callback(result);
 	});
+}
+
+function getPendingTxns(callback){
+	chrome.storage.session.get({ pending_txns : [] }).then((result) => {
+	  	callback(result);	
+	});
+}
+
+function clearPendingTxns(callback){
+	chrome.storage.session.set({ pending_txns : [] }).then((result) => {
+		callback(result);	
+	});
+}
+
+function addPendingTxn(pendingtxn, callback){
+	
+	//Get the curent list
+	getPendingTxns(function(pending){
+		
+		//And add this..
+		pending.pending_txns.push(pendingtxn);
+		
+		//And now set again..
+		chrome.storage.session.set({ pending_txns : pending.pending_txns }).then(() => {
+			if(callback){
+				callback(pending);	
+			}
+		});	
+	});
+	
+}
+
+function removePendingTxn(id, callback){
+	
+	//Get the curent list
+	getPendingTxns(function(pending){
+		
+		//Remove
+		pending.pending_txns.splice(id,1);
+		
+		//And now set again..
+		chrome.storage.session.set({ pending_txns : pending.pending_txns }).then(() => {
+			if(callback){
+				callback(pending);	
+			}
+		});	
+	});
+	
 }
 
 

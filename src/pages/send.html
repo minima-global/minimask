@@ -41,6 +41,11 @@
 		display:none;
 	}
 	
+	.righttd{
+		width:100;
+		text-align:right;
+	}
+	
 </style>
 	
 <h3>Send</h3>
@@ -49,21 +54,32 @@
 	
 	<table style="width:100%;">
 		<tr>
-			<td nowrap>Token : </td>
+			<td class="righttd" nowrap>Token : </td>
 			<td><select id="select_token"></td>
 		</tr>
 		
 		<tr>
-			<td nowrap>Amount : </td>
+			<td class="righttd" nowrap>Amount : </td>
 			<td><input id="send_amount" type=text></td>
 		</tr>
 		
 		<tr>
-			<td nowrap>Address : </td>
+			<td class="righttd" nowrap>Address : </td>
 			<td><input id="send_address" type=text></td>
 		</tr>
-		
 	</table>
+	
+	<br>
+	<hr style="width:80%;">
+	<br>
+	
+	<table style="width:100%;">	
+		<tr>
+			<td class="righttd" nowrap>Key Uses : </td>
+			<td><input id="send_keyuses" type=text></td>
+		</tr>
+	</table>
+	
 	<br>
 	<button class="mybtn" id="id_btn_send">Send Funds</button>
 	
