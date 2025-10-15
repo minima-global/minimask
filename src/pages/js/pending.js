@@ -19,11 +19,17 @@ function acceptPending(id, callback){
 	msg.params.address	= pending.params.toaddress;
 	msg.params.tokenid 	= pending.params.tokenid;
 	
-	chrome.runtime.sendMessage(msg, (resp) => {
-		alert("Funds Sent!");
+	//And get the latest key uses
+	callSimpleServiceWorker("account_get_key_uses", function(res){
+		msg.params.keyuses = res.data;
 		
-		//Remove from list..
-		cancelPending(id);
+		//And send on..
+		chrome.runtime.sendMessage(msg, (resp) => {
+			alert("Funds Sent!");
+			
+			//Remove from list..
+			cancelPending(id);
+		});
 	});
 }
 

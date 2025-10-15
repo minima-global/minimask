@@ -35,9 +35,9 @@ function _createSimpleMessage(func){
 	return msg;
 }
 
-function callSimpleServiceWorker(func, callback){
+function callSimpleServiceWorker(command, callback){
 	//Send a message to Service-Worker
-	chrome.runtime.sendMessage(_createSimpleMessage(func), (resp) => {
+	chrome.runtime.sendMessage(_createSimpleMessage(command), (resp) => {
 		callback(resp);
 	});
 }

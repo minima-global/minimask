@@ -28,6 +28,11 @@ function getTokens(){
 //Set the balance
 getTokens();
 
+//Set the Key Uses
+callSimpleServiceWorker("account_get_key_uses", function(res){
+	send_keyuses.value = res.data;
+});
+
 //Add click to button
 addButtonOnClick('id_btn_send', function(e) {
 	
@@ -39,9 +44,10 @@ addButtonOnClick('id_btn_send', function(e) {
 	//Amount
 	var amount    = getElement("send_amount").value.trim();
 	var address   = getElement("send_address").value.trim();
-	
-	if(amount == "" || address==""){
-		alert("You MUST specify a valid amount and address");
+	var keyuses   = getElement("send_keyuses").value.trim();
+		
+	if(amount == "" || address=="" || keyuses==""){
+		alert("You MUST specify a valid amount, address and keyuses");
 		return;
 	}else{
 		if(!confirm("Are you sure you wish to proceed ?")){
@@ -56,11 +62,12 @@ addButtonOnClick('id_btn_send', function(e) {
 	var msg 			= _createSimpleMessage("account_send");
 	
 	//Sent internally.. no pending
-	msg.external 		= true;
+	msg.external 		= false;
 	
 	msg.params.amount 	= amount;
 	msg.params.address	= address;
 	msg.params.tokenid 	= tokenid;
+	msg.params.keyuses 	= keyuses;
 	
 	chrome.runtime.sendMessage(msg, (resp) => {
 		getElement("send_wait").style.display="none";

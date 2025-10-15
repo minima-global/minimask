@@ -1,4 +1,3 @@
-
 /**
  * MinimMask injected JS code
  */
@@ -16,6 +15,7 @@ injectScript('minimask.js');
 /**
  * Listen out for messages and forward to Service Worker
  */
+var CONTENTJS_LOGGING = false;
 function contentjsReceiveMessage(evt) {
 	
 	//Get the message
@@ -31,13 +31,17 @@ function contentjsReceiveMessage(evt) {
 	msg.action.external = true;
 	
 	//Log it..
-	console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));
+	if(CONTENTJS_LOGGING){
+		console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));	
+	}
 	
 	//Content can send messages to Service Worker
 	chrome.runtime.sendMessage(msg.action, (response) => {
 		
-		console.log("Content-Js ReceiveResponse : "+JSON.stringify(response));
-		  	
+		if(CONTENTJS_LOGGING){
+			console.log("Content-Js ReceiveResponse : "+JSON.stringify(response));
+		}
+		
 		var resp 		= {};
 		resp.minitype	= "MINIMASK_RESPONSE";
 		resp.randid		= msg.randid;

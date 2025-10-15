@@ -6,4 +6,8 @@ addButtonOnClick('id_settings_logoutbtn', function(e) {
 	});
 });
 
+//Set the keyuses..
+callSimpleServiceWorker("account_get_key_uses", function(res){
+	id_keyuses_div.innerHTML = "<b>"+res.data+"</b>";
+});
 

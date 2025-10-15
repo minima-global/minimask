@@ -60,24 +60,31 @@ function convertMessageToAction(msg){
 
 	}else if(msg.command ==  "account_send"){
 			
-			//Set the main params
-			ret.params.amount 		= msg.params.amount;
-			ret.params.toaddress 	= msg.params.address;
-			ret.params.tokenid 		= msg.params.tokenid;
-					
-			//Is this internal.. ?
-			if(msg.external){
-				ret.pending = true;
-				return ret;	
-			}
+		//Set the main params
+		ret.params.amount 		= msg.params.amount;
+		ret.params.toaddress 	= msg.params.address;
+		ret.params.tokenid 		= msg.params.tokenid;
+				
+		//Is this internal.. ?
+		if(msg.external){
+			ret.pending = true;
+			return ret;	
+		}
 		
-			ret.webcall 			= true;
-			ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
-			ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
-			ret.params.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
-			ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
-			ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
-						
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
+		ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+		ret.params.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
+		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
+		ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
+	
+		//Set the Key Uses
+		ret.params.keyuses 		= msg.params.keyuses;
+		
+		//Increment
+		var newkeyuses = +msg.params.keyuses +1;
+		setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, newkeyuses, function(res){});		
+							
 	//NOT WEB CALLS
 	}else if(msg.command ==  "account_getaddress"){
 		ret.status 		 = true;
@@ -107,13 +114,20 @@ function convertMessageToAction(msg){
 		ret.params.removeid	= msg.params.removeid;
 	
 	}else if(msg.command ==  "account_get_key_uses"){
-			ret.internal 			= true;
-			ret.params.publickey	= msg.params.publickey;
-	
+		ret.internal 			= true;
+		
 	}else if(msg.command ==  "account_set_key_uses"){
-			ret.internal 			= true;
-			ret.params.publickey	= msg.params.publickey;
-			ret.params.amount		= msg.params.amount;
+		ret.internal 			= true;
+		ret.params.amount		= msg.params.amount;
+			
+	}else if(msg.command ==  "account_get_any_key_uses"){
+		ret.internal 			= true;
+		ret.params.publickey	= msg.params.publickey;
+	
+	}else if(msg.command ==  "account_set_any_key_uses"){
+		ret.internal 			= true;
+		ret.params.publickey	= msg.params.publickey;
+		ret.params.amount		= msg.params.amount;
 									
 	//UNKNOWN	
 	}else{
@@ -148,11 +162,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 	if(action.pending){
 		
-		//console.log("Service Worker PENDING command : "+JSON.stringify(action));
-		
 		addPendingTxn(action, function(res){
-			//console.log("ALL PENDING : "+JSON.stringify(res));
-			
 			//Send Back..
 			resp.status 	= false;
 			resp.pending 	= true;
@@ -194,11 +204,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 		}else if(action.command == "minimask_extension_init"){
 			
-			console.log("Try Logon..");
-			
 			//Are we logged in..
 			retrieveUserDetails(function(details){
-				console.log("INIT : "+JSON.stringify(details));
 				
 				resp.data 			= {};
 				resp.data.loggedon 	= false;
@@ -243,20 +250,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			});	
 		
 		
-		}else if(action.command == "account_get_key_uses"){
+		}else if(action.command == "account_get_any_key_uses"){
 			
 			getKeyUse(action.params.publickey, function(res){
-				
 				resp.data = res;
 				sendResponse(resp);
 			});	
 				
-		}else if(action.command == "account_set_key_uses"){
+		}else if(action.command == "account_set_any_key_uses"){
 				
 			setKeyUses(action.params.publickey, action.params.amount, function(res){
 				resp.data = res;
 				sendResponse(resp);
 			});	
+		
+		}else if(action.command == "account_get_key_uses"){
+					
+			getKeyUse(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, function(res){
+				resp.data = res;
+				sendResponse(resp);
+			});	
+				
+		}else if(action.command == "account_set_key_uses"){
+						
+			setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, action.params.amount, function(res){
+				resp.data = res;
+				sendResponse(resp);
+			});	
+		
 		}
 		
 		return true;
@@ -378,19 +399,11 @@ function setKeyUses(publickey, amount, callback){
 	
 	getAllKeyUses(function(allkeys){
 		
-		console.log("allkeys : "+JSON.stringify(allkeys));
-		
 		//Get the array
 		var karr = allkeys.key_uses;
-		
-		console.log("karr : "+JSON.stringify(karr));
 				
 		//Set for this public key		
 		karr[""+publickey] = amount;
-		
-		console.log("karr after: "+JSON.stringify(karr));
-				
-		console.log("NEW allkeys : "+JSON.stringify(allkeys));
 				
 		chrome.storage.session.set({ key_uses : karr }).then(() => {
 			if(callback){
