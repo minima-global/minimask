@@ -10,7 +10,8 @@ getElement('id_btn_restorewallet').addEventListener('click', function(e) {
 	
 	//First restore the wallet..
 	var msg 				= _createSimpleMessage("account_generate");
-	msg.params.seedphrase 	= "CLICK FEW LIKE OSTRICH LAUGH MEMORY GENIUS ENTIRE TRACK CHEAP SKULL TRIM DAMP MAMMAL NOMINEE MODIFY JUST HOVER ASPECT WAGE TOWN TASTE WHIP NATURE";
+	//msg.params.seedphrase = "CLICK FEW LIKE OSTRICH LAUGH MEMORY GENIUS ENTIRE TRACK CHEAP SKULL TRIM DAMP MAMMAL NOMINEE MODIFY JUST HOVER ASPECT WAGE TOWN TASTE WHIP NATURE";
+	msg.params.seedphrase 	= seed;
 	
 	chrome.runtime.sendMessage(msg, (resp) => {
 		getElement("generate_wait").style.display="none";
