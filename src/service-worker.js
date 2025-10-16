@@ -36,6 +36,18 @@ function convertMessageToAction(msg){
 		ret.webcall = true;
 		ret.url 	= MINIMASK_MEG_HOST+"wallet/create";
 	
+	}else if(msg.command ==  "send"){
+				
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
+		ret.params.amount 		= msg.params.amount;
+		ret.params.toaddress 	= msg.params.toaddress;
+		ret.params.tokenid 		= msg.params.tokenid;
+		ret.params.fromaddress 	= msg.params.fromaddress;
+		ret.params.privatekey 	= msg.params.privatekey;
+		ret.params.script 		= msg.params.script;				
+		ret.params.keyuses 		= msg.params.keyuses;
+							
 	}else if(msg.command ==  "block"){
 		ret.webcall = true;
 		ret.url 	= MINIMASK_MEG_HOST+"wallet/block";
@@ -92,7 +104,6 @@ function convertMessageToAction(msg){
 		ret.webcall 			= true;
 		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
 		ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
-		ret.params.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
 		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
 		ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
 	
