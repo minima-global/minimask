@@ -82,3 +82,20 @@ addButtonOnClick('id_btn_send', function(e) {
 		}
 	});
 });
+
+
+//Add click to button
+addButtonOnClick('id_btn_setkeys', function(e) {
+
+	//Get the keys value..
+	var keyuses   = getElement("send_keyuses").value.trim();
+	
+	// Set it..
+	var setkeys 			= _createSimpleMessage("account_set_key_uses");
+	setkeys.params.amount 	= keyuses;
+	
+	chrome.runtime.sendMessage(setkeys, (resp) => {
+		//And now..
+		alert("Key uses updated to : "+keyuses);	
+	});
+});

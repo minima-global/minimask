@@ -405,7 +405,7 @@ function setKeyUses(publickey, amount, callback){
 		//Set for this public key		
 		karr[""+publickey] = amount;
 				
-		chrome.storage.session.set({ key_uses : karr }).then(() => {
+		chrome.storage.local.set({ key_uses : karr }).then(() => {
 			if(callback){
 				callback(allkeys);	
 			}
@@ -414,7 +414,7 @@ function setKeyUses(publickey, amount, callback){
 }
 
 function getAllKeyUses(callback){
-	chrome.storage.session.get({ key_uses : {} }).then((result) => {
+	chrome.storage.local.get({ key_uses : {} }).then((result) => {
 	  	callback(result);	
 	});
 }

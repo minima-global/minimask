@@ -68,6 +68,16 @@ async function makeGenericPostRequest(url, params, userpass, callback){
 	callback(result) ;
 }
 
+function getURLParameter(parameterName){
+	    var result = null,tmp = [];
+		var items  = location.search.substr(1).split("&");
+	    for (var index = 0; index < items.length; index++) {
+	        tmp = items[index].split("=");
+		   if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+	    }
+	    return result;
+}
+
 //console.log('This is a popup.js!');
 
 /*chrome.storage.local.set({ key: chrome.runtime.id }).then(() => {

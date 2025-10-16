@@ -1,18 +1,21 @@
 {
   "name": "MiniMask",
-  "description": "Minima Wallet and MEG access extension",
+  "description": "Minima Wallet and MEG Access",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
     "default_popup": "./pages/start.html",
     "default_icon": "./images/minima.png"
   },
+  
   "background": {
       "service_worker": "service-worker.js"
   },
+  
   "permissions": [	"activeTab", 
   					"scripting",
 					"storage"],
+					
   "content_scripts": [
      {
        "matches": ["<all_urls>"],
@@ -21,6 +24,7 @@
 	   "run_at": "document_end"
      }
    ],
+  
    "web_accessible_resources": [{
        "resources": ["minimask.js"],
        "matches": ["<all_urls>"]
