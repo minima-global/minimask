@@ -6,10 +6,6 @@ MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
 var MINIMASK_USER_DETAILS 	= {};
-//MINIMASK_ACCOUNT_ADDRESS 		= "MxG085TPR16EJF558GCVUW8F985D1J4CU1CDCRQAG9MVTT00G76E0QCJ8H4BEH5";
-//MINIMASK_ACCOUNT_PUBLICKEY 	= "0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597";
-//MINIMASK_ACCOUNT_PRIVATEKEY	= "0x0EC144D5CC79FF1DA66CE0C1046A9F7AE35579234CE1A4F3C04CC1B103D2D32E";
-//MINIMASK_ACCOUNT_SCRIPT 		= "RETURN SIGNEDBY(0x276F7F3D948B2BCF82AE07E41E45FF31CE4B825F624D4FA61B4D010323150597)";
 
 MINIMASK_USER_DETAILS.LOGGEDON						= false;
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS 		= "";
@@ -18,10 +14,6 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
 var SERVICE_LOGGING = true;
-
-/**
- * Load the 
- */
 
 /**
  * Convert Command to actual function
@@ -52,10 +44,36 @@ function convertMessageToAction(msg){
 		ret.webcall = true;
 		ret.url 	= MINIMASK_MEG_HOST+"wallet/random";
 	
+	}else if(msg.command ==  "scanchain"){
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/scanchain";
+		ret.params.depth 	= msg.params.depth;
+	
+	}else if(msg.command ==  "gettxpow"){
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/gettxpow";
+		ret.params.txpowid 	= msg.params.txpowid;
+				
+	}else if(msg.command ==  "checktxpow"){
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/checktxpow";
+		ret.params.txpowid 	= msg.params.txpowid;
+	
+	}else if(msg.command ==  "balance"){
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
+		ret.params.address 	= msg.params.address;
+	
+	}else if(msg.command ==  "listcoins"){
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
+		ret.params.address 	= msg.params.address;
+		ret.params.tokenid 	= msg.params.tokenid;
+						
+	
 	}else if(msg.command ==  "account_balance"){
 		ret.webcall 		= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
-		
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
 	}else if(msg.command ==  "account_send"){
@@ -114,20 +132,20 @@ function convertMessageToAction(msg){
 		ret.params.removeid	= msg.params.removeid;
 	
 	}else if(msg.command ==  "account_get_key_uses"){
-		ret.internal 			= true;
+		ret.internal 		= true;
 		
 	}else if(msg.command ==  "account_set_key_uses"){
-		ret.internal 			= true;
-		ret.params.amount		= msg.params.amount;
+		ret.internal 		 = true;
+		ret.params.amount	 = msg.params.amount;
 			
 	}else if(msg.command ==  "account_get_any_key_uses"){
-		ret.internal 			= true;
-		ret.params.publickey	= msg.params.publickey;
+		ret.internal 		 = true;
+		ret.params.publickey = msg.params.publickey;
 	
 	}else if(msg.command ==  "account_set_any_key_uses"){
-		ret.internal 			= true;
-		ret.params.publickey	= msg.params.publickey;
-		ret.params.amount		= msg.params.amount;
+		ret.internal 		 = true;
+		ret.params.publickey = msg.params.publickey;
+		ret.params.amount	 = msg.params.amount;
 									
 	//UNKNOWN	
 	}else{
@@ -295,7 +313,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			//Success or fail
 			if(!resp.status){
-				resp.error = res.error;
+				resp.error 	= res.error;
 			}else{
 				resp.data	= res.response;	
 			}

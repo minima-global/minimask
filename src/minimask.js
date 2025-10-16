@@ -101,45 +101,9 @@ var MINIMASK = {
 	},
 	
 	/**
-	 * Access the private account
+	 * Access the MiniMask account
 	 */
 	account : {
-		
-		pending : function(callback){
-			postMessageToServiceWorker(_createSimpleMessage("account_pending"), function(resp){
-				callback(resp);
-			});
-		},
-		
-		removepending : function(id, callback){
-			var msg = _createSimpleMessage("account_remove_pending");
-			msg.params.removeid  = id;
-			
-			postMessageToServiceWorker(msg, function(resp){
-				callback(resp);
-			});
-		},
-		
-		getkeyuses : function(publickey, callback){
-			var msg = _createSimpleMessage("account_get_key_uses");
-			msg.params.publickey  = publickey;
-			
-			postMessageToServiceWorker(msg, function(resp){
-				callback(resp);
-			});
-		},
-		
-		setkeyuses : function(publickey, amount, callback){
-			var msg = _createSimpleMessage("account_set_key_uses");
-			msg.params.publickey  	= publickey;
-			msg.params.amount  		= amount;
-			
-			postMessageToServiceWorker(msg, function(resp){
-				callback(resp);
-			});
-		},
-		
-		
 		
 		balance : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_balance"), function(resp){
@@ -203,7 +167,46 @@ var MINIMASK = {
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
 			});
-		}	
+		},
+		
+		gettxpow : function(txpowid, callback){
+			var msg = _createSimpleMessage("gettxpow");
+			msg.params.txpowid  = txpowid;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		checktxpow : function(txpowid, callback){
+			var msg = _createSimpleMessage("checktxpow");
+			msg.params.txpowid  = txpowid;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		balance : function(address, callback){
+			var msg = _createSimpleMessage("balance");
+			msg.params.address  = address;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		listcoins : function(address, tokenid, callback){
+			var msg = _createSimpleMessage("gettxpow");
+			msg.params.address  = address;
+			msg.params.tokenid  = tokenid;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		}
+		
+			
 	}
 	
 }
