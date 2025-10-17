@@ -1,7 +1,8 @@
 /**
  * MEG Host details
  */
-MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
+//MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
+MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
 MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
@@ -13,7 +14,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY 	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
-var SERVICE_LOGGING = true;
+var SERVICE_LOGGING = false;
 
 /**
  * Convert Command to actual function
