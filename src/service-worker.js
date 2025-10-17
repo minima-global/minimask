@@ -26,11 +26,13 @@ function convertMessageToAction(msg){
 	ret.webcall 	= false;
 	ret.internal 	= false;
 	ret.pending 	= false;
-	
 	ret.url 		= "";
 	ret.params 		= {};
 	ret.response	= {};
 	
+	//Some calls are invalid from external
+	ret.valid 		= true;
+		
 	//WEBCALL functions
 	if(msg.command ==  "create"){
 		ret.webcall = true;
@@ -84,11 +86,26 @@ function convertMessageToAction(msg){
 						
 	
 	}else if(msg.command ==  "account_balance"){
+		
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
+		
 		ret.webcall 		= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
 	}else if(msg.command ==  "account_send"){
+		
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
 			
 		//Set the main params
 		ret.params.amount 		= msg.params.amount;
@@ -116,15 +133,35 @@ function convertMessageToAction(msg){
 							
 	//NOT WEB CALLS
 	}else if(msg.command ==  "account_getaddress"){
-		ret.status 		 = true;
+		
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
+		
+		ret.status 		 	 = true;
 		ret.response.address = MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 	
 	}else if(msg.command ==  "account_getpublickey"){
-		ret.status 		 = true;
-		ret.response.publickey = MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
+		
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
+		
+		ret.status 		 		= true;
+		ret.response.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
 			
 	//INTERNAL Messages
 	}else if(msg.command ==  "account_generate"){
+		
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
 		ret.internal 			= true;	
 		ret.url 				= MINIMASK_USER_DETAILS.MINIMASK_MEG_HOST+"wallet/seedphrase";
 		ret.params.seedphrase 	= msg.params.seedphrase;
@@ -133,29 +170,36 @@ function convertMessageToAction(msg){
 		ret.internal 		= true;	
 	
 	}else if(msg.command ==  "minimask_extension_logout"){
+		
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+			
 		ret.internal 		= true;	
 					
 	}else if(msg.command ==  "account_pending"){
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+				
 		ret.internal 		= true;
 	
 	}else if(msg.command ==  "account_remove_pending"){
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+				
 		ret.internal 		= true;
 		ret.params.removeid	= msg.params.removeid;
 	
 	}else if(msg.command ==  "account_get_key_uses"){
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
 		ret.internal 		= true;
 		
 	}else if(msg.command ==  "account_set_key_uses"){
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
 		ret.internal 		 = true;
-		ret.params.amount	 = msg.params.amount;
-			
-	}else if(msg.command ==  "account_get_any_key_uses"){
-		ret.internal 		 = true;
-		ret.params.publickey = msg.params.publickey;
-	
-	}else if(msg.command ==  "account_set_any_key_uses"){
-		ret.internal 		 = true;
-		ret.params.publickey = msg.params.publickey;
 		ret.params.amount	 = msg.params.amount;
 									
 	//UNKNOWN	
@@ -171,8 +215,28 @@ function convertMessageToAction(msg){
  * Listen for messages
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  	if(SERVICE_LOGGING){
+  	
+	//Send back response	
+	var resp 		= {};
+	resp.pending 	= false;
+		
+	if(SERVICE_LOGGING){
 		console.log("Service Worker Received Command : "+JSON.stringify(request));	
+	}
+	
+	//Is this from the Extension!
+	var fromext 	= !sender.origin.startsWith("chrome-extension://"+chrome.runtime.id);
+	var saysfromext = ( request.external == true );
+	if(fromext != saysfromext){
+		console.log("ERROR : Message origin says internal but not from extension .. request:"+JSON.stringify(request)+" sender:"+JSON.stringify(sender));
+	
+		//Invalid action
+		resp.status 	= false;
+		resp.pending 	= false;
+		resp.error 		= "Invalid action..";
+		
+		sendResponse(resp);
+		return;
 	}
 	
 	//Convert to a function
@@ -185,17 +249,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		console.log("Service Worker Converted Command : "+JSON.stringify(action));
 	}
 	
-	//Send back response	
-	var resp 		= {};
-	resp.pending 	= false;
-			
-	if(action.pending){
+	if(!action.valid){
+		
+		//Invalid action
+		resp.status 	= false;
+		resp.pending 	= false;
+		resp.error 		= "Invalid action..";
+		
+		sendResponse(resp);	
+		
+	}else if(action.pending){
 		
 		addPendingTxn(action, function(res){
 			//Send Back..
 			resp.status 	= false;
 			resp.pending 	= true;
-			resp.error 		= "Added to pending..";
+			resp.error 		= "Added command to Pending actions..";
 			
 			sendResponse(resp);
 		});
@@ -255,7 +324,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			storeUserDetails({}, function(){
 				clearPendingTxns(function(){
+					
+					//Reset details
 					MINIMASK_USER_DETAILS = {};
+					MINIMASK_USER_DETAILS.LOGGEDON = false;
+					
 					sendResponse(resp);	
 				});
 			});	
@@ -278,20 +351,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				sendResponse(resp);
 			});	
 		
-		
-		}else if(action.command == "account_get_any_key_uses"){
-			
-			getKeyUse(action.params.publickey, function(res){
-				resp.data = res;
-				sendResponse(resp);
-			});	
-				
-		}else if(action.command == "account_set_any_key_uses"){
-				
-			setKeyUses(action.params.publickey, action.params.amount, function(res){
-				resp.data = res;
-				sendResponse(resp);
-			});	
 		
 		}else if(action.command == "account_get_key_uses"){
 					

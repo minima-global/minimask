@@ -13,11 +13,10 @@ function createQRCode(txt){
 
 function setAddress(){
 	//Send a message to Service-Worker
-	chrome.runtime.sendMessage(_createSimpleMessage("account_getaddress"), (resp) => {
+	callSimpleServiceWorker("account_getaddress", (resp) => {
 		
 		if(resp.status){
 			createQRCode(resp.data.address);
-			
 			getElement("address_div").innerHTML = resp.data.address; 	
 		}
 		 		  

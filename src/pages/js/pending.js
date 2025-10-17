@@ -123,7 +123,7 @@ function setPendingList(pendinglist, callback){
 function loadPending(callback){
 	
 	//Send a message to Service-Worker
-	chrome.runtime.sendMessage(_createSimpleMessage("account_pending"), (resp) => {
+	callSimpleServiceWorker("account_pending", (resp) => {
 		
 		//Store this
 		PENDING_LIST = resp.data.pending_txns;

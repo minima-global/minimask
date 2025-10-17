@@ -32,6 +32,10 @@ function _createSimpleMessage(func){
 	var msg  		= {};
 	msg.command 	= func;
 	msg.params 		= {};
+	
+	//Send internally..
+	msg.external 	= false;
+	
 	return msg;
 }
 

@@ -20,7 +20,7 @@ function setTokens(resp){
 
 function getTokens(){
 	//Send a message to Service-Worker
-	chrome.runtime.sendMessage(_createSimpleMessage("account_balance"), (resp) => {
+	callSimpleServiceWorker("account_balance", (resp) => {
 		setTokens(resp);
 	});
 }

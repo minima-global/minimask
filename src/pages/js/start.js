@@ -1,7 +1,7 @@
 
 
 //Send it..
-chrome.runtime.sendMessage(_createSimpleMessage("minimask_extension_init"), (resp) => {
+callSimpleServiceWorker("minimask_extension_init", (resp) => {
 	
 	if(resp.data.loggedon){
 		console.log("User logged in!");

@@ -36,7 +36,7 @@ function setBalance(resp){
 
 function getBalance(){
 	//Send a message to Service-Worker
-	chrome.runtime.sendMessage(_createSimpleMessage("account_balance"), (resp) => {
+	callSimpleServiceWorker("account_balance", (resp) => {
 		setBalance(resp); 		  
 	});
 }
