@@ -14,17 +14,12 @@ var MINIMASK = {
 		//Log a little..
 		console.log("Initialising MiniMask..");
 		
-		/*postMessageToServiceWorker(_createSimpleMessage("minimask_init"), function(resp){
-			//Is logging enabled.. via the URL
+		//Get Init details
+		postMessageToServiceWorker(_createSimpleMessage("minimask_extension_init"), function(resp){
 			if(callback){
 				callback(resp);	
 			}
-		});*/
-		
-		//Is logging enabled.. via the URL
-		if(callback){
-			callback();	
-		}
+		});
 	},
 	
 	/**
@@ -112,10 +107,10 @@ var MINIMASK = {
 			});
 		},
 		
-		scanchain : function(depth, callback){
-			var msg = _createSimpleMessage("scanchain");
-			msg.params.depth  = depth;
-			
+		scanchain : function(offset, depth, callback){
+			var msg 			= _createSimpleMessage("scanchain");
+			msg.params.offset  	= offset;
+			msg.params.depth  	= depth;
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
 			});

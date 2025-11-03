@@ -1,8 +1,8 @@
 /**
  * MEG Host details
  */
-//MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
-MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
+MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
+//MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
 MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
@@ -61,8 +61,16 @@ function convertMessageToAction(msg){
 	
 	}else if(msg.command ==  "scanchain"){
 		ret.webcall 		= true;
+		
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/scanchain";
-		ret.params.depth 	= msg.params.depth;
+		
+		//Max 64 depth
+		ret.params.depth 	= +msg.params.depth;
+		if(ret.params.depth > 64){
+			ret.params.depth = 64;
+		}
+		
+		ret.params.offset 	= msg.params.offset;
 	
 	}else if(msg.command ==  "gettxpow"){
 		ret.webcall 		= true;
@@ -314,7 +322,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 						resp.data.loggedon 	= true;
 											
 						//Set the details..
-						MINIMASK_USER_DETAILS = details.user_details;	
+						MINIMASK_USER_DETAILS = details.user_details;
+						
+						//Set some details
+						resp.data.address 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+						resp.data.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;	
 					}
 				}
 				
