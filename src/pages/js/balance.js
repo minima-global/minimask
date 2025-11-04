@@ -25,9 +25,9 @@ function setBalance(resp){
 		cell2.style.textAlign 	= "right";
 		
 		if(balance.unconfirmed == "0"){
-			cell2.innerHTML 		= balance.confirmed;	
+			cell2.innerHTML 		= sanitizeHTML(balance.confirmed);	
 		}else{
-			cell2.innerHTML 		= balance.confirmed+" ("+balance.unconfirmed+")";
+			cell2.innerHTML 		= sanitizeHTML(balance.confirmed+" ("+balance.unconfirmed+")");
 		}
 		
 	}

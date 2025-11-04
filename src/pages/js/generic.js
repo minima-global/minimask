@@ -82,6 +82,12 @@ function getURLParameter(parameterName){
 	    return result;
 }
 
+function sanitizeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 //console.log('This is a popup.js!');
 
 /*chrome.storage.local.set({ key: chrome.runtime.id }).then(() => {

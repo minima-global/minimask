@@ -73,23 +73,23 @@ function setPendingList(pendinglist, callback){
 								
 			'<tr style="background-color: #eeeeee;">'+
 				'<td style="text-align:right" nowrap>From : </td>'+
-				'<td style="font-size:10;" nowrap>'+shrinkAddress(pending.sender.url)+'</td>'+
+				'<td style="font-size:10;" nowrap>'+sanitizeHTML(shrinkAddress(pending.sender.url))+'</td>'+
 			'</tr>'+
 								
 			'<tr style="background-color: #eeeeee;">'+
 				'<td style="text-align:right" nowrap>Token : </td>'+
-				'<td style="width:100%">'+pending.params.tokenid+'</td>'+
+				'<td style="width:100%">'+sanitizeHTML(pending.params.tokenid)+'</td>'+
 			'</tr>'+
 			
 			'<tr style="background-color: #eeeeee;">'+
 				'<td style="text-align:right" nowrap>Amount : </td>'+
-				'<td>'+pending.params.amount+'</td>'+
+				'<td>'+sanitizeHTML(pending.params.amount)+'</td>'+
 			'</tr>'+
 			
 			'<tr style="background-color: #eeeeee;">'+
 				'<td style="text-align:right" nowrap>Address : </td>'+
 				'<td nowrap>'+
-					'<div style="font-size:10;">'+shrinkAddress(pending.params.toaddress)+'</div>'+
+					'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.toaddress))+'</div>'+
 				'</td>'+
 			'</tr>'+
 			'<tr>'+

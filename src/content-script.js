@@ -18,6 +18,13 @@ injectScript('minimask.js');
 var CONTENTJS_LOGGING = false;
 function contentjsReceiveMessage(evt) {
 	
+	//Check Valid.. origin always null.. 
+	/*if (evt.origin !== window.location.origin){
+		console.log("Content-Js ReceiveMessage : Invalid Location Sent message!");
+		console.log("Evt:"+evt.origin+" Window:"+window.location.origin);
+		return;
+	} */
+	
 	//Get the message
 	var msg = evt.data;
 		
