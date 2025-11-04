@@ -67,6 +67,8 @@ addButtonOnClick('id_btn_send', function(e) {
 	msg.params.amount 	= amount;
 	msg.params.address	= address;
 	msg.params.tokenid 	= tokenid;
+	msg.params.state 	= "{}";
+	
 	msg.params.keyuses 	= keyuses;
 	
 	chrome.runtime.sendMessage(msg, (resp) => {

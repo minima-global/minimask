@@ -119,7 +119,11 @@ function convertMessageToAction(msg){
 		ret.params.amount 		= msg.params.amount;
 		ret.params.toaddress 	= msg.params.address;
 		ret.params.tokenid 		= msg.params.tokenid;
-		ret.params.state 		= msg.params.state;
+		
+		//Is there a state
+		if(msg.params.state != "{}"){
+			ret.params.state 		= msg.params.state;	
+		}
 				
 		//Is this internal.. ?
 		if(msg.external){
