@@ -1,0 +1,125 @@
+<html>
+<head>
+	<title>Simple Block Explorer</title>
+	
+	<link rel="stylesheet" href="style.css">
+	
+	<script type="text/javascript" src="block.js"></script>
+		
+</head>
+	
+<body>
+	
+<center>
+	<br>
+	<h3>Simple Minima Block Explorer</h3>
+	<br>
+	
+	<input id=searchtext type=text style="width:300;" placeholder="BlockID / TxPoWID"> <button onclick="search();">Search</button><br>
+	<br>
+	
+	<div id="block_data" style="width:500;font-family:monospace;white-space:pre;font-size:10;text-align:left;"></div>
+	
+	<br>
+	<div id=prevnext></div>
+		
+	<script type="text/javascript">
+		
+		//How deep..
+		var block_offset = getURLParam("offset");
+		if(block_offset == null){
+			block_offset = 0;
+		}
+		
+		//Wait for page to load
+		window.onload = function () {
+			
+			//Have we loaded the Extension
+			if(typeof MINIMASK !== "undefined"){
+				
+				//Lets see if we are logged in..
+				MINIMASK.init(function(initmsg){
+					
+					//Are we logged in
+					console.log("INIT : "+JSON.stringify(initmsg,null,2));
+				
+					//This application does NOT require you to be logged in..
+					initBlock();
+				});
+				
+			}else{
+				console.log("MINIMASK extension not active!");	
+			}	
+		}
+		
+		//Init the Page
+		function initBlock(){
+			
+			var blockshow = 4;
+			
+			//Get the current top block
+			MINIMASK.meg.scanchain(block_offset, blockshow, function(resp){
+				
+				var bdata = "";
+				
+				//Set this data
+				var len = resp.data.blocks.length;
+				for(var i=0;i<len;i++){
+					
+					var block = resp.data.blocks[i];
+					
+					bdata += "Block   : "+block.block+"<br>";
+					bdata += "BlockID : <a href='txpow.html?txpowid="+block.txpowid+"'>"+block.txpowid+"</a><br>";
+					bdata += "Date    : "+block.date+"<br>";
+					
+					//Add transactions
+					bdata += "Txns    : "+block.transactions.length+"<br>";	
+					
+					var list = "";
+					var txnlen = block.transactions.length;
+					if(txnlen>0){
+						list += "<br>";
+					}
+					for(var j=0;j<txnlen;j++){
+						var txid = block.transactions[j].txpowid;
+						
+						//var txid = "0x00035F277DDE81D37723C2BD73849DE4776CCCB4C5820B8DEB018107C6AAF800";
+						list += "<a href='txpow.html?txpowid="+txid+"'>"+txid+"</a><br>";
+					}
+					
+					bdata += ""+list+"<br>";
+					bdata += "<br>";
+				}
+				
+				//Add ther NEXT PREV
+				var nblock =  +block_offset+blockshow+1;
+				var next = "<a href='block.html?offset="+nblock+"'>NEXT</a>"
+				
+				var pblock =  +block_offset-blockshow-1;
+				if(pblock<0){
+					pblock = 0;
+				}
+				var prev = "<a href='block.html?offset="+pblock+"'>PREV</a>"
+				
+				var home = "<a href='block.html'>HOME</a>"
+				
+				//Now set
+				block_data.innerHTML = bdata + "<br>"+prev+" "+home+" "+next;
+			});
+		}
+		
+		function search(){
+			 var txid = searchtext.value.trim();
+			 if(txid != ""){
+				//Jump to that page
+				location.href="txpow.html?txpowid="+txid;
+			 } 
+		}
+		
+	</script>
+	
+</center>	
+
+</body>
+
+</html>
