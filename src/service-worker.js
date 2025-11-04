@@ -93,7 +93,6 @@ function convertMessageToAction(msg){
 		ret.params.address 	= msg.params.address;
 		ret.params.tokenid 	= msg.params.tokenid;
 						
-	
 	}else if(msg.command ==  "account_balance"){
 		
 		//Check we are logged in..

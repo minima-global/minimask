@@ -136,7 +136,7 @@ var MINIMASK = {
 		},
 		
 		listcoins : function(address, tokenid, callback){
-			var msg = _createSimpleMessage("gettxpow");
+			var msg = _createSimpleMessage("listcoins");
 			msg.params.address  = address;
 			msg.params.tokenid  = tokenid;
 			
