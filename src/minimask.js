@@ -45,12 +45,13 @@ var MINIMASK = {
 			});
 		},
 		
-		send : function(amount, address, tokenid, callback){
+		send : function(amount, address, tokenid, statejson, callback){
 			var msg = _createSimpleMessage("account_send");
 			
-			msg.params.amount  = ""+amount;
-			msg.params.address = address;
-			msg.params.tokenid = tokenid;
+			msg.params.amount  	= ""+amount;
+			msg.params.address 	= address;
+			msg.params.tokenid 	= tokenid;
+			msg.params.state 	= JSON.stringify(statejson);
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);

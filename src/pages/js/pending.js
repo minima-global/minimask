@@ -18,6 +18,7 @@ function acceptPending(id, callback){
 	msg.params.amount 	= pending.params.amount;
 	msg.params.address	= pending.params.toaddress;
 	msg.params.tokenid 	= pending.params.tokenid;
+	msg.params.state 	= pending.params.state;
 	
 	//And get the latest key uses
 	callSimpleServiceWorker("account_get_key_uses", function(res){
@@ -90,6 +91,12 @@ function setPendingList(pendinglist, callback){
 				'<td style="text-align:right" nowrap>Address : </td>'+
 				'<td nowrap>'+
 					'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.toaddress))+'</div>'+
+				'</td>'+
+			'</tr>'+
+			'<tr style="background-color: #eeeeee;">'+
+				'<td style="text-align:right" nowrap>State : </td>'+
+				'<td nowrap>'+
+					'<div style="font-size:10;">'+sanitizeHTML(pending.params.state)+'</div>'+
 				'</td>'+
 			'</tr>'+
 			'<tr>'+

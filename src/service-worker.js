@@ -40,7 +40,7 @@ function convertMessageToAction(msg){
 		ret.url 	= MINIMASK_MEG_HOST+"wallet/create";
 	
 	}else if(msg.command ==  "send"){
-				
+		
 		ret.webcall 			= true;
 		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
 		ret.params.amount 		= msg.params.amount;
@@ -120,6 +120,7 @@ function convertMessageToAction(msg){
 		ret.params.amount 		= msg.params.amount;
 		ret.params.toaddress 	= msg.params.address;
 		ret.params.tokenid 		= msg.params.tokenid;
+		ret.params.state 		= msg.params.state;
 				
 		//Is this internal.. ?
 		if(msg.external){
@@ -132,7 +133,8 @@ function convertMessageToAction(msg){
 		ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
 		ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
-	
+		ret.params.mine 		= false;
+		
 		//Set the Key Uses
 		ret.params.keyuses 		= msg.params.keyuses;
 		
@@ -274,6 +276,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			resp.status 	= false;
 			resp.pending 	= true;
 			resp.error 		= "Added command to Pending actions..";
+			
+			var datajson 		= {};
+			datajson.command 	= action.command;
+			datajson.params 	= action.params;
+			resp.data			= datajson; 
 			
 			sendResponse(resp);
 		});
