@@ -25,6 +25,7 @@ function convertMessageToAction(msg){
 	
 	ret.command		= msg.command;
 	ret.webcall 	= false;
+	ret.cached 		= false;
 	ret.internal 	= false;
 	ret.pending 	= false;
 	ret.url 		= "";
@@ -52,15 +53,17 @@ function convertMessageToAction(msg){
 		ret.params.keyuses 		= msg.params.keyuses;
 							
 	}else if(msg.command ==  "block"){
-		ret.webcall = true;
-		ret.url 	= MINIMASK_MEG_HOST+"wallet/block";
+		ret.webcall 		= true;
+		ret.cached 			= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/block";
 	
 	}else if(msg.command ==  "random"){
-		ret.webcall = true;
-		ret.url 	= MINIMASK_MEG_HOST+"wallet/random";
+		ret.webcall 		= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/random";
 	
 	}else if(msg.command ==  "scanchain"){
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/scanchain";
 		
@@ -74,21 +77,25 @@ function convertMessageToAction(msg){
 	
 	}else if(msg.command ==  "gettxpow"){
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/gettxpow";
 		ret.params.txpowid 	= msg.params.txpowid;
 				
 	}else if(msg.command ==  "checktxpow"){
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/checktxpow";
 		ret.params.txpowid 	= msg.params.txpowid;
 	
 	}else if(msg.command ==  "balance"){
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
 		ret.params.address 	= msg.params.address;
 	
 	}else if(msg.command ==  "listcoins"){
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
 		ret.params.address 	= msg.params.address;
 		ret.params.tokenid 	= msg.params.tokenid;
@@ -103,6 +110,7 @@ function convertMessageToAction(msg){
 		}
 		
 		ret.webcall 		= true;
+		ret.cached 			= true;
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
@@ -300,6 +308,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				
 				if(!res.status){
 					resp.status = false;
+					
 					sendResponse(resp);
 					
 				}else{
@@ -316,10 +325,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					storeUserDetails(MINIMASK_USER_DETAILS, function(){
 						sendResponse(resp);		
 					});
+					
+					sendResponse(resp);
 				}							
 			});
 			
 		}else if(action.command == "minimask_extension_init"){
+			
+			/*resp.data 			= {};
+			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
+							
+			//Are we logged in..
+			if(MINIMASK_USER_DETAILS.LOGGEDON){
+				resp.data.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+				resp.data.publickey	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
+			}
+			
+			sendResponse(resp);
+			
+			*/
 			
 			//Are we logged in..
 			retrieveUserDetails(function(details){
@@ -345,6 +369,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 		}else if(action.command == "minimask_extension_logout"){
 			
+			//Reset details
+			/*MINIMASK_USER_DETAILS = {};
+			MINIMASK_USER_DETAILS.LOGGEDON = false;
+			resp.data.loggedon 	= false;
+			sendResponse(resp);*/
+			
 			storeUserDetails({}, function(){
 				clearPendingTxns(function(){
 					
@@ -354,7 +384,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					
 					sendResponse(resp);	
 				});
-			});	
+			});
 			
 		}else if(action.command == "account_pending"){
 			
@@ -362,7 +392,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				resp.data = allpending;
 				sendResponse(resp);
 			});
-			
 			
 		}else if(action.command == "account_remove_pending"){
 			
@@ -394,6 +423,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		return true;
 		
 	}else if(action.webcall){
+		
+		//Is it a cached call..
+		var foundcache = null;
+		if(action.cached){
+			
+			//Check the cache!
+			foundcache = getCachedWebCall(action.url, action.params);
+			
+			//Send this back
+			if(foundcache != null){
+				sendResponse(foundcache.response);	
+				return;
+			}		
+		}
 			
 		//Call MEG
 		makePostRequest(action.url, action.params, function(res){
@@ -409,6 +452,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				resp.error 	= res.error;
 			}else{
 				resp.data	= res.response;	
+			}
+			
+			//Is it a Cache Call
+			if(action.cached){
+				//Cache It!
+				addCachedWebCall(action.url, action.params, resp);
 			}
 			
 			sendResponse(resp);
@@ -489,7 +538,7 @@ async function makePostRequest(url, jsonparams, callback){
 }
 
 /**
- * Save / Load User data
+ * Save / Load User data - Currently NOT used as need to encrypt for Session stgorage
  */
 function storeUserDetails(data, callback){
 	chrome.storage.session.set({ user_details : data }).then(() => {
@@ -595,4 +644,75 @@ function removePendingTxn(id, callback){
 	
 }
 
+/**
+ * Cache calls to MEG
+ */
+var MINIMASK_CACHED_CALLS = [];
+
+function getTimeMilli(){
+	//Date as of NOW
+	var recdate = new Date();
+	return recdate.getTime();	
+}
+
+function addCachedWebCall(url, params, response){
+	
+	//Create a cache object
+	var cached 			= {};
+	cached.time			= getTimeMilli();
+	
+	cached.url  		= url;
+	cached.params  		= JSON.stringify(params);
+	
+	cached.response  	= response;
+	
+	MINIMASK_CACHED_CALLS.push(cached);
+	
+	if(SERVICE_LOGGING){
+		console.log("CACHE ADD url:"+url+" params:"+cached.params+" cache_size:"+MINIMASK_CACHED_CALLS.length);
+	}
+}
+
+function getCachedWebCall(url, params){
+	
+	//Current time - to remove elements from cache
+	var ctime = getTimeMilli();
+	
+	//Did we find it..
+	var foundcache = null;
+	
+	//The NEW Cache array
+	var NEW_CACHE = [];
+	
+	//What to look for..
+	var paramstr = JSON.stringify(params);
+	
+	//Check all the cached objects
+	var len 	= MINIMASK_CACHED_CALLS.length;
+	var found 	= false;
+	for(var i=0;i<len;i++){
+		var cached = MINIMASK_CACHED_CALLS[i];
+		
+		//Check it..
+		if(cached.url == url && cached.params == paramstr){
+			if(SERVICE_LOGGING){
+				console.log("CACHE FOUND url:"+url+" params:"+paramstr);
+			}
+			foundcache = cached;
+		}
+		
+		//Do we keep this cache entry - 1 minute
+		if(cached.time + 60000 > ctime){
+			NEW_CACHE.push(cached);
+		}
+	}
+	
+	//Now swich them..
+	MINIMASK_CACHED_CALLS = NEW_CACHE; 
+	
+	console.log("CACHE GET url:"+url+" params:"+paramstr+" "+foundcache+" size:"+MINIMASK_CACHED_CALLS.length);
+	
+	//And return what we found..
+	return foundcache;
+}
 

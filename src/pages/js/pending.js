@@ -51,7 +51,7 @@ function cancelPending(id, callback){
 
 function shrinkAddress(addr){
 	var strlen = addr.length;
-	if(strlen > 16){
+	if(strlen > 24){
 		return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
 	}
 	
@@ -96,7 +96,7 @@ function setPendingList(pendinglist, callback){
 			'<tr style="background-color: #eeeeee;">'+
 				'<td style="text-align:right" nowrap>State : </td>'+
 				'<td nowrap>'+
-					'<div style="font-size:10;">'+sanitizeHTML(pending.params.state)+'</div>'+
+					'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.state))+'</div>'+
 				'</td>'+
 			'</tr>'+
 			'<tr>'+
