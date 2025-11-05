@@ -710,7 +710,9 @@ function getCachedWebCall(url, params){
 	//Now swich them..
 	MINIMASK_CACHED_CALLS = NEW_CACHE; 
 	
-	console.log("CACHE GET url:"+url+" params:"+paramstr+" "+foundcache+" size:"+MINIMASK_CACHED_CALLS.length);
+	if(SERVICE_LOGGING){
+		console.log("CACHE Check url:"+url+" params:"+paramstr+" found:"+foundcache+" cache_size:"+MINIMASK_CACHED_CALLS.length);
+	}
 	
 	//And return what we found..
 	return foundcache;
