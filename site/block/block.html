@@ -55,7 +55,7 @@
 		//Init the Page
 		function initBlock(){
 			
-			var blockshow = 4;
+			var blockshow = 16;
 			
 			//Get the current top block
 			MINIMASK.meg.scanchain(block_offset, blockshow, function(resp){
@@ -83,7 +83,6 @@
 					for(var j=0;j<txnlen;j++){
 						var txid = block.transactions[j].txpowid;
 						
-						//var txid = "0x00035F277DDE81D37723C2BD73849DE4776CCCB4C5820B8DEB018107C6AAF800";
 						list += "<a href='txpow.html?txpowid="+txid+"'>"+txid+"</a><br>";
 					}
 					
