@@ -14,7 +14,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY 	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
-var SERVICE_LOGGING = false;
+var SERVICE_LOGGING = true;
 
 /**
  * Convert Command to actual function
@@ -99,6 +99,11 @@ function convertMessageToAction(msg){
 		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
 		ret.params.address 	= msg.params.address;
 		ret.params.tokenid 	= msg.params.tokenid;
+		
+		//Check for state ?
+		if(msg.params.state != ""){
+			ret.params.state = msg.params.state;	
+		}
 						
 	}else if(msg.command ==  "account_balance"){
 		
@@ -144,7 +149,7 @@ function convertMessageToAction(msg){
 		ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
 		ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
-		ret.params.mine 		= false;
+		ret.params.mine 		= true;
 		
 		//Set the Key Uses
 		ret.params.keyuses 		= msg.params.keyuses;
@@ -226,6 +231,7 @@ function convertMessageToAction(msg){
 									
 	//UNKNOWN	
 	}else{
+		ret.valid	= false
 		ret.status 	= false;
 		ret.error 	= "Unknown command : "+msg.command;
 	}
@@ -246,20 +252,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		console.log("Service Worker Received Command : "+JSON.stringify(request));	
 	}
 	
-	//Is this from the Extension!
-	var fromext 	= !sender.origin.startsWith("chrome-extension://"+chrome.runtime.id);
-	var saysfromext = ( request.external == true );
-	if(fromext != saysfromext){
-		console.log("ERROR : Message origin says internal but not from extension .. request:"+JSON.stringify(request)+" sender:"+JSON.stringify(sender));
-	
-		//Invalid action
-		resp.status 	= false;
-		resp.pending 	= false;
-		resp.error 		= "Invalid action..";
-		
-		sendResponse(resp);
-		return;
-	}
+	//Is this an external or Internal request
+	request.external = !sender.origin.startsWith("chrome-extension://"+chrome.runtime.id);
 	
 	//Convert to a function
 	var action 		= convertMessageToAction(request);
@@ -271,12 +265,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		console.log("Service Worker Converted Command : "+JSON.stringify(action));
 	}
 	
+	//What was the command
+	var datajson 		= {};
+	datajson.command 	= action.command;
+	datajson.params 	= action.params;
+	
 	if(!action.valid){
 		
 		//Invalid action
 		resp.status 	= false;
 		resp.pending 	= false;
 		resp.error 		= "Invalid action..";
+		resp.data		= datajson;
 		
 		sendResponse(resp);	
 		
@@ -287,11 +287,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			resp.status 	= false;
 			resp.pending 	= true;
 			resp.error 		= "Added command to Pending actions..";
-			
-			var datajson 		= {};
-			datajson.command 	= action.command;
-			datajson.params 	= action.params;
-			resp.data			= datajson; 
+			resp.data		= datajson; 
 			
 			sendResponse(resp);
 		});
@@ -334,16 +330,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			/*resp.data 			= {};
 			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
-							
 			//Are we logged in..
 			if(MINIMASK_USER_DETAILS.LOGGEDON){
 				resp.data.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 				resp.data.publickey	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
 			}
-			
-			sendResponse(resp);
-			
-			*/
+			sendResponse(resp);*/
 			
 			//Are we logged in..
 			retrieveUserDetails(function(details){

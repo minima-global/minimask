@@ -102,12 +102,6 @@ var MINIMASK = {
 			});
 		},
 		
-		random : function(callback){
-			postMessageToServiceWorker(_createSimpleMessage("random"), function(resp){
-				callback(resp);
-			});
-		},
-		
 		scanchain : function(offset, depth, callback){
 			var msg 			= _createSimpleMessage("scanchain");
 			msg.params.offset  	= offset;
@@ -135,12 +129,29 @@ var MINIMASK = {
 			});
 		},
 		
-		listcoins : function(address, tokenid, callback){
+		listcoins : function(address, tokenid, state, callback){
 			var msg = _createSimpleMessage("listcoins");
+			
+			//MUST add an address
 			msg.params.address  = address;
-			msg.params.tokenid  = tokenid;
+			
+			//Can leave blank - search for all tokens.. need 0x01 ro overide default in MEG
+			if(tokenid == ""){
+				msg.params.tokenid = "0x01";
+			}else{
+				msg.params.tokenid  = tokenid;	
+			}
+			
+			//Can leave blank
+			msg.params.state  = state;
 			
 			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		random : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("random"), function(resp){
 				callback(resp);
 			});
 		}

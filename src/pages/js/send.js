@@ -61,9 +61,6 @@ addButtonOnClick('id_btn_send', function(e) {
 	//Send it..
 	var msg 			= _createSimpleMessage("account_send");
 	
-	//Sent internally.. no pending
-	msg.external 		= false;
-	
 	msg.params.amount 	= amount;
 	msg.params.address	= address;
 	msg.params.tokenid 	= tokenid;

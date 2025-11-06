@@ -34,9 +34,6 @@ function contentjsReceiveMessage(evt) {
 		return;
 	}
 	
-	//This is an external request
-	msg.action.external = true;
-	
 	//Log it..
 	if(CONTENTJS_LOGGING){
 		console.log("Content-Js ReceiveMessage : "+JSON.stringify(msg));	

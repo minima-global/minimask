@@ -12,9 +12,6 @@ function acceptPending(id, callback){
 	//Send this amount..
 	var msg 			= _createSimpleMessage("account_send");
 	
-	//Sent internally.. no pending
-	msg.external 		= false;
-	
 	msg.params.amount 	= pending.params.amount;
 	msg.params.address	= pending.params.toaddress;
 	msg.params.tokenid 	= pending.params.tokenid;
