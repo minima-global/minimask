@@ -1,9 +1,9 @@
 
-
-
 /**
  * Main MinimMask Object for all interaction
  */
+var MAIN_MINIMASK_CALLBACK = null;
+
 var MINIMASK = {
 			
 	/**
@@ -14,6 +14,8 @@ var MINIMASK = {
 		//Log a little..
 		console.log("Initialising MiniMask..");
 		
+		MAIN_MINIMASK_CALLBACK = callback;
+		
 		//Get Init details
 		postMessageToServiceWorker(_createSimpleMessage("minimask_extension_init"), function(resp){
 			if(callback){
@@ -23,45 +25,65 @@ var MINIMASK = {
 	},
 	
 	/**
-	 * Access the MiniMask account
+	 * Access the MiniMask Account
 	 */
 	account : {
 		
+		/**
+		 * Get the balance of all tokens for this address
+		 */
 		balance : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_balance"), function(resp){
 				callback(resp);
 			});
 		},
 		
+		/**
+		 * Get all coins for this address
+		 */
+		coins : function(callback){
+			postMessageToServiceWorker(_createSimpleMessage("account_coins"), function(resp){
+				callback(resp);
+			});
+		},
+	
+		/**
+		 * Get the address for the logged in account
+		 */
 		getAddress : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_getaddress"), function(resp){
 				callback(resp);
 			});
 		},
 		
+		/**
+		 * Get the public key for the logged in account
+		 */
 		getPublicKey : function(callback){
 			postMessageToServiceWorker(_createSimpleMessage("account_getpublickey"), function(resp){
 				callback(resp);
 			});
 		},
 		
-		send : function(amount, address, tokenid, statejson, callback){
+		/**
+		 * Send funds from this account - will create a PENDING transaction 
+		 */
+		send : function(amount, address, tokenid, state, callback){
 			var msg = _createSimpleMessage("account_send");
 			
 			msg.params.amount  	= ""+amount;
 			msg.params.address 	= address;
 			msg.params.tokenid 	= tokenid;
-			msg.params.state 	= JSON.stringify(statejson);
+			msg.params.state 	= JSON.stringify(state);
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
 			});
 		}
-		
 	},
 	
 	/**
-	 * Call the MEG functions directly
+	 * Call MEG functions directly
 	 */
 	meg : {
 		
@@ -89,6 +111,31 @@ var MINIMASK = {
 			msg.params.fromaddress  = fromaddress;
 			msg.params.privatekey  	= privatekey;
 			msg.params.script  		= script;
+			msg.params.keyuses  	= keyuses;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
+		rawtransaction : function(inputs, outputs, scripts, state, callback){
+			var msg = _createSimpleMessage("rawtxn");
+			
+			msg.params.inputs  		= JSON.stringify(inputs);
+			msg.params.outputs  	= JSON.stringify(outputs);
+			msg.params.scripts  	= JSON.stringify(scripts);
+			msg.params.state 	 	= JSON.stringify(state);
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
+		sign : function(txndata, privatekey, keyuses, callback){
+			var msg = _createSimpleMessage("signtxn");
+			
+			msg.params.data  		= txndata;
+			msg.params.privatekey  	= privatekey;
 			msg.params.keyuses  	= keyuses;
 			
 			postMessageToServiceWorker(msg, function(resp){

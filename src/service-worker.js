@@ -52,6 +52,25 @@ function convertMessageToAction(msg){
 		ret.params.script 		= msg.params.script;				
 		ret.params.keyuses 		= msg.params.keyuses;
 							
+	}else if(msg.command ==  "rawtxn"){
+			
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/rawtxn";
+		
+		ret.params.inputs 		= msg.params.inputs;
+		ret.params.outputs 		= msg.params.outputs;
+		ret.params.scripts 		= msg.params.scripts;
+		ret.params.state 		= msg.params.state;
+		
+	}else if(msg.command ==  "signtxn"){
+				
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/signtxn";
+		
+		ret.params.data 		= msg.params.data;
+		ret.params.privatekey 	= msg.params.privatekey;
+		ret.params.keyuses 		= msg.params.keyuses;
+		
 	}else if(msg.command ==  "block"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
@@ -69,8 +88,8 @@ function convertMessageToAction(msg){
 		
 		//Max 64 depth
 		ret.params.depth 	= +msg.params.depth;
-		if(ret.params.depth > 64){
-			ret.params.depth = 64;
+		if(ret.params.depth > 32){
+			ret.params.depth = 32;
 		}
 		
 		ret.params.offset 	= msg.params.offset;
@@ -104,7 +123,21 @@ function convertMessageToAction(msg){
 		if(msg.params.state != ""){
 			ret.params.state = msg.params.state;	
 		}
-						
+	
+	}else if(msg.command ==  "account_coins"){
+		
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
+		
+		ret.webcall 		= true;
+		ret.cached 			= true;
+		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
+		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+							
 	}else if(msg.command ==  "account_balance"){
 		
 		//Check we are logged in..
@@ -140,7 +173,8 @@ function convertMessageToAction(msg){
 				
 		//Is this internal.. ?
 		if(msg.external){
-			ret.pending = true;
+			ret.pending 	= true;
+			//ret.pendinguid 	= getRandomHexString();
 			return ret;	
 		}
 		
@@ -284,10 +318,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		
 		addPendingTxn(action, function(res){
 			//Send Back..
-			resp.status 	= false;
-			resp.pending 	= true;
-			resp.error 		= "Added command to Pending actions..";
-			resp.data		= datajson; 
+			resp.status 		= false;
+			resp.pending 		= true;
+			//resp.pendinguid 	= action.pendinguid;
+			resp.error 			= "Added command to Pending actions..";
+			resp.data			= datajson; 
 			
 			sendResponse(resp);
 		});
@@ -710,3 +745,14 @@ function getCachedWebCall(url, params){
 	return foundcache;
 }
 
+/**
+ * Utility Funcions
+ */
+function getRandomHexString() {
+    const hex = '0123456789ABCDEF';
+    let output = '';
+    for (let i = 0; i < 24; ++i) {
+        output += hex.charAt(Math.floor(Math.random() * hex.length));
+    }
+    return "0x"+output;
+}
