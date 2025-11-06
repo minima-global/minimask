@@ -15,7 +15,7 @@ injectScript('minimask.js');
 /**
  * Listen out for messages and forward to Service Worker
  */
-var CONTENTJS_LOGGING = false;
+var CONTENTJS_LOGGING = true;
 function contentjsReceiveMessage(evt) {
 	
 	//Get the message
@@ -23,9 +23,11 @@ function contentjsReceiveMessage(evt) {
 		
 	if(!msg){
 		return;
+		
 	}else if(msg.minitype == "MINIMASK_RESPONSE"){
 		//We sent this..
 		return;
+		
 	}else if(msg.minitype != "MINIMASK_REQUEST"){
 		
 		if(CONTENTJS_LOGGING){
@@ -59,4 +61,3 @@ function contentjsReceiveMessage(evt) {
 
 //Listen for messages
 window.addEventListener("message", contentjsReceiveMessage);
-
