@@ -15,6 +15,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
 var SERVICE_LOGGING = false;
+var WEB_LOGGING 	= false;
 
 /**
  * Convert Command to actual function
@@ -72,8 +73,8 @@ function convertMessageToAction(msg){
 		ret.params.keyuses 		= msg.params.keyuses;
 	
 	}else if(msg.command ==  "viewtxn"){
-					
 		ret.webcall 			= true;
+		ret.cached 				= true;
 		ret.url 				= MINIMASK_MEG_HOST+"wallet/viewtxn";
 		
 		ret.params.data 		= msg.params.data;
@@ -478,8 +479,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			removePendingTxn(action.params.removeid, function(allpending){
 				
-				console.log("REMOVED PENDING and send response : "+JSON.stringify(allpending));
-				
 				resp.data = allpending;
 				sendResponse(resp);
 			});	
@@ -493,8 +492,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			//Add this to our stack
 			addPendingSentMessage(fullpending);
-			
-			console.log("PENDING SENT "+JSON.stringify(fullpending));
 			
 			sendResponse(resp);
 			
@@ -568,10 +565,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				return;
 			}		
 		}
-			
+		
+		if(WEB_LOGGING){
+			console.log("Web Call -> url:"+action.url+" params:"+JSON.stringify(action.params));
+		}	
+		
 		//Call MEG
 		makePostRequest(action.url, action.params, function(res){
-			if(SERVICE_LOGGING){
+			if(SERVICE_LOGGING || WEB_LOGGING){
 				console.log("Post Response : "+JSON.stringify(res));
 			}
 			
@@ -761,22 +762,27 @@ function addPendingTxn(pendingtxn, callback){
 	
 }
 
-function removePendingTxn(id, callback){
+function removePendingTxn(uid, callback){
 	
 	//Get the curent list
 	getPendingTxns(function(pending){
 		
-		//Remove
-		pending.pending_txns.splice(id,1);
+		var newlist = [];
 		
-		//And now set again..
-		chrome.storage.session.set({ pending_txns : pending.pending_txns }).then(() => {
+		//Remove
+		for(var i=0;i<pending.pending_txns.length;i++){
+			if(pending.pending_txns[i].pendinguid != uid){
+				newlist.push(pending.pending_txns[i]);
+			}
+		}
+		
+		//And now set the new list..
+		chrome.storage.session.set({ pending_txns : newlist }).then(() => {
 			if(callback){
-				callback(pending);	
+				callback(newlist);	
 			}
 		});	
-	});
-	
+	});	
 }
 
 /**
@@ -794,7 +800,6 @@ function removePendingSentMessage(uid){
 	    return pitem.pendingmsg.pendinguid !== uid;
 	});
 }
-
 
 /**
  * Cache calls to MEG

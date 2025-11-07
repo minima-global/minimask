@@ -3,12 +3,35 @@
  */
 
 var PENDING_LIST = [];
+
+function getPendingItem(uid){
+	for(var i=0;i<PENDING_LIST.length;i++){
+		if(PENDING_LIST[i].pendinguid == uid){
+			return PENDING_LIST[i];
+		}
+	}
+	
+	return null;
+}
 		
-function acceptPending(id, callback){
+function acceptPending(uid, callback){
 	
-	//Get that vakue..
-	var pending = PENDING_LIST[id];
+	//Get that value..
+	var pending = getPendingItem(uid)
+		
+	//is it a SEND or a SIGN
+	if(pending.command == "account_send"){
+		sendAction(uid, callback);
+	}else if(pending.command == "account_sign"){
+		signAction(uid, callback);
+	}
+}
+
+function sendAction(uid, callback){
 	
+	//Get that value..
+	var pending = getPendingItem(uid)
+		
 	//Send this amount..
 	var msg 			= _createSimpleMessage("account_send");
 	
@@ -29,7 +52,34 @@ function acceptPending(id, callback){
 				alert("Funds Sent!");
 								
 				//Remove from list..
-				cancelPending(id);	
+				cancelPending(uid);	
+			});
+		});
+	});
+}
+
+function signAction(uid, callback){
+	
+	//Get that value..
+	var pending = getPendingItem(uid)
+		
+	//Send this amount..
+	var msg 			= _createSimpleMessage("account_sign");
+	msg.params.data 	= pending.params.data;
+	
+	//And get the latest key uses
+	callSimpleServiceWorker("account_get_key_uses", function(res){
+		msg.params.keyuses = res.data;
+		
+		//And send on..
+		chrome.runtime.sendMessage(msg, (sendresp) => {
+			
+			pendingSent(pending, sendresp, function(){
+			
+				alert("Transaction Signed!");
+								
+				//Remove from list..
+				cancelPending(uid);	
 			});
 		});
 	});
@@ -50,9 +100,9 @@ function pendingSent(pending, resp, callback){
 	});
 }
 
-function cancelPending(id, callback){
+function cancelPending(uid, callback){
 	var msg 				= _createSimpleMessage("account_remove_pending");
-	msg.params.removeid  	= id;
+	msg.params.removeid  	= uid;
 	
 	chrome.runtime.sendMessage(msg, (resp) => {
 		
@@ -74,17 +124,17 @@ function shrinkAddress(addr){
 	return addr;
 }
 
-function setPendingList(pendinglist, callback){
+function setPendingList(callback){
 	
 	var total = "";
 	
-	if(pendinglist.length == 0){
+	if(PENDING_LIST.length == 0){
 		total = "No pending transactions..";
 	}
 	
-	for(var i=0;i<pendinglist.length;i++){
+	for(var i=0;i<PENDING_LIST.length;i++){
 	
-		var pending = pendinglist[i];
+		var pending = PENDING_LIST[i];
 		
 		if(pending.command == "account_send"){
 			var comm = '<table width=100%>'+
@@ -101,12 +151,12 @@ function setPendingList(pendinglist, callback){
 											
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>Token : </td>'+
-							'<td style="width:100%">'+sanitizeHTML(pending.params.tokenid)+'</td>'+
+							'<td style="width:100%">'+sanitizeHTML(shrinkAddress(pending.params.tokenid))+'</td>'+
 						'</tr>'+
 						
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>Amount : </td>'+
-							'<td>'+sanitizeHTML(pending.params.amount)+'</td>'+
+							'<td>'+sanitizeHTML(shrinkAddress(pending.params.amount))+'</td>'+
 						'</tr>'+
 						
 						'<tr style="background-color: #eeeeee;">'+
@@ -137,6 +187,11 @@ function setPendingList(pendinglist, callback){
 							'<td style="text-align:right" nowrap>Type : </td>'+
 							'<td style="font-size:10;" nowrap>Sign transaction</td>'+
 						'</tr>'+
+						
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>UID : </td>'+
+							'<td style="font-size:10;" nowrap>'+pending.pendinguid+'</td>'+
+						'</tr>'+
 									
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>From : </td>'+
@@ -145,9 +200,15 @@ function setPendingList(pendinglist, callback){
 											
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>Transaction : </td>'+
-							'<td style="width:100%">xxx</td>'+
+							'<td style="width:100%"><a href="transaction.html?pendinguid='+pending.pendinguid+'">View Transaction</a></td>'+
 						'</tr>'+
 						
+						'<tr>'+
+							'<td colspan=2 style="text-align:right;" nowrap>'+
+								'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
+							   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
+							'</td>'+
+						'</tr>'+
 					'</table>';
 				
 		}
@@ -159,11 +220,13 @@ function setPendingList(pendinglist, callback){
 	id_pending_list.innerHTML = total;
 	
 	//Now add event Listeners
-	for(var i=0;i<pendinglist.length;i++){
+	for(var i=0;i<PENDING_LIST.length;i++){
+		
+		var puid = PENDING_LIST[i].pendinguid;
 		
 		//Accept
-		addButtonOnClickWithParams("id_btn_accept_"+i, acceptPending, i);
-		addButtonOnClickWithParams("id_btn_cancel_"+i, cancelPending, i);
+		addButtonOnClickWithParams("id_btn_accept_"+i, acceptPending, puid);
+		addButtonOnClickWithParams("id_btn_cancel_"+i, cancelPending, puid);
 	} 
 	
 	//All done..
@@ -181,7 +244,7 @@ function loadPending(callback){
 		PENDING_LIST = resp.data.pending_txns;
 				
 		//Set it..
-		setPendingList(PENDING_LIST, callback);
+		setPendingList(callback);
 	});
 }
 
