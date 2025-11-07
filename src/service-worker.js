@@ -1,8 +1,8 @@
 /**
  * MEG Host details
  */
-MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
-//MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
+//MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
+MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
 MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
