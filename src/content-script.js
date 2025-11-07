@@ -15,7 +15,7 @@ injectScript('minimask.js');
 /**
  * Listen out for messages and forward to Service Worker
  */
-var CONTENTJS_LOGGING = true;
+var CONTENTJS_LOGGING = false;
 function contentjsReceiveMessage(evt) {
 	
 	//Get the message
@@ -29,11 +29,9 @@ function contentjsReceiveMessage(evt) {
 		return;
 		
 	}else if(msg.minitype != "MINIMASK_REQUEST"){
-		
 		if(CONTENTJS_LOGGING){
 			console.log("Content-Js ReceiveMessage NOT REQUEST / RESPONSE : "+JSON.stringify(msg));
 		}
-		
 		return;
 	}
 	
@@ -43,20 +41,29 @@ function contentjsReceiveMessage(evt) {
 	}
 	
 	//Content can send messages to Service Worker
-	chrome.runtime.sendMessage(msg.action, (response) => {
+	try{
 		
-		if(CONTENTJS_LOGGING){
-			console.log("Content-Js ReceiveResponse : "+JSON.stringify(response));
-		}
+		chrome.runtime.sendMessage(msg.action, (response) => {
+				
+			if(CONTENTJS_LOGGING){
+				console.log("Content-Js ReceiveResponse : "+JSON.stringify(response));
+			}
+			
+			var resp 		= {};
+			resp.minitype	= "MINIMASK_RESPONSE";
+			resp.randid		= msg.randid;
+			resp.data 		= response;
+			
+			//Send this to the top window.. origin /
+			window.postMessage(resp);	  
+		});	
 		
-		var resp 		= {};
-		resp.minitype	= "MINIMASK_RESPONSE";
-		resp.randid		= msg.randid;
-		resp.data 		= response;
+	}catch(Error){
 		
-		//Send this to the top window.. origin /
-		window.postMessage(resp);	  
-	});
+		//If the context becomes invalid - due to reloading new extension
+		//..
+	}
+	
 }
 
 //Listen for messages

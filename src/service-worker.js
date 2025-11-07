@@ -14,7 +14,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY 	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
-var SERVICE_LOGGING = true;
+var SERVICE_LOGGING = false;
 
 /**
  * Convert Command to actual function
@@ -70,7 +70,14 @@ function convertMessageToAction(msg){
 		ret.params.data 		= msg.params.data;
 		ret.params.privatekey 	= msg.params.privatekey;
 		ret.params.keyuses 		= msg.params.keyuses;
+	
+	}else if(msg.command ==  "viewtxn"){
+					
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/viewtxn";
 		
+		ret.params.data 		= msg.params.data;
+			
 	}else if(msg.command ==  "block"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
@@ -174,7 +181,7 @@ function convertMessageToAction(msg){
 		//Is this internal.. ?
 		if(msg.external){
 			ret.pending 	= true;
-			//ret.pendinguid 	= getRandomHexString();
+			ret.pendinguid 	= getRandomHexString();
 			return ret;	
 		}
 		
@@ -191,7 +198,36 @@ function convertMessageToAction(msg){
 		//Increment
 		var newkeyuses = +msg.params.keyuses +1;
 		setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, newkeyuses, function(res){});		
-							
+	
+	}else if(msg.command ==  "account_sign"){
+				
+		//Check we are logged in..
+		if(!MINIMASK_USER_DETAILS.LOGGEDON){
+			ret.status 	= false;
+			ret.error 	= "Not logged in..";	
+			return ret;
+		}
+			
+		//Set the main params
+		ret.params.data 		= msg.params.data;
+				
+		//Is this internal.. ?
+		if(msg.external){
+			ret.pending 	= true;
+			ret.pendinguid 	= getRandomHexString();
+			return ret;	
+		}
+		
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/signtxn";
+		
+		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
+		ret.params.keyuses 		= msg.params.keyuses;
+		
+		//Increment
+		var newkeyuses = +msg.params.keyuses +1;
+		setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, newkeyuses, function(res){});		
+						
 	//NOT WEB CALLS
 	}else if(msg.command ==  "account_getaddress"){
 		
@@ -250,6 +286,15 @@ function convertMessageToAction(msg){
 		ret.internal 		= true;
 		ret.params.removeid	= msg.params.removeid;
 	
+	}else if(msg.command ==  "account_sent_pending"){
+		
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
+		ret.internal 		= true;
+		ret.pendingmsg		= msg.pendingmsg;
+		ret.pendingresp		= msg.pendingresp;
+	
 	}else if(msg.command ==  "account_get_key_uses"){
 		//Not allowed from external
 		if(msg.external){ret.valid=false;return ret;}
@@ -263,6 +308,13 @@ function convertMessageToAction(msg){
 		ret.internal 		 = true;
 		ret.params.amount	 = msg.params.amount;
 									
+	}else if(msg.command ==  "pending_messages"){
+		
+		//Are there any messages to send back..
+		ret.internal 			= true;
+		
+		ret.params.pendinglist 	= msg.params.pendinglist;
+		
 	//UNKNOWN	
 	}else{
 		ret.valid	= false
@@ -320,7 +372,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			//Send Back..
 			resp.status 		= false;
 			resp.pending 		= true;
-			//resp.pendinguid 	= action.pendinguid;
+			resp.pendinguid 	= action.pendinguid;
 			resp.error 			= "Added command to Pending actions..";
 			resp.data			= datajson; 
 			
@@ -357,7 +409,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 						sendResponse(resp);		
 					});
 					
-					sendResponse(resp);
+					//sendResponse(resp);
 				}							
 			});
 			
@@ -365,6 +417,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			/*resp.data 			= {};
 			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
+			
 			//Are we logged in..
 			if(MINIMASK_USER_DETAILS.LOGGEDON){
 				resp.data.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
@@ -393,14 +446,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				
 				sendResponse(resp);				
 			});
-			
+					
 		}else if(action.command == "minimask_extension_logout"){
 			
 			//Reset details
 			/*MINIMASK_USER_DETAILS = {};
 			MINIMASK_USER_DETAILS.LOGGEDON = false;
 			resp.data.loggedon 	= false;
-			sendResponse(resp);*/
+			sendResponse(resp);
+			*/
 			
 			storeUserDetails({}, function(){
 				clearPendingTxns(function(){
@@ -429,8 +483,58 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				resp.data = allpending;
 				sendResponse(resp);
 			});	
+
+		}else if(action.command == "account_sent_pending"){
 		
-		
+			//Create the full pending action+resp
+			var fullpending 		= {};
+			fullpending.pendingmsg 	= action.pendingmsg;
+			fullpending.pendingresp = action.pendingresp;
+			
+			//Add this to our stack
+			addPendingSentMessage(fullpending);
+			
+			console.log("PENDING SENT "+JSON.stringify(fullpending));
+			
+			sendResponse(resp);
+			
+		}else if(action.command == "pending_messages"){
+					
+			//Get the list..
+			var checkpending = action.params.pendinglist;
+			var found 		 = [];
+			
+			//Cycle through the list..
+			for(var i=0;i<checkpending.length;i++){
+				for(var j=0;j<PENDING_SENT_MESSAGES.length;j++){
+				
+					psmsg = PENDING_SENT_MESSAGES[j];
+					
+					var checkuid  = checkpending[i];
+					var psentuid  = psmsg.pendingmsg.pendinguid;
+					
+					//Found a match ?
+					if(checkuid == psentuid){
+						
+						var userpendmsg 		= {};
+						userpendmsg.pendinguid 	= psmsg.pendingmsg.pendinguid;
+						userpendmsg.action  	= psmsg.pendingmsg.command;
+						userpendmsg.params  	= psmsg.pendingmsg.params;
+						userpendmsg.response  	= psmsg.pendingresp;
+						
+						found.push(userpendmsg);
+						
+						//REMOVE THIS FROM OUR LIST NOW
+						removePendingSentMessage(psmsg.pendingmsg.pendinguid);
+					}
+				}
+			}
+			
+			//Sent the list back
+			resp.data 	= found;
+			
+			sendResponse(resp);
+				
 		}else if(action.command == "account_get_key_uses"){
 					
 			getKeyUse(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, function(res){
@@ -565,7 +669,7 @@ async function makePostRequest(url, jsonparams, callback){
 }
 
 /**
- * Save / Load User data - Currently NOT used as need to encrypt for Session stgorage
+ * Save / Load User data - Currently NOT used as need to encrypt for Session storage
  */
 function storeUserDetails(data, callback){
 	chrome.storage.session.set({ user_details : data }).then(() => {
@@ -630,6 +734,10 @@ function getPendingTxns(callback){
 }
 
 function clearPendingTxns(callback){
+	
+	//Clear pending..
+	PENDING_SENT_MESSAGES = [];
+						
 	chrome.storage.session.set({ pending_txns : [] }).then((result) => {
 		callback(result);	
 	});
@@ -670,6 +778,23 @@ function removePendingTxn(id, callback){
 	});
 	
 }
+
+/**
+ * POLL Messages
+ */
+var PENDING_SENT_MESSAGES = [];
+
+function addPendingSentMessage(msg){
+	PENDING_SENT_MESSAGES.push(msg);
+}
+
+function removePendingSentMessage(uid){
+	//Now remove that elemnt
+	PENDING_SENT_MESSAGES = PENDING_SENT_MESSAGES.filter(function(pitem) {
+	    return pitem.pendingmsg.pendinguid !== uid;
+	});
+}
+
 
 /**
  * Cache calls to MEG

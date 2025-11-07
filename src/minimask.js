@@ -2,24 +2,56 @@
 /**
  * Main MinimMask Object for all interaction
  */
-var MAIN_MINIMASK_CALLBACK = null;
-
 var MINIMASK = {
+	
+	/**
+	 * Main Callback for pending actions
+	 */
+	MAIN_MINIMASK_CALLBACK : null,
 			
 	/**
 	 * MINIMASK Startup
 	 */
 	init : function(callback){
 		
-		//Log a little..
-		console.log("Initialising MiniMask..");
-		
+		//Save this to send back pending responses
 		MAIN_MINIMASK_CALLBACK = callback;
+		
+		//Set a Timer to POLL for messages - Pending / Login etc
+		setInterval(function(){
+			
+			var msg 				= _createSimpleMessage("pending_messages");
+			msg.params.pendinglist 	= PENDING_UID_LIST;
+						
+			postMessageToServiceWorker(msg, function(resp){
+				
+				for(var i=0;i<resp.data.length;i++){
+					
+					var pendingaction 	= resp.data[i];
+					var puid 			= pendingaction.pendinguid;
+									
+					//Remove from list
+					removeMiniMaskPendinUID(puid);
+					
+					var mini_msg 	= {};
+					mini_msg.event 	= "MINIMASK_PENDING";
+					mini_msg.data 	= pendingaction;
+								
+					//Send back to user
+					MAIN_MINIMASK_CALLBACK(mini_msg); 
+				}
+			});
+		}, 1000);
 		
 		//Get Init details
 		postMessageToServiceWorker(_createSimpleMessage("minimask_extension_init"), function(resp){
+			
+			var mini_msg 	= {};
+			mini_msg.event 	= "MINIMASK_INIT";
+			mini_msg.data 	= resp;
+			
 			if(callback){
-				callback(resp);	
+				callback(mini_msg);	
 			}
 		});
 	},
@@ -77,6 +109,37 @@ var MINIMASK = {
 			msg.params.state 	= JSON.stringify(state);
 			
 			postMessageToServiceWorker(msg, function(resp){
+				
+				//Will result in a pending!
+				if(resp.pending){
+					//Add pending UID to our check list
+					addMiniMaskPendinUID(resp.pendinguid);					
+				
+					console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
+				}
+				
+				callback(resp);
+			});
+		},
+		
+		/**
+		 * Sign a transaction created with MINIMASK.meg.rawtxn - will create a Pending transaction
+		 */
+		sign : function(txndata, callback){
+			var msg = _createSimpleMessage("account_sign");
+			
+			msg.params.data 	= txndata;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				
+				//Will result in a pending!
+				if(resp.pending){
+					//Add pending UID to our check list
+					addMiniMaskPendinUID(resp.pendinguid);					
+				
+					console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
+				}
+				
 				callback(resp);
 			});
 		}
@@ -118,7 +181,7 @@ var MINIMASK = {
 			});	
 		},
 		
-		rawtransaction : function(inputs, outputs, scripts, state, callback){
+		rawtxn : function(inputs, outputs, scripts, state, callback){
 			var msg = _createSimpleMessage("rawtxn");
 			
 			msg.params.inputs  		= JSON.stringify(inputs);
@@ -131,12 +194,22 @@ var MINIMASK = {
 			});	
 		},
 		
-		sign : function(txndata, privatekey, keyuses, callback){
+		signtxn : function(txndata, privatekey, keyuses, callback){
 			var msg = _createSimpleMessage("signtxn");
 			
 			msg.params.data  		= txndata;
 			msg.params.privatekey  	= privatekey;
 			msg.params.keyuses  	= keyuses;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
+		viewtxn : function(txndata, callback){
+			var msg	= _createSimpleMessage("viewtxn");
+			
+			msg.params.data = txndata;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
@@ -282,7 +355,25 @@ function postMessageToServiceWorker(action, callback){
 	window.postMessage(msg);
 }
 
-//Utility functions
+/**
+ * Pending messages
+ */
+var PENDING_UID_LIST = [];
+
+function addMiniMaskPendinUID(uid){
+	PENDING_UID_LIST.push(uid);
+}
+
+function removeMiniMaskPendinUID(uid){
+	//Now remove that elemnt
+	PENDING_UID_LIST = PENDING_UID_LIST.filter(function(itemuid) {
+	    return itemuid !== uid;
+	});
+}
+
+/**
+ * Utility functions
+ */
 function _createSimpleMessage(func){
 	var msg  		= {};
 	msg.command 	= func;

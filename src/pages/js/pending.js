@@ -22,12 +22,31 @@ function acceptPending(id, callback){
 		msg.params.keyuses = res.data;
 		
 		//And send on..
-		chrome.runtime.sendMessage(msg, (resp) => {
-			alert("Funds Sent!");
+		chrome.runtime.sendMessage(msg, (sendresp) => {
 			
-			//Remove from list..
-			cancelPending(id);
+			pendingSent(pending, sendresp, function(){
+			
+				alert("Funds Sent!");
+								
+				//Remove from list..
+				cancelPending(id);	
+			});
 		});
+	});
+}
+
+function pendingSent(pending, resp, callback){
+	
+	//Now tell service this message sent
+	var msg 		= _createSimpleMessage("account_sent_pending");
+	msg.pendingmsg 	= pending;
+	msg.pendingresp	= resp;
+	
+	//Add..
+	chrome.runtime.sendMessage(msg, (resp) => {
+		if(callback){
+			callback();	
+		}
 	});
 }
 
@@ -67,42 +86,71 @@ function setPendingList(pendinglist, callback){
 	
 		var pending = pendinglist[i];
 		
-		var comm = '<table width=100%>'+
-								
-			'<tr style="background-color: #eeeeee;">'+
-				'<td style="text-align:right" nowrap>From : </td>'+
-				'<td style="font-size:10;" nowrap>'+sanitizeHTML(shrinkAddress(pending.sender.url))+'</td>'+
-			'</tr>'+
-								
-			'<tr style="background-color: #eeeeee;">'+
-				'<td style="text-align:right" nowrap>Token : </td>'+
-				'<td style="width:100%">'+sanitizeHTML(pending.params.tokenid)+'</td>'+
-			'</tr>'+
+		if(pending.command == "account_send"){
+			var comm = '<table width=100%>'+
+											
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Type : </td>'+
+							'<td style="font-size:10;" nowrap>Send coins from account</td>'+
+						'</tr>'+
+									
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>From : </td>'+
+							'<td style="font-size:10;" nowrap>'+sanitizeHTML(shrinkAddress(pending.sender.url))+'</td>'+
+						'</tr>'+
+											
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Token : </td>'+
+							'<td style="width:100%">'+sanitizeHTML(pending.params.tokenid)+'</td>'+
+						'</tr>'+
+						
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Amount : </td>'+
+							'<td>'+sanitizeHTML(pending.params.amount)+'</td>'+
+						'</tr>'+
+						
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Address : </td>'+
+							'<td nowrap>'+
+								'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.toaddress))+'</div>'+
+							'</td>'+
+						'</tr>'+
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>State : </td>'+
+							'<td nowrap>'+
+								'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.state))+'</div>'+
+							'</td>'+
+						'</tr>'+
+						'<tr>'+
+							'<td colspan=2 style="text-align:right;" nowrap>'+
+								'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
+							   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
+							'</td>'+
+						'</tr>'+
+					'</table>';	
 			
-			'<tr style="background-color: #eeeeee;">'+
-				'<td style="text-align:right" nowrap>Amount : </td>'+
-				'<td>'+sanitizeHTML(pending.params.amount)+'</td>'+
-			'</tr>'+
+		}else if(pending.command == "account_sign"){
 			
-			'<tr style="background-color: #eeeeee;">'+
-				'<td style="text-align:right" nowrap>Address : </td>'+
-				'<td nowrap>'+
-					'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.toaddress))+'</div>'+
-				'</td>'+
-			'</tr>'+
-			'<tr style="background-color: #eeeeee;">'+
-				'<td style="text-align:right" nowrap>State : </td>'+
-				'<td nowrap>'+
-					'<div style="font-size:10;">'+sanitizeHTML(shrinkAddress(pending.params.state))+'</div>'+
-				'</td>'+
-			'</tr>'+
-			'<tr>'+
-				'<td colspan=2 style="text-align:right;" nowrap>'+
-					'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
-				   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
-				'</td>'+
-			'</tr>'+
-		'</table>';
+			var comm = '<table width=100%>'+
+														
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Type : </td>'+
+							'<td style="font-size:10;" nowrap>Sign transaction</td>'+
+						'</tr>'+
+									
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>From : </td>'+
+							'<td style="font-size:10;" nowrap>'+sanitizeHTML(shrinkAddress(pending.sender.url))+'</td>'+
+						'</tr>'+
+											
+						'<tr style="background-color: #eeeeee;">'+
+							'<td style="text-align:right" nowrap>Transaction : </td>'+
+							'<td style="width:100%">xxx</td>'+
+						'</tr>'+
+						
+					'</table>';
+				
+		}
 		
 		total += comm+"<br>";
 	}
