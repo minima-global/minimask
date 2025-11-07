@@ -137,6 +137,23 @@ var MINIMASK = {
 		/*
 		 * Create a Raw unsigned transaction with 
 		 * any inputs, outpus and state variables.
+		 *
+		 * For example :
+		 *
+		 * // A list of CoinIDs
+		 * var inputs =  ["0xF7FB71DDECEE8A39821D8700BCDDCF9D80C842F5F836651CB3F6E41D80527918",
+		 * "0x6148D011DBB8BCC4DF9449565BF8CB527FBA8EBB72243343FFBEB6CDD9388F77"]
+		 *
+		 * //A list of coins
+		 * var outputs = [{"address":"0x6A3A060CE9D8E876E9B12DBE5D8F6A6864183BA1A63EA8CBCC14D668B5BECACF",
+		 * "amount":"40","storestate":true,"tokenid":"0x00"}]		 
+		 *
+		 * //All the scripts
+		 * var scripts = ["RETURN SIGNEDBY(0x3C986F919AD66B2F1724675449FFD6A2D1FA6C8A8DAD9723991EA68E35C2D950)"]
+		 *
+		 * //Any State
+		 * state = {"0":"98","1":"[MESSAGE]"}
+		 *
 		 */
 		rawtxn : function(inputs, outputs, scripts, state, callback)
 		
@@ -144,6 +161,11 @@ var MINIMASK = {
 		 * Sign a transaction created with rawtxn
 		 */ 
 		signtxn : function(txndata, privatekey, keyuses, callback)
+		
+		/* 
+		 * Post a transaction created with rawtxn and signed with signtxn
+		 */ 
+		posttxn : function(txndata, callback)
 		
 		/*
 		 * Convert a data transaction into a human readable JSON 

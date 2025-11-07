@@ -72,6 +72,13 @@ function convertMessageToAction(msg){
 		ret.params.privatekey 	= msg.params.privatekey;
 		ret.params.keyuses 		= msg.params.keyuses;
 	
+	}else if(msg.command ==  "posttxn"){
+					
+		ret.webcall 			= true;
+		ret.url 				= MINIMASK_MEG_HOST+"wallet/posttxn";
+		
+		ret.params.data 		= msg.params.data;
+		
 	}else if(msg.command ==  "viewtxn"){
 		ret.webcall 			= true;
 		ret.cached 				= true;

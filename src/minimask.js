@@ -206,6 +206,16 @@ var MINIMASK = {
 			});	
 		},
 		
+		posttxn : function(txndata, callback){
+			var msg = _createSimpleMessage("posttxn");
+			
+			msg.params.data  		= txndata;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
 		viewtxn : function(txndata, callback){
 			var msg	= _createSimpleMessage("viewtxn");
 			
