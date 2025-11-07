@@ -1,0 +1,192 @@
+<html>
+
+<head>
+	<title>MiniMask</title>
+	
+	<!-- Style Sheets -->
+	<link rel="stylesheet" href="buttons.css">
+	<link rel="stylesheet" href="style.css">
+
+	<!-- JS Libs -->
+	
+</head>
+
+<body>
+<center>
+
+	<br>
+	<h1>MiniMask</h1>
+	
+	<a href="index.html">Home</a>&nbsp;&nbsp;&nbsp;
+	<a href="examples.html">Examples</a>&nbsp;&nbsp;&nbsp;
+	<a href="help.html">Help</a>
+
+	<div class="maindiv">
+	
+		Look at the <a href='examples.html'>Examples</a> to see how to setup the MiniMask functionality.<br>
+		<br>
+		The API MiniMask uses is similar to the MDS system Minima dapps use.<br>
+		<br>
+		Once the MiniMask extension is loaded.. you will have a MINIMASK object to call.<br>
+		<br>
+		The function are split intoi 2 categories<<br>
+		<br>
+		There is an Account section that allows you to send and sign from the Users MiniMask account<br>
+		<br>
+		These calls all start with MINIMASK.account..<br>
+		<br>
+		Here is a balance check call :<br>
+		<br>
+		<code style="background:white">
+			MINIMASK.account.balance(function(balanceresp){<br>
+			&nbsp;&nbsp;&nbsp;console.log(JSON.stringify(balanceresp));<br>
+			});<br>
+		</code>
+		<br>
+		And a SEND from the User account would be :<br>
+		<br>
+		<code style="background:white">
+			//Set up sopme state vars<br>
+			var state = {};<br>
+			state[0] = "123.98"<br>
+			state[1] = "0xFFEEDD"<br>
+			<br>
+			MINIMASK.account.send("0.0001",<br> 
+			&nbsp;&nbsp;&nbsp;"MxG085BNJVTBB60KPG6FMVEV2D1EAY78JR11YGBQCE5UH213H6CBQYN48VNQQB5",<br> 
+			&nbsp;&nbsp;&nbsp;"0x00", state, function(resp){<br>
+			&nbsp;&nbsp;&nbsp;console.log("SEND : "+JSON.stringify(resp,null,2));<br>
+			});<br>
+		</code>
+		<br>
+		There is a <b>MEG</b> ( Minima Enterprise Gateway ) section which is lower level functions that give the same calls as the Minima MEG server.<br>
+		<br>
+		MEG calls do not cause Pending actions as private keys must be specified by you.<br>
+		<br>
+		
+		The current API calls are 
+		<pre>
+var MINIMASK = {
+	
+	/**
+	 * MINIMASK Startup call.. Use to initialise MiniMask.
+	 * 
+	 * The callback is for when Pending Transaction are accepted.
+	 */
+	init : function(callback)
+	
+	/**
+	 * Access the Users MiniMask Account
+	 */
+	account : {
+		
+		/**
+		 * Get the balance of all tokens for this address
+		 */
+		balance : function(callback)
+		
+		/**
+		 * Get all coins for this address
+		 */
+		coins : function(callback)
+	
+		/**
+		 * Get the address for the logged in account
+		 */
+		getAddress : function(callback)
+		
+		/**
+		 * Get the public key for the logged in account
+		 */
+		getPublicKey : function(callback)
+		
+		/**
+		 * Send funds from this account (Causes a Pending)
+		 */
+		send : function(amount, address, tokenid, state, callback)
+		
+		/**
+		 * Sign a transaction created with MINIMASK.meg.rawtxn  (Causes a Pending)
+		 */
+		sign : function(txndata, callback)
+	},
+				
+	/**
+	 * Call MEG functions
+	 */
+	meg : {
+		
+		/**
+		 * Create a new Minima account, address, public key, private key etc.
+		 */
+		create : function(callback)
+		
+		/*
+		 * Get the Balance of an address
+		 */
+		balance : function(address, callback)
+		
+		/*
+		 * Send funds from a created Minima account.
+		 *
+		 * Note that you must use a different keysuses every time. 
+		 * Start with 0 and increment.
+		 */ 
+		send : function(amount, toaddress, tokenid, 
+				fromaddress, privatekey, script, keyuses, callback)
+		
+		/*
+		 * Create a Raw unsigned transaction with 
+		 * any inputs, outpus and state variables.
+		 */
+		rawtxn : function(inputs, outputs, scripts, state, callback)
+		
+		/* 
+		 * Sign a transaction created with rawtxn
+		 */ 
+		signtxn : function(txndata, privatekey, keyuses, callback)
+		
+		/*
+		 * Convert a data transaction into a human readable JSON 
+		 */
+		viewtxn : function(txndata, callback)
+		
+		/*
+		 * Get the current block
+		 */
+		block : function(callback)
+		
+		/*
+		 * Return all blocks and transactions offset from the chain tip. 
+		 * Max depth 32.  
+		 */
+		scanchain : function(offset, depth, callback)
+		
+		/*
+		 * Get a TxPoW
+		 */
+		gettxpow : function(txpowid, callback)
+		
+		/*
+		 * Check if a TxPoW is on chain
+		 */
+		checktxpow : function(txpowid, callback)
+		
+		/*
+		 * List coins for a certain address. 
+		 * Use blank tokenid and state for all coins and states.
+		 */
+		listcoins : function(address, tokenid, state, callback)
+		
+		/*
+		 * Get a secure random number
+		 */
+		random : function(callback)
+			
+		</pre>	
+			
+	</div>
+	
+</center>
+	
+</body>
+</html>

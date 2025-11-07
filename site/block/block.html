@@ -34,17 +34,24 @@
 		//Wait for page to load
 		window.onload = function () {
 			
-			//Have we loaded the Extension
+			//Have we loaded the MiniMask Extension
 			if(typeof MINIMASK !== "undefined"){
 				
 				//Lets see if we are logged in..
 				MINIMASK.init(function(initmsg){
 					
-					//Are we logged in
-					console.log("INIT : "+JSON.stringify(initmsg,null,2));
-				
-					//This application does NOT require you to be logged in..
-					initBlock();
+					//Log all messages
+					console.log("init : "+JSON.stringify(initmsg,null,2));
+					
+					if(initmsg.event == "MINIMASK_INIT"){
+									
+						//Load the block data						
+						initBlock();
+						
+					}else if(initmsg.event == "MINIMASK_PENDING"){
+						//Confirmed Pending actions will be sent here..
+						
+					}	
 				});
 				
 			}else{
