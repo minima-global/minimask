@@ -1,8 +1,11 @@
 /**
  * MEG Host details
  */
+
+//DEBUG HOST
 //MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
 MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
+
 MINIMASK_MEG_USER 			= "apicaller";
 MINIMASK_MEG_PASSWORD 		= "apicaller";
 
@@ -857,8 +860,11 @@ function getCachedWebCall(url, params){
 	for(var i=0;i<len;i++){
 		var cached = MINIMASK_CACHED_CALLS[i];
 		
+		//Is it within the cache time
+		var validtime = (cached.time + 60000 > ctime)
+		
 		//Check it..
-		if(cached.url == url && cached.params == paramstr){
+		if(validtime && (cached.url == url) && (cached.params == paramstr)){
 			if(SERVICE_LOGGING){
 				console.log("CACHE FOUND url:"+url+" params:"+paramstr);
 			}
@@ -866,7 +872,7 @@ function getCachedWebCall(url, params){
 		}
 		
 		//Do we keep this cache entry - 1 minute
-		if(cached.time + 60000 > ctime){
+		if(validtime){
 			NEW_CACHE.push(cached);
 		}
 	}
