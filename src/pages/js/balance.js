@@ -37,7 +37,11 @@ function setBalance(resp){
 function getBalance(){
 	//Send a message to Service-Worker
 	callSimpleServiceWorker("account_balance", (resp) => {
-		setBalance(resp); 		  
+		if(!resp.status){
+			popupAlert(resp.error);
+		}else{
+			setBalance(resp);	
+		}
 	});
 }
 

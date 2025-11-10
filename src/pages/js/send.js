@@ -18,10 +18,16 @@ function setTokens(resp){
 	}
 }
 
+var VALID_TOKEN = true;
 function getTokens(){
 	//Send a message to Service-Worker
 	callSimpleServiceWorker("account_balance", (resp) => {
-		setTokens(resp);
+		if(!resp.status){
+			VALID_TOKEN = false;
+			popupAlert(resp.error);
+		}else{
+			setTokens(resp);	
+		}
 	});
 }
 
@@ -35,6 +41,10 @@ callSimpleServiceWorker("account_get_key_uses", function(res){
 
 //Add click to button
 addButtonOnClick('id_btn_send', function(e) {
+	
+	if(!VALID_TOKEN){
+		return;
+	}
 	
 	//Token
 	var sel 	= getElement("select_token");
@@ -75,7 +85,7 @@ addButtonOnClick('id_btn_send', function(e) {
 			popupAlert(resp.error);
 			return;
 		}else{
-			popupAlert("Funds sent!");
+			popupAlert("Funds sent!\n\nPlease wait for transaction to confirm..");
 			
 			jumpToPage("balance.html");
 		}
