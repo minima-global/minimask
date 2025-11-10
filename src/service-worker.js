@@ -2,12 +2,15 @@
  * MEG Host details
  */
 
-//DEBUG HOST
-//MINIMASK_MEG_HOST 			= "http://127.0.0.1:8080/";
-MINIMASK_MEG_HOST 			= "https://minimask.org:8888/";
+//MEG HOST Details
+MINIMASK_MEG_HOST 			= "";
+MINIMASK_MEG_USER 			= "";
+MINIMASK_MEG_PASSWORD 		= "";
 
-MINIMASK_MEG_USER 			= "apicaller";
-MINIMASK_MEG_PASSWORD 		= "apicaller";
+//Default Settings
+DEFAULT_MINIMASK_MEG_HOST 		= "https://minimask.org:8888/";
+DEFAULT_MINIMASK_MEG_USER 		= "apicaller";
+DEFAULT_MINIMASK_MEG_PASSWORD 	= "apicaller";
 
 var MINIMASK_USER_DETAILS 	= {};
 
@@ -19,6 +22,13 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
 var SERVICE_LOGGING = false;
 var WEB_LOGGING 	= false;
+
+/**
+ * Get the current MEG Host
+ */
+function getCurrentMEGFunctionCall(func){
+	return MINIMASK_MEG_HOST+func;
+}
 
 /**
  * Convert Command to actual function
@@ -42,12 +52,12 @@ function convertMessageToAction(msg){
 	//WEBCALL functions
 	if(msg.command ==  "create"){
 		ret.webcall = true;
-		ret.url 	= MINIMASK_MEG_HOST+"wallet/create";
+		ret.url 	= getCurrentMEGFunctionCall("wallet/create");
 	
 	}else if(msg.command ==  "send"){
 		
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/send");
 		ret.params.amount 		= msg.params.amount;
 		ret.params.toaddress 	= msg.params.toaddress;
 		ret.params.tokenid 		= msg.params.tokenid;
@@ -59,7 +69,7 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "rawtxn"){
 			
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/rawtxn";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/rawtxn");
 		
 		ret.params.inputs 		= msg.params.inputs;
 		ret.params.outputs 		= msg.params.outputs;
@@ -69,7 +79,7 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "signtxn"){
 				
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/signtxn";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/signtxn");
 		
 		ret.params.data 		= msg.params.data;
 		ret.params.privatekey 	= msg.params.privatekey;
@@ -78,31 +88,31 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "posttxn"){
 					
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/posttxn";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/posttxn");
 		
 		ret.params.data 		= msg.params.data;
 		
 	}else if(msg.command ==  "viewtxn"){
 		ret.webcall 			= true;
 		ret.cached 				= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/viewtxn";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/viewtxn");
 		
 		ret.params.data 		= msg.params.data;
 			
 	}else if(msg.command ==  "block"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/block";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/block");
 	
 	}else if(msg.command ==  "random"){
 		ret.webcall 		= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/random";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/random");
 	
 	}else if(msg.command ==  "scanchain"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
 		
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/scanchain";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/scanchain");
 		
 		//Max 64 depth
 		ret.params.depth 	= +msg.params.depth;
@@ -115,25 +125,25 @@ function convertMessageToAction(msg){
 	}else if(msg.command ==  "gettxpow"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/gettxpow";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/gettxpow");
 		ret.params.txpowid 	= msg.params.txpowid;
 				
 	}else if(msg.command ==  "checktxpow"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/checktxpow";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/checktxpow");
 		ret.params.txpowid 	= msg.params.txpowid;
 	
 	}else if(msg.command ==  "balance"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/balance");
 		ret.params.address 	= msg.params.address;
 	
 	}else if(msg.command ==  "listcoins"){
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/listcoins");
 		ret.params.address 	= msg.params.address;
 		ret.params.tokenid 	= msg.params.tokenid;
 		
@@ -153,7 +163,7 @@ function convertMessageToAction(msg){
 		
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/listcoins";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/listcoins");
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 							
 	}else if(msg.command ==  "account_balance"){
@@ -167,7 +177,7 @@ function convertMessageToAction(msg){
 		
 		ret.webcall 		= true;
 		ret.cached 			= true;
-		ret.url 			= MINIMASK_MEG_HOST+"wallet/balance";
+		ret.url 			= getCurrentMEGFunctionCall("wallet/balance");
 		ret.params.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 
 	}else if(msg.command ==  "account_send"){
@@ -197,7 +207,7 @@ function convertMessageToAction(msg){
 		}
 		
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/send";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/send");
 		ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
 		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
 		ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
@@ -230,7 +240,7 @@ function convertMessageToAction(msg){
 		}
 		
 		ret.webcall 			= true;
-		ret.url 				= MINIMASK_MEG_HOST+"wallet/signtxn";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/signtxn");
 		
 		ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
 		ret.params.keyuses 		= msg.params.keyuses;
@@ -271,7 +281,7 @@ function convertMessageToAction(msg){
 		if(msg.external){ret.valid=false;return ret;}
 		
 		ret.internal 			= true;	
-		ret.url 				= MINIMASK_USER_DETAILS.MINIMASK_MEG_HOST+"wallet/seedphrase";
+		ret.url 				= getCurrentMEGFunctionCall("wallet/seedphrase");
 		ret.params.seedphrase 	= msg.params.seedphrase;
 								
 	}else if(msg.command ==  "minimask_extension_init"){
@@ -319,8 +329,33 @@ function convertMessageToAction(msg){
 		ret.internal 		 = true;
 		ret.params.amount	 = msg.params.amount;
 									
-	}else if(msg.command ==  "pending_messages"){
+	}else if(msg.command ==  "account_init_meg"){
 		
+		//Not allowed from external
+		//if(msg.external){ret.valid=false;return ret;}
+		
+		ret.internal 		= true;
+		
+	}else if(msg.command ==  "account_get_custom_meg"){
+
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
+		ret.internal 		= true;
+		
+	}else if(msg.command ==  "account_set_custom_meg"){
+		
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+		
+		ret.internal 		= true;
+		ret.params	 		= msg.params;
+									
+	}else if(msg.command ==  "pending_messages"){
+	
+		//Not allowed from external
+		if(msg.external){ret.valid=false;return ret;}
+				
 		//Are there any messages to send back..
 		ret.internal 			= true;
 		
@@ -398,15 +433,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					
 		if(action.command == "account_generate"){
 			
-			makePostRequest(MINIMASK_MEG_HOST+"wallet/seedphrase", action.params, function(res){
+			makePostRequest(getCurrentMEGFunctionCall("wallet/seedphrase"), action.params, function(res){
 				
 				if(!res.status){
 					resp.status = false;
+					resp.error  = res.error;
 					
 					sendResponse(resp);
 					
 				}else{
-					console.log("Service Worker account_generate : "+JSON.stringify(res));
 					
 					//Store the data
 					MINIMASK_USER_DETAILS.LOGGEDON						= true;
@@ -419,22 +454,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					storeUserDetails(MINIMASK_USER_DETAILS, function(){
 						sendResponse(resp);		
 					});
-					
-					//sendResponse(resp);
 				}							
 			});
 			
 		}else if(action.command == "minimask_extension_init"){
-			
-			/*resp.data 			= {};
-			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
-			
-			//Are we logged in..
-			if(MINIMASK_USER_DETAILS.LOGGEDON){
-				resp.data.address 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
-				resp.data.publickey	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
-			}
-			sendResponse(resp);*/
 			
 			//Are we logged in..
 			retrieveUserDetails(function(details){
@@ -455,17 +478,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					}
 				}
 				
-				sendResponse(resp);				
+				//Load the MEG settings..
+				setupMEGConnectDetails(function(){
+					sendResponse(resp);	
+				});				
 			});
 					
 		}else if(action.command == "minimask_extension_logout"){
-			
-			//Reset details
-			/*MINIMASK_USER_DETAILS = {};
-			MINIMASK_USER_DETAILS.LOGGEDON = false;
-			resp.data.loggedon 	= false;
-			sendResponse(resp);
-			*/
 			
 			storeUserDetails({}, function(){
 				clearPendingTxns(function(){
@@ -556,6 +575,38 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				sendResponse(resp);
 			});	
 		
+		}else if(action.command == "account_init_meg"){
+									
+			setupMEGConnectDetails(function(){
+				resp.data = "MEG Host setup..";
+				sendResponse(resp);	
+			});
+				
+		}else if(action.command == "account_get_custom_meg"){
+							
+			retrieveCustomMEGDetails(function(res){
+				resp.data = res;
+				sendResponse(resp);
+			});	
+				
+		}else if(action.command == "account_set_custom_meg"){
+			
+			//Wipe the cache..
+			wipeCachedCalls();
+			
+			//Clear Pending..
+			clearPendingTxns(function(){
+				storeCustomMEGDetails(action.params, function(res){
+					resp.data = action.params;
+					
+					//Reset the details!
+					setupMEGConnectDetails(function(){
+						
+						//Send back th eresponse..	
+						sendResponse(resp);	
+					});
+				});		
+			});
 		}
 		
 		return true;
@@ -658,7 +709,7 @@ async function makePostRequest(url, jsonparams, callback){
 		if (!response.ok) {
 			var resp 		= {};
 			resp.status 	= false;
-			resp.error 		= "Call error "+response.status;
+			resp.error 		= "Could not contact Host : "+MINIMASK_MEG_HOST+"\n\nStatus :  "+response.status;
 			
 			callback(resp);
 			
@@ -691,6 +742,56 @@ function storeUserDetails(data, callback){
 function retrieveUserDetails(callback){
 	chrome.storage.session.get(["user_details"]).then((result) => {
 	  	callback(result);
+	});
+}
+
+/**
+ * Store Custom MEG details 
+ */
+function storeCustomMEGDetails(data, callback){
+	chrome.storage.local.set({ custom_meg : data }).then(() => {
+		callback();  
+	});
+}
+
+function retrieveCustomMEGDetails(callback){
+	chrome.storage.local.get(["custom_meg"]).then((res) => {
+		
+		//Is there one..
+		if(res.custom_meg == undefined){
+			res.custom_meg					= {};
+			res.custom_meg.enable 			= false;
+			res.custom_meg.meg_host 		= "";
+			res.custom_meg.meg_user 		= "";
+			res.custom_meg.meg_password 	= "";
+		}
+		
+	  	callback(res);
+	});
+}
+
+function setupMEGConnectDetails(callback){
+	
+	retrieveCustomMEGDetails(function(res){
+		
+		//Are they enabled..
+		if(!res.custom_meg.enable){
+			//Default Details
+			MINIMASK_MEG_HOST 			= DEFAULT_MINIMASK_MEG_HOST;
+			MINIMASK_MEG_USER 			= DEFAULT_MINIMASK_MEG_USER;
+			MINIMASK_MEG_PASSWORD 		= DEFAULT_MINIMASK_MEG_PASSWORD;
+		
+		}else{
+			MINIMASK_MEG_HOST 			= res.custom_meg.meg_host;
+			MINIMASK_MEG_USER 			= res.custom_meg.meg_user;
+			MINIMASK_MEG_PASSWORD 		= res.custom_meg.meg_password;
+		}
+		
+		console.log("Set Up Meg Details! Host : "+MINIMASK_MEG_HOST);
+		
+		if(callback){
+			callback();
+		}
 	});
 }
 
@@ -750,7 +851,9 @@ function clearPendingTxns(callback){
 	PENDING_SENT_MESSAGES = [];
 						
 	chrome.storage.session.set({ pending_txns : [] }).then((result) => {
-		callback(result);	
+		if(callback){
+			callback(result);	
+		}
 	});
 }
 
@@ -820,6 +923,10 @@ function getTimeMilli(){
 	//Date as of NOW
 	var recdate = new Date();
 	return recdate.getTime();	
+}
+
+function wipeCachedCalls(){
+	MINIMASK_CACHED_CALLS = [];
 }
 
 function addCachedWebCall(url, params, response){

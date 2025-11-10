@@ -49,7 +49,7 @@ function sendAction(uid, callback){
 			
 			pendingSent(pending, sendresp, function(){
 			
-				alert("Funds Sent!");
+				popupAlert("Funds Sent!");
 								
 				//Remove from list..
 				cancelPending(uid);	
@@ -76,7 +76,7 @@ function signAction(uid, callback){
 			
 			pendingSent(pending, sendresp, function(){
 			
-				alert("Transaction Signed!");
+				popupAlert("Transaction Signed!");
 								
 				//Remove from list..
 				cancelPending(uid);	

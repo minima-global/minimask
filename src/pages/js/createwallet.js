@@ -5,7 +5,7 @@ getElement('id_btn_restorewallet').addEventListener('click', function(e) {
 	var seed = id_seed_txt.value.trim();
 	
 	if(seed == ""){
-		alert("Cannot have a blank seed");
+		popupAlert("Cannot have a blank seed");
 		return;
 	}
 	
@@ -20,7 +20,7 @@ getElement('id_btn_restorewallet').addEventListener('click', function(e) {
 		getElement("generate_wait").style.display="none";
 		
 		if(!resp.status){
-			alert("Error : "+resp.error);
+			popupAlert(resp.error);
 			return;
 		}else{
 			jumpToPage("wallet.html");

@@ -22,18 +22,21 @@
 		
 	<script type="text/javascript">
 		
-		//How deep..
-		var txpowid = getURLParam("txpowid");
-		console.log("TxPoWID : "+txpowid);
-		
 		//Wait for page to load
 		window.onload = function () {
 			
 			//Have we loaded the Extension
 			if(typeof MINIMASK !== "undefined"){
 				
-				//This application does NOT require you to be logged in..
-				initTxPoW();
+				//Always INIT the extension..
+				MINIMASK.init(function(initmsg){
+					
+					if(initmsg.event == "MINIMASK_INIT"){
+						
+						//Show the TxPoW
+						initTxPoW();
+					}
+				});
 				
 			}else{
 				console.log("MINIMASK extension not active!");	
@@ -42,6 +45,8 @@
 		
 		//Init the Page
 		function initTxPoW(){
+			
+			var txpowid = getURLParam("txpowid");
 			
 			//Get the current top block
 			MINIMASK.meg.gettxpow(txpowid, function(resp){

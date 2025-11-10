@@ -19,6 +19,10 @@ function addButtonOnClickWithParams(id, func, param){
 	});
 }
 
+function popupAlert(msg){
+	alert("\n"+msg);
+}
+
 //Jump to a page..
 function jumpToPage(page){
 	location.href=page;

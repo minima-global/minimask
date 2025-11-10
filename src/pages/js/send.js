@@ -47,7 +47,7 @@ addButtonOnClick('id_btn_send', function(e) {
 	var keyuses   = getElement("send_keyuses").value.trim();
 		
 	if(amount == "" || address=="" || keyuses==""){
-		alert("You MUST specify a valid amount, address and keyuses");
+		popupAlert("You MUST specify a valid amount, address and keyuses");
 		return;
 	}else{
 		if(!confirm("Are you sure you wish to proceed ?")){
@@ -72,29 +72,13 @@ addButtonOnClick('id_btn_send', function(e) {
 		getElement("send_wait").style.display="none";
 		
 		if(!resp.status){
-			alert("Error : "+resp.error);
+			popupAlert(resp.error);
 			return;
 		}else{
-			alert("Funds sent!");
+			popupAlert("Funds sent!");
 			
 			jumpToPage("balance.html");
 		}
 	});
 });
 
-
-//Add click to button
-addButtonOnClick('id_btn_setkeys', function(e) {
-
-	//Get the keys value..
-	var keyuses   = getElement("send_keyuses").value.trim();
-	
-	// Set it..
-	var setkeys 			= _createSimpleMessage("account_set_key_uses");
-	setkeys.params.amount 	= keyuses;
-	
-	chrome.runtime.sendMessage(setkeys, (resp) => {
-		//And now..
-		alert("Key uses updated to : "+keyuses);	
-	});
-});

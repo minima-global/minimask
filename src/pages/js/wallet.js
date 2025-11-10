@@ -46,3 +46,18 @@ addButtonOnClick('id_img_pending', function(e) {
 		
 	getElement("mainiframe").src="./pending.html";
 });
+
+addButtonOnClick('id_img_logout', function(e) {
+	checkPending();
+	
+	//Get Key Uses..	
+	callSimpleServiceWorker("account_get_key_uses", function(res){
+	
+		if(confirm("Are you sure you wish to Logout ?\n\nCurrent key uses : "+res.data)){
+			//Logout..
+			callSimpleServiceWorker("minimask_extension_logout", (resp) => {
+				window.top.location.href = "./start.html";
+			});
+		}
+	});
+});

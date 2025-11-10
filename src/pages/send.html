@@ -54,41 +54,38 @@
 	<table style="width:100%;">
 		<tr>
 			<td class="righttd" nowrap>Token : </td>
-			<td><select id="select_token"></td>
+			<td><select id="select_token" style="width:90%"></td>
 		</tr>
 		
 		<tr>
 			<td class="righttd" nowrap>Amount : </td>
-			<td><input id="send_amount" type=text></td>
+			<td><input id="send_amount" type=text style="width:90%"></td>
 		</tr>
 		
 		<tr>
 			<td class="righttd" nowrap>Address : </td>
-			<td><input id="send_address" type=text></td>
+			<td><input id="send_address" type=text style="width:90%"></td>
 		</tr>
-	</table>
-	
-	<br>
-	<button class="mybtn" id="id_btn_send">Send Funds</button>
-	<br>	
-	<br>
-	<hr style="width:80%;">
-	<br>
-	
-	<table style="width:100%;">	
+		
+		<tr><td colspan=2>&nbsp;</td></tr>
 		<tr>
 			<td class="righttd" nowrap>Key Uses : </td>
-			<td><input id="send_keyuses" type="number" style="width:100;">&nbsp;&nbsp;&nbsp;<button id="id_btn_setkeys" class="mybtn">Update Key Uses</button></td>
+			<td><input id="send_keyuses" type=number style="width:90%"></td>
 		</tr>
+		
 	</table>
 	
 	<div style="font-size:10;">
 		<br>
-		Key uses will be remembered and automatically increment<br>
-		<br>
-		On a <b>NEW</b> computer please set to your old value (or higher..)
+		You can set key uses manually in <a href='./settings.html'>Settings</a><br>
+		
+	</div>
 	
-	</div>  
+	<br>
+	<button class="mybtn" id="id_btn_send">Send Funds</button>
+	<br>	
+	
+	  
 	
 	<div id="send_wait" class="overlay-box">
 		<br>Sending.. pls wait..
