@@ -115,15 +115,6 @@ function cancelPending(uid, callback){
 	});			
 }
 
-function shrinkAddress(addr){
-	var strlen = addr.length;
-	if(strlen > 24){
-		return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
-	}
-	
-	return addr;
-}
-
 function setPendingList(callback){
 	
 	var total = "";

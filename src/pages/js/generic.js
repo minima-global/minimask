@@ -83,6 +83,23 @@ function getURLParameter(parameterName){
 	    return result;
 }
 
+function shrinkAddress(addr){
+	var strlen = addr.length;
+	if(strlen > 24){
+		return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
+	}
+	
+	return addr;
+}
+
+function shrinkAmount(amt){
+	var strlen = amt.length;
+	if(strlen > 16){
+		return amt.substring(0,16)+"..";
+	}
+	return amt;
+}
+
 function sanitizeHTML(str) {
     const div = document.createElement('div');
     div.textContent = str;
