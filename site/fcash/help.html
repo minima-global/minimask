@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>Future Cash</title>
+	
+	<link rel="stylesheet" href="style.css">
+		
+</head>
+	
+<body>
+	
+<style>
+
+	.righttd{
+		width:100;
+		text-align:right;
+	}
+	
+	
+</style>
+	
+<center>
+	<br>
+	<h3>Future Cash</h3>
+	<a href="index.html">Home</a>&nbsp;&nbsp;&nbsp;<a href="help.html">Help</a><br><br>
+	
+	<div style="width:700;">
+		This Contract was made in Script IDE : 
+		<pre style="text-align:left;font-size:12;">
+/* A string to make the address (hash of the script) unique */
+LET cname = [ Future Cash Contract v1 ]
+
+/* Coin MUST be older than the timelock - stored in state var 0 */
+ASSERT @COINAGE GT PREVSTATE[0]
+
+/* CHECK is signed by the specified key - stored in state var 1 */ */
+RETURN SIGNEDBY( PREVSTATE[1] )
+		</pre>
+		
+		The Contract address is : <b>MxG081D4YAEM6CBEYT2AA2VWMFMBZVGKEEU2SASEJ47SSTNVD5SBVMJB1GACYZ9</b><br>
+		<br>
+		The timelock details are stored as state variables..<br>
+		<br>
+		0 - Holds the timelock amount<br>
+		<br>
+		1 - Holds the public key of the owner<br>
+		<br>
+		Simple!	
+			
+	<div>	
+	
+</center>	
+
+</body>
+
+</html>

@@ -1,0 +1,209 @@
+<html>
+<head>
+	<title>Future Cash</title>
+	
+	<link rel="stylesheet" href="style.css">
+		
+</head>
+	
+<body>
+	
+<style>
+
+	.righttd{
+		width:100;
+		text-align:right;
+	}
+	
+	
+</style>
+	
+<center>
+	<br>
+	<h3>Future Cash</h3>
+	<a href="index.html">Home</a>&nbsp;&nbsp;&nbsp;<a href="help.html">Help</a><br><br>
+	
+	<div style="width:700;">
+		This application shows how to send Minima to a time lock contract. 
+		The backend shows how to construct a raw transaction from a selection of coins, sign and post it.
+		The maximum amount you can send is 10 Minima and the maximum timelock is 100 blocks!<br>
+		<br>
+				
+		<table>
+			<tr>
+				<td class="righttd" nowrap>Amount : </td>
+				<td><input type=text id="id_send_amount" value=0.1></td>
+			</tr>
+			
+			<tr>
+				<td class="righttd" nowrap>Time Lock Blocks : </td>
+				<td><input type=text id="id_time_amount" value=20></td>
+			</tr>
+			<tr>
+				<td colspan=2 class="righttd"><button onclick="sendFunds();" class="mybtn">Send!</button></td>
+			</tr>
+		<table>	
+	<div>	
+	<br>
+	<b>Future funds..</b> 
+	<div id="id_list_future"></div>
+	<br>	 	
+	<button class="mybtn" onclick="	window.location.reload();">REFRESH</button>
+		
+	<script type="text/javascript">
+		
+		//The User public Key
+		var USER_PUBLICKEY = "";
+		var USER_ADDRESS   = "";
+		
+		//The details of the contract
+		var FCASH_ADDRESS = "MxG081D4YAEM6CBEYT2AA2VWMFMBZVGKEEU2SASEJ47SSTNVD5SBVMJB1GACYZ9";
+		var FCASH_SCRIPT  = "LET cname=[ Future Cash Contract v1 ] ASSERT @COINAGE GT PREVSTATE[0] RETURN SIGNEDBY(PREVSTATE[1])"
+		
+		//Wait for page to load
+		window.onload = function () {
+			
+			//Have we loaded the MiniMask Extension
+			if(typeof MINIMASK !== "undefined"){
+				
+				//Lets see if we are logged in..
+				MINIMASK.init(function(initmsg){
+					
+					//Log all messages
+					console.log("MiniMask : "+JSON.stringify(initmsg,null,2));
+					
+					if(initmsg.event == "MINIMASK_INIT"){
+						
+						//Are we logged in..
+						if(initmsg.data.data.loggedon){
+							//Get the User Key..
+							USER_PUBLICKEY 	= initmsg.data.data.publickey;
+							USER_ADDRESS	= initmsg.data.data.address;
+							
+							//Load any Future Funds
+							loadFuture();							
+						}
+							
+					}else if(initmsg.event == "MINIMASK_PENDING"){
+						
+					}	
+				});
+				
+			}else{
+				console.log("MINIMASK extension not active!");	
+			}	
+		}
+		
+		//Send funds to the contract
+		function sendFunds(){
+			
+			//Are we logged in..
+			if(USER_PUBLICKEY == ""){
+				alert("No user logged in..");
+				return;
+			}
+			
+			//Get the value
+			var amount = id_send_amount.value;
+			if(+amount > 10){
+				alert("MAX 10 Minima send..!");
+				return
+			}
+			
+			var blocks = id_time_amount.value;
+			if(+blocks > 100){
+				alert("MAX 10 Blocks into the future..!");
+				return
+			}
+			
+			//Create the state..
+			var state = {};
+			state[0]  = blocks;
+			state[1]  = USER_PUBLICKEY;
+			
+			//Let send some funds!
+			MINIMASK.account.send(amount, FCASH_ADDRESS, "0x00", state, function(sendresp){
+				
+				if(sendresp.pending){
+					//This will be a Pending transaction!
+					alert("Pending transaction created!\n\nOpen MiniMask extension to approve..");	
+				}else{
+					alert(sendresp.error);
+				}
+			});
+		
+		}
+		
+		//Init the Page
+		function loadFuture(){
+			
+			//Get all Minima coinsd, at that address, with the public key as a state var
+			MINIMASK.meg.listcoins(FCASH_ADDRESS, "0x00", USER_PUBLICKEY, function(resp){
+				console.log("coins : "+JSON.stringify(resp,null,2));
+				var cointable = "<br>";
+				
+				var len = resp.data.length;
+				if(len == 0){
+					cointable += "No coins found.."
+				}
+				
+				for(var i=0;i<resp.data.length;i++){
+					var coin = resp.data[i];
+					
+					var timelock = coin.state[0];
+					
+					//Can we collect
+					var can_collect = false;
+					if(+coin.age > +timelock){
+						can_collect = true;
+					}
+					
+					cointable +=i+") Amount:"+coin.amount+" Age:"+coin.age+" / "+timelock;
+					if(can_collect){
+						cointable += " &nbsp;&nbsp;&nbsp;<button class='mybtn' onclick='collectCoin(\""+coin.coinid+"\","+coin.amount+")'>COLLECT</button><br><br>"	
+					}else{
+						cointable += " &nbsp;&nbsp;&nbsp;Waiting..<br><br>"
+					}
+				}
+				
+				id_list_future.innerHTML = cointable;
+			});
+		}
+		
+		function collectCoin(coinid, amount){
+			console.log("Collect : "+coinid);
+			
+			//Construct a RAW transaction..
+			var inputcoins = [];
+			inputcoins.push(coinid);
+			
+			//Send the coins BACK to yourself..
+			var outputcoin 		= {};
+			
+			//Amount MUST be a string - for precision..
+			outputcoin.amount 	= ""+amount;
+			outputcoin.tokenid 	= "0x00";
+			outputcoin.address 	= USER_ADDRESS;
+			
+			var outputcoins = [];
+			outputcoins.push(outputcoin);
+			
+			//All the sscripts
+			var scripts = [];
+			scripts.push(FCASH_SCRIPT);
+			
+			//Create the TXN
+			MINIMASK.meg.rawtxn(inputcoins, outputcoins, scripts, {}, function(rawresp){
+				console.log("rawtxn : "+JSON.stringify(rawresp,null,2));
+								
+			});
+			
+		}
+		
+	</script>
+	
+</center>	
+
+</body>
+
+</html>
