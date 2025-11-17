@@ -115,7 +115,7 @@ var MINIMASK = {
 					//Add pending UID to our check list
 					addMiniMaskPendinUID(resp.pendinguid);					
 				
-					console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
+					//console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
 				}
 				
 				callback(resp);
@@ -125,10 +125,12 @@ var MINIMASK = {
 		/**
 		 * Sign a transaction created with MINIMASK.meg.rawtxn - will create a Pending transaction
 		 */
-		sign : function(txndata, callback){
+		sign : function(txndata, post, callback){
+			
 			var msg = _createSimpleMessage("account_sign");
 			
-			msg.params.data 	= txndata;
+			msg.params.data = txndata;
+			msg.params.post = post;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				
@@ -137,7 +139,7 @@ var MINIMASK = {
 					//Add pending UID to our check list
 					addMiniMaskPendinUID(resp.pendinguid);					
 				
-					console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
+					//console.log("ADDED TO PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
 				}
 				
 				callback(resp);
@@ -194,22 +196,24 @@ var MINIMASK = {
 			});	
 		},
 		
-		signtxn : function(txndata, privatekey, keyuses, callback){
-			var msg = _createSimpleMessage("signtxn");
+		signtxn : function(txndata, privatekey, keyuses, post, callback){
+			
+			var msg = _createSimpleMessage("signtxn");	
 			
 			msg.params.data  		= txndata;
 			msg.params.privatekey  	= privatekey;
 			msg.params.keyuses  	= keyuses;
+			msg.params.post  		= post;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
-			});	
+			});
 		},
 		
 		posttxn : function(txndata, callback){
 			var msg = _createSimpleMessage("posttxn");
 			
-			msg.params.data  		= txndata;
+			msg.params.data = txndata;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);

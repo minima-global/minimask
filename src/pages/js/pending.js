@@ -66,6 +66,7 @@ function signAction(uid, callback){
 	//Send this amount..
 	var msg 			= _createSimpleMessage("account_sign");
 	msg.params.data 	= pending.params.data;
+	msg.params.post 	= pending.params.post;
 	
 	//And get the latest key uses
 	callSimpleServiceWorker("account_get_key_uses", function(res){
@@ -76,8 +77,12 @@ function signAction(uid, callback){
 			
 			pendingSent(pending, sendresp, function(){
 			
-				popupAlert("Transaction Signed!");
-								
+				if(pending.params.post){
+					popupAlert("Transaction Signed and Posted!");	
+				}else{
+					popupAlert("Transaction Signed!");
+				}
+						
 				//Remove from list..
 				cancelPending(uid);	
 			});
@@ -172,11 +177,17 @@ function setPendingList(callback){
 			
 		}else if(pending.command == "account_sign"){
 			
+			//Are we posting
+			var title = "Sign transaction";
+			if(pending.params.post){
+				title = "Sign and Post transaction";
+			}
+			
 			var comm = '<table width=100%>'+
 														
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>Type : </td>'+
-							'<td style="font-size:10;" nowrap>Sign transaction</td>'+
+							'<td style="font-size:10;" nowrap>'+title+'</td>'+
 						'</tr>'+
 						
 						'<tr style="background-color: #eeeeee;">'+

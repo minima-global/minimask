@@ -45,7 +45,10 @@
 		<table>	
 	<div>	
 	<br>
-	<b>Future funds..</b> 
+	<b>Future funds..</b><br>
+	
+	<span style="font-size:10;">( Please allow a minute for sent coins to appear in the list.. )</span><br>
+	 
 	<div id="id_list_future"></div>
 	<br>	 	
 	<button class="mybtn" onclick="	window.location.reload();">REFRESH</button>
@@ -57,8 +60,8 @@
 		var USER_ADDRESS   = "";
 		
 		//The details of the contract
-		var FCASH_ADDRESS = "MxG081D4YAEM6CBEYT2AA2VWMFMBZVGKEEU2SASEJ47SSTNVD5SBVMJB1GACYZ9";
-		var FCASH_SCRIPT  = "LET cname=[ Future Cash Contract v1 ] ASSERT @COINAGE GT PREVSTATE[0] RETURN SIGNEDBY(PREVSTATE[1])"
+		var FCASH_ADDRESS = "MxG084V4UHRZY9JFSK3G7BGN370J7KY0RZJBS63F8YZT387WP2B1478F8AEWKQH";
+		var FCASH_SCRIPT  = "LET cname=[ Future Cash Contract v1 ] ASSERT @COINAGE GT PREVSTATE(0) RETURN SIGNEDBY(PREVSTATE(1))"
 		
 		//Wait for page to load
 		window.onload = function () {
@@ -106,7 +109,7 @@
 			//Get the value
 			var amount = id_send_amount.value;
 			if(+amount > 10){
-				alert("MAX 10 Minima send..!");
+				alert("MAX 10 Minima send..!\n\nThis is a DEMO after all..");
 				return
 			}
 			
@@ -195,9 +198,18 @@
 			//Create the TXN
 			MINIMASK.meg.rawtxn(inputcoins, outputcoins, scripts, {}, function(rawresp){
 				console.log("rawtxn : "+JSON.stringify(rawresp,null,2));
-								
+				
+				var txndata = rawresp.data.data;
+				
+				console.log("txndata : "+txndata);
+				
+				//Now post and sign it..
+				MINIMASK.account.sign(txndata, true, function(signresp){
+					console.log("signtxn : "+JSON.stringify(signresp,null,2));
+					
+					alert("Collection transaction added to Pending!\n\nPlease open MiniMask and confirm..");		
+				});								
 			});
-			
 		}
 		
 	</script>

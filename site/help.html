@@ -106,8 +106,10 @@ var MINIMASK = {
 		
 		/**
 		 * Sign a transaction created with MINIMASK.meg.rawtxn  (Causes a Pending)
-		 */
-		sign : function(txndata, callback)
+		 *
+ 		 * Do you post as well as Sign ?
+ 		 */
+		sign : function(txndata, post, callback)
 	},
 				
 	/**
@@ -159,8 +161,10 @@ var MINIMASK = {
 		
 		/* 
 		 * Sign a transaction created with rawtxn
+		 *
+		 * Do you post as well as Sign ?
 		 */ 
-		signtxn : function(txndata, privatekey, keyuses, callback)
+		signtxn : function(txndata, privatekey, keyuses, post, callback)
 		
 		/* 
 		 * Post a transaction created with rawtxn and signed with signtxn

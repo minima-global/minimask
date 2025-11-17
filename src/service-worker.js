@@ -84,7 +84,8 @@ function convertMessageToAction(msg){
 		ret.params.data 		= msg.params.data;
 		ret.params.privatekey 	= msg.params.privatekey;
 		ret.params.keyuses 		= msg.params.keyuses;
-	
+		ret.params.post 		= msg.params.post;
+		
 	}else if(msg.command ==  "posttxn"){
 					
 		ret.webcall 			= true;
@@ -231,6 +232,7 @@ function convertMessageToAction(msg){
 			
 		//Set the main params
 		ret.params.data 		= msg.params.data;
+		ret.params.post 		= msg.params.post;
 				
 		//Is this internal.. ?
 		if(msg.external){

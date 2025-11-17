@@ -27,16 +27,16 @@
 		This Contract was made in Script IDE : 
 		<pre style="text-align:left;font-size:12;">
 /* A string to make the address (hash of the script) unique */
-LET cname = [ Future Cash Contract v1 ]
+LET cname=[ Future Cash Contract v1 ]
 
 /* Coin MUST be older than the timelock - stored in state var 0 */
-ASSERT @COINAGE GT PREVSTATE[0]
+ASSERT @COINAGE GT PREVSTATE(0)
 
 /* CHECK is signed by the specified key - stored in state var 1 */ */
-RETURN SIGNEDBY( PREVSTATE[1] )
+RETURN SIGNEDBY(PREVSTATE(1))
 		</pre>
 		
-		The Contract address is : <b>MxG081D4YAEM6CBEYT2AA2VWMFMBZVGKEEU2SASEJ47SSTNVD5SBVMJB1GACYZ9</b><br>
+		The Contract address is : <b>MxG084V4UHRZY9JFSK3G7BGN370J7KY0RZJBS63F8YZT387WP2B1478F8AEWKQH</b><br>
 		<br>
 		The timelock details are stored as state variables..<br>
 		<br>
