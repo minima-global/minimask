@@ -41,7 +41,7 @@ var MINIMASK = {
 					MAIN_MINIMASK_CALLBACK(mini_msg); 
 				}
 			});
-		}, 1000);
+		}, 2000);
 		
 		//Get Init details
 		postMessageToServiceWorker(_createSimpleMessage("minimask_extension_init"), function(resp){
