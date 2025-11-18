@@ -170,7 +170,7 @@ var MINIMASK = {
 		send : function(amount, toaddress, tokenid, fromaddress, privatekey, script, keyuses, callback){
 			var msg = _createSimpleMessage("send");
 			
-			msg.params.amount  		= amount;
+			msg.params.amount  		= ""+amount;
 			msg.params.toaddress  	= toaddress;
 			msg.params.tokenid  	= tokenid;
 			msg.params.fromaddress  = fromaddress;
