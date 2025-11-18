@@ -152,7 +152,7 @@ function setPendingList(callback){
 						
 						'<tr style="background-color: #eeeeee;">'+
 							'<td style="text-align:right" nowrap>Amount : </td>'+
-							'<td>'+sanitizeHTML(shrinkAddress(pending.params.amount))+'</td>'+
+							'<td>'+sanitizeHTML(shrinkAddress(""+pending.params.amount))+'</td>'+
 						'</tr>'+
 						
 						'<tr style="background-color: #eeeeee;">'+

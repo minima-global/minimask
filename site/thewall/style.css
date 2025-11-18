@@ -1,0 +1,47 @@
+
+@font-face {
+	font-family: Manrope;
+	src: url('./Manrope-Regular.ttf');
+}
+
+body {
+	font-family: Manrope; 
+	font-size: 16;
+	margin: 8;   
+}
+
+.msgdiv {
+	max-width:600;
+	text-align:left;
+	background-color: #F8F8F8;
+  	border-radius: 8px;
+  	padding: 8px 8px;
+	border-color: #16181C;
+	margin:20px;
+	white-space: pre-wrap;
+	word-wrap: break-all;
+}
+
+/* Normal buttons */
+.mybtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 12px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.mybtn:hover {
+  background-color: RoyalBlue;
+}
+
+.mybtn:active {
+  background-color: red;
+}
+
+.mybtn:disabled {
+  background-color: RoyalBlue;
+}

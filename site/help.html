@@ -101,6 +101,8 @@ var MINIMASK = {
 		
 		/**
 		 * Send funds from this account (Causes a Pending)
+		 *
+		 * Amount MUST be a string.. Number is not precise enough
 		 */
 		send : function(amount, address, tokenid, state, callback)
 		
@@ -132,6 +134,9 @@ var MINIMASK = {
 		 *
 		 * Note that you must use a different keysuses every time. 
 		 * Start with 0 and increment.
+		 *
+		 * Amount MUST be a string.. Number is not precise enough
+		 *		 
 		 */ 
 		send : function(amount, toaddress, tokenid, 
 				fromaddress, privatekey, script, keyuses, callback)
@@ -154,7 +159,7 @@ var MINIMASK = {
 		 * var scripts = ["RETURN SIGNEDBY(0x3C986F919AD66B2F1724675449FFD6A2D1FA6C8A8DAD9723991EA68E35C2D950)"]
 		 *
 		 * //A JSON state
-		 * state = {"0":"98","1":"[MESSAGE]"}
+		 * state = {"0":"98","1":"0xFFEEDD"}
 		 *
 		 */
 		rawtxn : function(inputs, outputs, scripts, state, callback)

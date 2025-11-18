@@ -58,7 +58,7 @@ function convertMessageToAction(msg){
 		
 		ret.webcall 			= true;
 		ret.url 				= getCurrentMEGFunctionCall("wallet/send");
-		ret.params.amount 		= msg.params.amount;
+		ret.params.amount 		= ""+msg.params.amount;
 		ret.params.toaddress 	= msg.params.toaddress;
 		ret.params.tokenid 		= msg.params.tokenid;
 		ret.params.fromaddress 	= msg.params.fromaddress;
@@ -191,7 +191,7 @@ function convertMessageToAction(msg){
 		}
 			
 		//Set the main params
-		ret.params.amount 		= msg.params.amount;
+		ret.params.amount 		= ""+msg.params.amount;
 		ret.params.toaddress 	= msg.params.address;
 		ret.params.tokenid 		= msg.params.tokenid;
 		

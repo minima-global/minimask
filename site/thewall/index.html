@@ -1,0 +1,158 @@
+<html>
+<head>
+	<title>The Wall</title>
+	
+	<link rel="stylesheet" href="style.css">
+		
+</head>
+	
+<body>
+	
+<style>
+
+	.righttd{
+		width:100;
+		text-align:right;
+	}
+	
+	
+</style>
+	
+<center>
+	<br>
+	<h3>The Wall</h3>
+	
+	<div style="width:700;">
+		This application sends Minima to an address with a message as a state variable..<br>
+		<br>
+		We then scan the chain for that address. The messages remain for 24 hours.<br>
+		<br>
+		<span style="font-size:10;">Each message costs 0.00000001 Minima</span><br>
+		<br>
+		
+		<textarea id="id_sendmsg" style="width:400;height:150;resize:none;"></textarea><br>
+		<br>
+		<button class=mybtn onclick="sendMessage();">SEND MESSAGE</button>
+		 
+		<br>
+			
+	<br>
+	<b>All messages..</b><br>
+	<span style="font-size:10;">( Please allow a minute for sent messages to appear in the list.. )</span><br>
+	 
+	<div id="id_list_messages"></div>
+	<br>	 	
+	<button class="mybtn" onclick="window.location.reload();">REFRESH</button>
+		
+	<script type="text/javascript">
+		
+		//The details of the contract
+		var WALL_ADDRESS = "0xFFEEDDFFEEDD99";
+		
+		//Wait for page to load
+		window.onload = function () {
+			
+			//Have we loaded the MiniMask Extension
+			if(typeof MINIMASK !== "undefined"){
+				
+				//Lets see if we are logged in..
+				MINIMASK.init(function(initmsg){
+					
+					//Log all messages
+					console.log("MiniMask : "+JSON.stringify(initmsg,null,2));
+					
+					if(initmsg.event == "MINIMASK_INIT"){
+						
+						//Are we logged in..
+						if(!initmsg.data.data.loggedon){
+							alert("You must be logged into MiniMask to send messages..");							
+						}
+						
+						loadMessages();
+							
+					}else if(initmsg.event == "MINIMASK_PENDING"){
+						
+					}	
+				});
+				
+			}else{
+				console.log("MINIMASK extension not active!");	
+			}	
+		}
+		
+		//Send funds to the contract
+		function sendMessage(){
+			
+			//Get the message
+			var msg=id_sendmsg.value.trim();
+			
+			//URL encode..
+			if(msg == ""){
+				alert("Blank message not allowed..");
+				return;
+			}else if(msg.length>1024){
+				alert("Message too long.. 1024 characters max");
+				return;
+			}
+			
+			var cdate = new Date().toLocaleString();
+			
+			//Create the state..
+			var state = {};
+			state[99]  = "["+cdate+"\n\n"+encodeURI(msg)+"]";
+			
+			//Let send some funds!
+			MINIMASK.account.send("0.00000001", WALL_ADDRESS, "0x00", state, function(sendresp){
+				
+				if(sendresp.pending){
+					//This will be a Pending transaction!
+					alert("Pending transaction created!\n\nOpen MiniMask extension to approve..");	
+				
+					id_sendmsg.value = "";
+				}else{
+					alert(sendresp.error);
+				}
+			});
+		}
+		
+		function sanitizeHTML(str) {
+		    const div = document.createElement('div');
+		    div.textContent = str;
+		    return div.innerHTML;
+		}
+		
+		//Init the Page
+		function loadMessages(){
+			
+			//Get all Minima coinsd, at that address, with the public key as a state var
+			MINIMASK.meg.listcoins(WALL_ADDRESS, "", "", function(resp){
+				console.log("coins : "+JSON.stringify(resp,null,2));
+				
+				var cointable = "<br>";
+				
+				var len = resp.data.length;
+				if(len == 0){
+					cointable += "No Messages found.."
+				}
+				
+				for(var i=0;i<resp.data.length;i++){
+					var coin = resp.data[i];
+					
+					var fullmsg = coin.state[99];
+					var decmsg 	= decodeURI(coin.state[99]);
+					var msg		= decmsg.substring(1,decmsg.length-1);
+					
+					cointable += "<pre class='msgdiv'>"+sanitizeHTML(msg)+"</pre>"	
+				}
+				
+				id_list_messages.innerHTML = cointable;
+			});
+		}
+		
+	</script>
+	
+</center>	
+
+</body>
+
+</html>
