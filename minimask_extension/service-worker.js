@@ -453,16 +453,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= res.response.script;
 					
 					//Store these details
-					storeUserDetails(MINIMASK_USER_DETAILS, function(){
+					/*storeUserDetails(MINIMASK_USER_DETAILS, function(){
 						sendResponse(resp);		
-					});
+					});*/
+					
+					//Send back details
+					sendResponse(resp);
 				}							
 			});
 			
 		}else if(action.command == "minimask_extension_init"){
 			
 			//Are we logged in..
-			retrieveUserDetails(function(details){
+			/*retrieveUserDetails(function(details){
 				
 				resp.data 			= {};
 				resp.data.loggedon 	= false;
@@ -484,11 +487,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				setupMEGConnectDetails(function(){
 					sendResponse(resp);	
 				});				
+			});*/
+			
+			//Details are in RAM
+			resp.data 			= {};
+			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
+
+			if(MINIMASK_USER_DETAILS.LOGGEDON){
+				//Set some details
+				resp.data.address 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+				resp.data.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
+			}							
+			
+			//Load the MEG settings..
+			setupMEGConnectDetails(function(){
+				sendResponse(resp);	
 			});
+			
 					
 		}else if(action.command == "minimask_extension_logout"){
 			
-			storeUserDetails({}, function(){
+			/*storeUserDetails({}, function(){
 				clearPendingTxns(function(){
 					
 					//Reset details
@@ -497,8 +516,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 					
 					sendResponse(resp);	
 				});
-			});
+			});*/
 			
+			clearPendingTxns(function(){
+				
+				//Reset details
+				MINIMASK_USER_DETAILS = {};
+				MINIMASK_USER_DETAILS.LOGGEDON = false;
+				
+				sendResponse(resp);	
+			});
+		
 		}else if(action.command == "account_pending"){
 			
 			getPendingTxns(function(allpending){
@@ -735,7 +763,7 @@ async function makePostRequest(url, jsonparams, callback){
 /**
  * Save / Load User data - Currently NOT used as need to encrypt for Session storage
  */
-function storeUserDetails(data, callback){
+/*function storeUserDetails(data, callback){
 	chrome.storage.session.set({ user_details : data }).then(() => {
 		callback();  
 	});
@@ -745,7 +773,7 @@ function retrieveUserDetails(callback){
 	chrome.storage.session.get(["user_details"]).then((result) => {
 	  	callback(result);
 	});
-}
+}*/
 
 /**
  * Store Custom MEG details 
