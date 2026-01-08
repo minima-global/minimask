@@ -13,11 +13,6 @@ function injectScript (src) {
 //Inject the minimask.js code into the page
 injectScript('minimask.js');
 
-//Now set up the MEG host..
-callSimpleServiceWorker("account_init_meg", function(res){
-	//console.log("MEG setup : "+JSON.stringify(res));
-});
-
 /**
  * Listen out for messages and forward to Service Worker
  */

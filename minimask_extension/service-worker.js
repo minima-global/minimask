@@ -374,10 +374,34 @@ function convertMessageToAction(msg){
 }
 
 /**
- * Listen for messages
+ * Listen for messages - MAIN ENTRY POINT
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  	
+	
+	console.log("Service Worker Received Command : "+JSON.stringify(request));
+	
+	//Check MEG setup..
+	if(MINIMASK_MEG_HOST == ""){
+		
+		console.log("MEG host requires setting..");
+			
+		//Set the host..
+		setupMEGConnectDetails(function(){
+			
+			//And process the request
+			_processMiniRequest(request, sender, sendResponse);
+		});
+		
+	}else{
+		//Just process request
+		_processMiniRequest(request, sender, sendResponse);
+	}
+	
+	return true;
+});
+	
+function _processMiniRequest(request, sender, sendResponse){
+	 	
 	//Send back response	
 	var resp 		= {};
 	resp.pending 	= false;
@@ -426,8 +450,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			
 			sendResponse(resp);
 		});
-		
-		return true;
 		
 	}else if(action.internal){
 		
@@ -499,11 +521,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				resp.data.publickey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY;
 			}							
 			
-			//Load the MEG settings..
-			setupMEGConnectDetails(function(){
-				sendResponse(resp);	
-			});
-			
+			sendResponse(resp);	
 					
 		}else if(action.command == "minimask_extension_logout"){
 			
@@ -639,8 +657,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			});
 		}
 		
-		return true;
-		
 	}else if(action.webcall){
 		
 		//Is it a cached call..
@@ -686,8 +702,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			sendResponse(resp);
 		});
 		
-		return true;
-			
 	}else{
 		//ONLY send back the response
 		resp.status = action.status;
@@ -701,8 +715,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		
 		//No webcall required.. just send answer back
 		sendResponse(resp);
-	}
-});
+	}	
+}
 
 
 /**
