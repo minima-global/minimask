@@ -21,7 +21,7 @@ MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY	= "";
 MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT 		= "";
 
 var SERVICE_LOGGING = false;
-var WEB_LOGGING 	= false;
+var WEB_LOGGING 	= true;
 
 /**
  * Get the current MEG Host
@@ -65,6 +65,7 @@ function convertMessageToAction(msg){
 		ret.params.privatekey 	= msg.params.privatekey;
 		ret.params.script 		= msg.params.script;				
 		ret.params.keyuses 		= msg.params.keyuses;
+		ret.params.split 		= msg.params.split;
 							
 	}else if(msg.command ==  "rawtxn"){
 			
@@ -733,14 +734,29 @@ async function makePostRequest(url, jsonparams, callback){
 	headers.append('Content-Type', 'application/x-www-form-urlencoded');
 	
 	//Convert JSON to URL params
-	var urlparams = Object.keys(jsonparams)
+	/*var urlparams = Object.keys(jsonparams)
 	  .filter(function (key) {
-	    return jsonparams[key] ? true : false
+		console.log("FILTER KEY = "+key+" VALUE = "+jsonparams[key]);
+		return jsonparams[key] ? true : false
 	  })
 	  .map(function (key) {
+		console.log("MAP KEY = "+key+" VALUE = "+jsonparams[key]);
 	    return encodeURIComponent(key) + '=' + encodeURIComponent(jsonparams[key])
 	  })
-	  .join('&');
+	  .join('&');*/
+	
+	  var urlparams = Object.keys(jsonparams)
+	  	  .filter(function (key) {
+	  		//console.log("FILTER KEY = "+key+" VALUE = "+jsonparams[key]);
+	  		return true;
+	  	  })
+	  	  .map(function (key) {
+	  		//console.log("MAP KEY = "+key+" VALUE = "+jsonparams[key]);
+	  	    return encodeURIComponent(key) + '=' + encodeURIComponent(jsonparams[key])
+	  	  })
+	  	  .join('&');
+	    
+	//console.log("URLPARAMS = "+urlparams);
 	  
 	try{
 		const response = await fetch(url, {
