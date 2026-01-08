@@ -4,6 +4,8 @@
 
 var PENDING_LIST = [];
 
+var PENDING_DEBUG_LOGGING = true;
+
 function getPendingItem(uid){
 	for(var i=0;i<PENDING_LIST.length;i++){
 		if(PENDING_LIST[i].pendinguid == uid){
@@ -47,6 +49,10 @@ function sendAction(uid, callback){
 		//And send on..
 		chrome.runtime.sendMessage(msg, (sendresp) => {
 			
+			if(PENDING_DEBUG_LOGGING){
+				console.log("PENDING SEND ACTION : "+JSON.stringify(sendresp));
+			}
+			
 			pendingSent(pending, sendresp, function(){
 			
 				popupAlert("Funds Sent!");
@@ -74,6 +80,10 @@ function signAction(uid, callback){
 		
 		//And send on..
 		chrome.runtime.sendMessage(msg, (sendresp) => {
+			
+			if(PENDING_DEBUG_LOGGING){
+				console.log("PENDING SIGN ACTION : "+JSON.stringify(sendresp));
+			}
 			
 			pendingSent(pending, sendresp, function(){
 			
