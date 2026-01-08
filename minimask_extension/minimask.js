@@ -167,7 +167,7 @@ var MINIMASK = {
 			});
 		},
 		
-		send : function(amount, toaddress, tokenid, fromaddress, privatekey, script, keyuses, callback){
+		send : function(amount, toaddress, tokenid, fromaddress, privatekey, script, keyuses, split, callback){
 			var msg = _createSimpleMessage("send");
 			
 			msg.params.amount  		= ""+amount;
@@ -177,6 +177,7 @@ var MINIMASK = {
 			msg.params.privatekey  	= privatekey;
 			msg.params.script  		= script;
 			msg.params.keyuses  	= keyuses;
+			msg.params.split  		= split;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
