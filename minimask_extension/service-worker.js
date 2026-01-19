@@ -137,10 +137,13 @@ function convertMessageToAction(msg){
 		ret.params.txpowid 	= msg.params.txpowid;
 	
 	}else if(msg.command ==  "balance"){
-		ret.webcall 		= true;
-		ret.cached 			= true;
-		ret.url 			= getCurrentMEGFunctionCall("wallet/balance");
-		ret.params.address 	= msg.params.address;
+		ret.webcall 				= true;
+		ret.cached 					= true;
+		ret.url 					= getCurrentMEGFunctionCall("wallet/balance");
+		ret.params.address 			= msg.params.address;
+		ret.params.confirmations 	= msg.params.confirmations;
+		ret.params.coinlist 		= msg.params.coinlist;
+		ret.params.tokendetails 	= msg.params.tokendetails;
 	
 	}else if(msg.command ==  "listcoins"){
 		ret.webcall 		= true;

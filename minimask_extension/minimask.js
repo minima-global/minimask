@@ -159,8 +159,17 @@ var MINIMASK = {
 		},
 		
 		balance : function(address, callback){
+			//Run full balance..
+			fullbalance(address, 3, false, false, callback);	
+		},
+		
+		balancefull : function(address, confirmations, coinlist, tokendetails, callback){
 			var msg = _createSimpleMessage("balance");
-			msg.params.address  = address;
+			
+			msg.params.address  		= address;
+			msg.params.confirmations  	= confirmations;
+			msg.params.coinlist  		= coinlist;
+			msg.params.tokendetails		= tokendetails;
 			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
