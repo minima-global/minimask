@@ -158,6 +158,16 @@ var MINIMASK = {
 			});	
 		},
 		
+		createseed : function(seedphrase, callback){
+			
+			var msg = _createSimpleMessage("createseed");
+			msg.params.seedphrase = seedphrase;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
 		balance : function(address, callback){
 			//Run full balance..
 			fullbalance(address, 3, false, false, callback);	

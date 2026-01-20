@@ -124,6 +124,11 @@ var MINIMASK = {
 		 */
 		create : function(callback)
 		
+		/**
+		 * Create a Minima account given a specific seed phrase
+		 */
+		createseed : function(seedphrase, callback)
+		
 		/*
 		 * Get the Balance of an address
 		 */
@@ -136,10 +141,11 @@ var MINIMASK = {
 		 * Start with 0 and increment.
 		 *
 		 * Amount MUST be a string.. Number is not precise enough
-		 *		 
+		 *
+		 * Split MUST be 1-10		 
 		 */ 
 		send : function(amount, toaddress, tokenid, 
-				fromaddress, privatekey, script, keyuses, callback)
+				fromaddress, privatekey, script, keyuses, split, callback)
 		
 		/*
 		 * Create a Raw unsigned transaction with 

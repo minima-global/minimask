@@ -54,6 +54,12 @@ function convertMessageToAction(msg){
 		ret.webcall = true;
 		ret.url 	= getCurrentMEGFunctionCall("wallet/create");
 	
+	}else if(msg.command ==  "createseed"){
+		
+		ret.webcall 			= true;
+		ret.url 				= getCurrentMEGFunctionCall("wallet/seedphrase");
+		ret.params.seedphrase 	= msg.params.seedphrase;
+				
 	}else if(msg.command ==  "send"){
 		
 		ret.webcall 			= true;
