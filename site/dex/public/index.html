@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="stylesheet" href="./css/style.css">
+	
+	<script type="text/javascript" src="./js/libs/jquery-3.7.1.min.js"></script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
+	
+	<script src="./js/libs/chartjs-chart-financial.min.js" type="text/javascript"></script>
+	
+	<script src="./js/libs/decimal.js" type="text/javascript"></script>
+		
+	<script src="./js/libs/qrcode.min.js" type="text/javascript"></script>
+	
+    <title>Minima DEX</title>
+</head>
+
+<body>
+	
+	<!-- The BLACKOUT Panel-->
+	<div id="id_blackoutdiv" class="blackout"></div>
+	
+	<!-- The BUY SELL Panel-->
+	<div id="id_buyselldiv" class="centerdiv">
+		
+		<div class="greyrounded">
+			<div class="paddedborder">
+		
+				<b>Market Action</b><br>
+				
+				<table style="width:100%;height:100%;" border=0>
+					<tr>
+						<td colspan=2><br><div id="id_mktaction_details"></div><br></td>
+					</tr>
+					<tr>
+						<td class="alignright" style="min-width:200px;">
+							Price : 
+						</td>
+						<td style="width:100%;">
+							<div id="id_mktaction_price"></div> 
+						</td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td class="alignright">
+							Maximum Amount : 
+						</td>
+						<td style="width:100%;">
+							<div id="id_mktaction_maxamount"></div> 
+						</td>
+					</tr>
+					<tr>
+						<td class="alignright">
+							Choose Amount : 
+						</td>
+						<td>
+							<div>
+							  <input id="id_mktamountrange" type="range" min="0" max="1" step="0.001" style="width:200px;" />
+							</div>
+						</td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td class="alignright">
+							Amount : 
+						</td>
+						<td>
+							<div id="id_mktcurrentamount"></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="alignright">
+							Total : 
+						</td>
+						<td>
+							<div id="id_mkttotal"></div>
+						</td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td><button class="mybtn" onclick="hideMktActionPanel();">Cancel</button></td>
+						<td class="alignright"><button onclick="startTrade();" class="mybtn">CONFIRM</button></td>
+					</tr>
+				</table>
+				
+			</div>
+		</div>
+	</div>
+	
+	<!-- The SEED Panel-->
+	<div id="id_seedphrasepanel" class="centerdiv" style="height:280px;">
+		
+		<div class="greyrounded">
+			<div class="paddedborder">
+		
+				<b>Seed Phrase</b><br>
+				<br>
+				Seed phrase and key uses for your DEX wallet : <br>
+				<br>
+				Make sure you have a backup of this info..<br>
+				<br>
+				<div id="id_seedphrasedetails">###</div>
+				<br>
+				<div id="id_seedphrase_keyuses">###</div>
+				<br>
+				<center>
+					<button class="mybtn" onclick="hideSeedPhrase();">Close</button>
+				</center>
+			</div>
+		</div>
+	</div>
+	
+	<!-- The INIT Panel-->
+	<div id="id_initpanel" class="centerdiv" style="height:300px;">
+		
+		<div class="greyrounded">
+			<div class="paddedborder">
+		
+				<b>Welcome!</b><br>
+				<br>
+				Your wallet details are encrypted with a password<br>
+				<br>
+				Type that in here or choose one now if this is your first time<br>
+				<br>
+				DO NOT FORGET IT<br>
+				<br>
+				
+				<center>
+					
+					<input type="password" id="id_init_password"><br>
+					<br>
+					<button class="mybtn" onclick="init_clearall();">Clear All Data</button>&nbsp;&nbsp;&nbsp;
+					<button class="mybtn" onclick="init_passwordcheck();">Continue</button>
+					
+				</center>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Create seed -->
+	<div id="id_createseed_panel" class="centerdiv" style="height:300px;">
+		
+		<div class="greyrounded">
+			<div class="paddedborder">
+		
+				<b>Create Seed</b><br>
+				<br>
+				No details found..<br>
+				<br>
+				Please type in your seed / key uses or create a new one..<br>
+				<br>
+				MAKE A BACKUP ( ..you can access this info later )<br>
+				<br>
+				<table width=100%>
+					<tr>
+						<td class="alignright">Seed Phrase : </td>
+						<td><input type="text" id="id_init_seed" style="width:90%"></td>
+					</tr>
+					<tr>
+						<td class="alignright">Key Uses : </td>
+						<td><input type="number" id="id_init_keyuses" style="width:90%" value=0></td>
+					</tr>
+				</table>
+				<br>
+				<center>
+					<button class="mybtn" onclick="init_createnew();">Create New</button>&nbsp;&nbsp;&nbsp;
+					<button class="mybtn" onclick="init_continueseed();">Continue</button>
+				</center>
+			</div>
+		</div>
+	</div>
+	
+	<!-- TRade INFO -->
+	<div id="id_tradeinfo_panel" class="centerdiv" style="height:320px;">
+		
+		<div class="greyrounded">
+			<div class="paddedborder">
+		
+				<b>Trade Information</b><br>
+				<br>
+				<center>
+					
+					<textarea id="id_tradeinfo_textarea" 
+						style="font-size:0.8em;padding:5px;border-radius: 5px;width:90%;height:180px;resize:none;" readonly></textarea> 
+					
+					<br><br>
+					<button class="mybtn" onclick="hideTradeInfoPanel();">Close</button>
+					
+				</center>
+			</div>
+		</div>
+	</div>
+	
+	<table class="fullwidthheight" border=0>
+		
+		<!-- TOP MENU-->
+		<tr>
+			<td style="padding-top:10px;padding-bottom:0px;padding-left:10px;padding-right:10px;">
+				
+				<div class="greyrounded">
+					<div class="paddedborder">
+						
+						<table style="width:100%;">
+							<tr>
+								
+								<td>
+									<button class="menubtn" onclick="navigate_dex();">DEX</button>
+									<button class="menubtn" onclick="navigate_wallet();">Wallet</button>
+									<button class="menubtn" onclick="navigate_allorders();">All My Orders</button>
+									<button class="menubtn" onclick="navigate_history();">History</button>
+								</td>
+								
+								<td>
+									<div id="id_dex_state"></div>	
+								<td>
+								
+								<td style="text-align:right">
+									<button class="menubtn" onclick="navigate_help();">Help</button>
+									<!--<button class="menubtn" onclick="navigate_logout();">Log Out</button>-->
+									<!-- <button class="menubtn" onclick="navigate_settings();">Settings</button> -->
+								</td>
+							
+							</tr>
+							
+						</table>											
+	
+					</div>
+				</div>
+				
+			</td>
+		</tr>
+		
+		<tr style="height:100%">
+			<td style="" colspan=1>
+				
+				<!--The MAIN dex-->
+				<div class="fullwidthheight" style="display:none;" id="id_view_maindex" >
+					
+					<!-- the Main DEX page -->	
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="width:300px;padding-top:10px;padding-bottom:10px;padding-left:10px;padding-right:5px;">
+								
+								<table class="fullwidthheight" border=0>
+									<tr style="">
+										<td style="padding-bottom:10px;">
+											<div class="greyrounded" style="overflow-y: auto;">
+												
+												<div class="paddedborder">
+												
+													<b>My Orders</b><br>
+													<table id="id_myorders_table" style="width:100%;border-spacing:2px;" border=0>
+														<tr><th>Amount</th><th>Price</th><th>Type</th><th style='width:0%;'>Action</th></tr>
+													</table>
+												
+												</div>
+												
+											</div>
+										</td>
+									</tr>
+						
+									<tr style="height:150px;">
+										<td>
+												
+											<div class="greyrounded">
+											
+												<div class="paddedborder">
+														
+													<b>Create Order</b><br>
+													<table style="width:100%" border=0>
+														<tr><td>&nbsp;</td></tr>
+														<tr>
+															<td style="text-align:right">Amount : </td>
+															<td><input type=number id="id_createorder_amount" step="0.0001" min=0 value=1></td>
+														</tr>
+														<tr>
+															<td style="text-align:right">Price : </td>
+															<td><input type=number id="id_createorder_price" step="0.0001" min=0 value=1></td>
+														</tr>
+														<tr><td>&nbsp;</td></tr>
+														<tr>
+															<td><button class="mybtn" id="id_createorder_buy">BUY</button></td>
+															<td style="text-align:right"><button class="mybtn" id="id_createorder_sell">SELL</button></td>
+														</tr>
+													</table>												
+	
+												</div>
+												
+											</div>
+												
+										</td>
+									</tr>
+								</table> 
+								
+							</td>
+							
+							<td style="padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px;width:500px;">
+								
+								<table class="fullwidthheight" border=0>
+									
+									<tr style="height:50px;">
+										<td style="padding-bottom:10px;">
+											
+											<div class="greyrounded">
+												
+												<div class="paddedborder">
+													<b>Market</b>
+													
+													<div style="text-align:center;padding-top:10px;">
+														<select style="width:90%" id="id_allmarkets">
+															<option>###</option>	
+														</select>
+														<br><br>
+													</div>
+													
+													<table>
+														<tr>
+															<td class="alignright smallgreytext">Token : </td>
+															<td><div id="id_market_tokenname" class="smallgreytext"><div></td>
+														</tr>
+														<tr>
+															<td class="alignright smallgreytext">TokenID : </td>
+															<td><div id="id_market_tokenid" class="smallgreytext"><div></td>
+														</tr>
+													</table>
+													
+													
+													
+												</div>
+											</div>
+										</td>
+									</tr>
+																	
+									<tr style="height:300px;">
+										
+										<td style="padding-bottom:10px;">
+											<div class="greyrounded">
+												<div class="paddedborder">
+													<table style="width:100%" border=0> 
+														<tr>
+															<td><b>Price Graph</b></td>
+															<td style="text-align:right;">
+																<button onclick="setPriceChartTimeSpan('WEEK')" class=mybtn>Week</button>
+																<button onclick="setPriceChartTimeSpan('DAY')" class=mybtn>Day</button>
+																<button onclick="setPriceChartTimeSpan('HOUR')" class=mybtn>Hour</button>
+																<button onclick="setPriceChartTimeSpan('10MINUTES')" class=mybtn>10 Mins</button>
+															</td>
+														</tr>	
+													</table>
+													<!--<table style="width:100%" border=0>
+														<tr>
+															<td><b>Price Graph</b></td>
+															<td style="text-align:right;">
+																<button onclick="autoUpdateBalance();" class=mybtn>ALL</button>
+																<button onclick="autoUpdateBalance();" class=mybtn>24 HRS</button>
+																<button onclick="autoUpdateBalance();" class=mybtn>1 HR</button>
+															</td>
+														</tr>
+													<table>-->
+													
+													<div style="height:240px;">
+														<canvas id="chartgraph"></canvas>
+													</div>
+													
+												</div>
+												
+											</div>
+										</td>
+									</tr>
+						
+									<tr style="">
+										<td>
+											<div class="greyrounded" style="overflow-y: auto;">
+											
+												<div class="paddedborder">
+													<b>All Trades</b><br>
+													
+													<table id="id_trades_table" style="width:100%;border-spacing:2px;" border=0>
+														<tr><th>Type</th><th>Amount</th><th>Price</th><th>Date</th></tr>
+													</table>
+												</div>
+											
+											</div>
+										</td>
+									</tr>
+								</table>
+								
+							</td>
+							
+							<td style="">
+								
+								<table class="fullwidthheight" style="padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:10px;" border=0>
+									<tr>
+										<td style="padding-bottom:10px;">
+											<div class="greyrounded" style="overflow-y: auto;">
+												
+												<div class="paddedborder">
+													
+													<b>Order Book</b><br>
+													
+													<table id="id_allorders_table" style="width:100%;border-spacing:4px;" border=0>
+														<tr><th>Orders</th><th>Total Amount</th><th>Max Amount</th><th>Price</th><th style='width:0%;'>Action</th></tr>
+													</table>
+												
+												</div>
+												
+											</div>
+										</td>
+									</tr>
+									
+									<tr style="height:300px;">
+										<td>
+											<div class="greyrounded">
+												
+												<div class="paddedborder">
+													<b>Chat Room</b><br>
+													
+													<div style="height:280px;text-align:center;">
+																										
+														<table class="fullwidthheight" border=0>
+															<tr>
+																<td colspan=2>
+																	<textarea id="id_chatroom_textarea" 
+																		style="padding:5px;border-radius: 5px;width:98%;height:220px;resize:none;" readonly></textarea>			
+																</td>
+															</tr>
+															<tr>
+																<td style="width:100%;">
+																	<input id="id_chatroom_message" type="text" style="width:100%;">
+																</td>
+																<td>&nbsp;&nbsp;	 
+																	<button class="mybtn" id="id_chatroom_chatbutton">Chat</button>
+																</td>
+															</tr>
+														</table>
+													</div>
+													
+												</div>
+												
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+					</table>
+					
+				</div>
+				
+				<!--The WALLET -->
+				<div class="fullwidthheight" style="display:none;" id="id_view_wallet" >
+					
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding-left:10px;padding-top:10px;padding-bottom:5px;padding-right:5px;">
+								
+								<div class="greyrounded" style="overflow-y: auto;">
+																									
+									<div class="paddedborder">
+										<table style="width:100%" border=0>
+											<tr>
+												<td><b>Balance</b></td>
+												<td style="text-align:right;">
+													<button id="id_refreshbalance" onclick="autoUpdateBalance();" class=mybtn>Auto-Refresh</button>
+												</td>
+											</tr>
+										<table>
+										<br>
+										<table id="id_balance_table" style="width:100%;border-spacing:8px;" border=0>
+											<tr><th>Token</th><th>Amount</th><th>Coins</th><th>Split</th></tr>
+										</table>
+									</div>
+								
+								</div>
+											
+							</td>
+							
+								<td rowspan=2 style="width:450px;">
+									
+									<table class="fullwidthheight" style="padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:10px;" border=0>
+										
+										<tr>
+											<td style="padding-bottom:10px;">
+												<div class="greyrounded">
+													
+													<div class="paddedborder">
+														
+														<b>Receive</b><br>
+														<br>
+														<center>
+															<div id="wallet_receiveqr"></div>
+															<br>
+															<br>
+															<div id="id_wallet_address" style="font-size:0.9em;white-space: wrap;width:350px;overflow-wrap: break-word;"></div>
+															<br>
+															<p style="font-size:0.7em;">
+															1. When you send funds to this wallet make sure you SPLIT them<br>
+															( so that you can handle multiple trades simultaneously )</p>
+															
+															<p style="font-size:0.7em;">
+															2. When you send funds to this wallet press <b>Auto-Refresh</b> to check for coins<br>
+															( this happens automatically when you send, split or trade )</p>
+															
+														</center>
+														
+													</div>
+													
+												</div>
+											</td>
+											
+										</tr>
+										
+										<tr style="height:150px;">
+											<td style="padding-bottom:0px;">
+												<div class="greyrounded">
+													
+													<div class="paddedborder">
+														
+														<b>Seed Phrase</b><br>
+														<br>
+														View your current seed phrase and key uses<br> 
+														<br>
+														<center>
+															<button class=mybtn onclick="showSeedPhrase();">Seed Phrase</button>
+														</center>
+													</div>
+													
+												</div>
+											</td>							
+										</tr>
+									
+									</table>
+															
+								</td>
+							
+						</tr>
+						
+						<tr>
+							<td style="height:200px;padding-left:10px;padding-top:5px;padding-bottom:10px;padding-right:5px;">
+															
+								<div class="greyrounded">
+																									
+									<div class="paddedborder">
+										<b>Send</b><br>
+										<br>
+										<table style="width:90%" border=0>
+											<tr>
+												<td class="alignright">
+													Token : &nbsp;
+												</td>
+												<td>
+													<select id="id_wallet_tokenselect" style="width:100%">	
+													</select>
+												</td>			
+											</tr>
+											
+											<tr>
+												<td class="alignright">
+													Amount : &nbsp; 
+												</td>
+												<td>
+													  <input id="id_wallet_send_amount" type="number" style="width:100%" value="0"/>
+												</td>			
+											</tr>
+											
+											<tr>
+												<td class="alignright">
+													Address : &nbsp;
+												</td>
+												<td>
+													<input id="id_wallet_send_address"  type="text" style="width:100%">
+												</td>			
+											</tr>
+											
+											<tr><td>&nbsp;</td></tr>
+											
+											<tr>
+												<td colspan=2 style="text-align:center;">
+													<button onclick="wallet_sendfunds();" class=mybtn>&nbsp;&nbsp;Send Funds&nbsp;&nbsp;</button> 
+												</td>			
+											</tr>
+											
+										</table>
+										
+									</div>
+								
+								</div>
+											
+							</td>
+							
+						</tr>
+						
+						
+					</table>
+					
+				</div>
+
+				<!--All Orders-->
+				<div class="fullwidthheight" id="id_view_allorders" style="display:none;">
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding:10px;">
+								
+								<div class="greyrounded" style="overflow-y: auto;">
+																									
+									<div class="paddedborder">
+										<b>All Orders</b><br>
+  										<br>	
+										<table id="id_allmyorders_table" style="width:100%;border-spacing:2px;" border=0>
+											<tr><th>Amount</th><th>Price</th><th>Type</th><th>Action</th></tr>
+										</table>
+										
+									</div>
+								
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<!--History-->
+				<div class="fullwidthheight" id="id_view_history" style="display:none;">
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding:10px;">
+								
+								<div class="greyrounded" style="overflow-y: auto;">
+																									
+									<div class="paddedborder">
+										<table style="width:100%" border=0>
+											<tr>
+												<td><b>History</b></td>
+												<td style="text-align:right;">
+													<button onclick="clearHistory();" class=mybtn>Clear History</button>
+												</td>
+											</tr>
+										<table>
+										<br>
+										<table id="id_history_table" style="font-size:12px;width:100%;border-spacing:2px;" border=0>
+										</table>
+									</div>
+								
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<!--The HELP -->
+				<div class="fullwidthheight" id="id_view_help" style="display:none;">
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding:10px;">
+								
+								<div class="greyrounded" style="overflow-y: auto;">
+																									
+									<div class="paddedborder">
+										<b>Help</b><br>
+										
+										<p style="width:100%;">
+Welcome to the Minima DEX.<br>
+<br>
+This is truly decentralised application that allows Users to trade Minima tokens.<br>
+<br>
+You must have the <b>MiniMask</b> Chrome extension installed. All Minima functionality is provided by this. 
+You do not need to have any funds in the MiniMask wallet - the DEX has its own wallet built in that you will be sending funds to and from. You can of course send funds to and from your MiniMask / Web wallet.<br>
+<br>
+Make sure you have a backup of the Seed Phrase and key uses! You can always log in again at a later date with the same details. All available on the Wallet page.<br> 
+<br>
+The system works by allowing users to communicate with each other P2P (Peer-to-Peer). The server is just a chat relay. It is not involved in the trades at all. All the Minima transactions are created and signed on the client. 
+The system is <b>non-custodial</b> as Users keep their private keys and sign transactions themselves.<br>
+<br>
+The orderbook is made up from all orders from all Users connected at that time. If you disconnect from the server your orders are removed.<br>
+<br>
+So - you <b>MUST</b> be connected to the DEX for your orderbook orders to be available. You must be connected because for a trade to proceed you must be availbale to sign the transaction.<br>
+<br>
+Each trade is a single transaction. All the tokens are added as inputs and outputs and posted if you both agree that this is a correct and valid trade.<br>
+<br>
+There is no scenario where one User gets their coins without the other User also getting their coins!<br>
+<br>
+The trade is atomic.<br>
+<br>
+Ergo - You must keep the browser window open if you have orders in the Order Book (Makers). For Users who just with to do a quick trade (Takers), you can of course shut the window down after the trade is complete.<br>
+<br>
+You can set the Chrome Settings for "Always keep these sites active" in 'Performance' to the DEX address. This way it will keep running when you are using other applications and this page is just in the background.<br>
+<br>
+Currently this DEX is very much in ALPHA development..<br>
+<br>
+Enjoy!<br>
+   																		
+										</p>
+										 
+									</div>
+								
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>
+				
+				<!--The Settings-->
+				<div class="fullwidthheight" id="id_view_settings" style="display:none;">
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding:10px;">
+								
+								<div class="greyrounded">
+																									
+									<div class="paddedborder">
+										<b>Settings</b><br>
+									</div>
+								
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>	
+					
+			</td>			
+		</tr>
+		
+			
+	<table>
+	
+	<!--JS Functions-->
+	<script type="text/javascript" src="dexconfig.js"></script>
+		
+	<script type="text/javascript" src="./js/startup.js"></script>
+	
+	<script type="text/javascript" src="./js/utils.js"></script>
+	<script type="text/javascript" src="./js/mktaction.js"></script>
+	<script type="text/javascript" src="./js/client.js"></script>
+	<script type="text/javascript" src="./js/variables.js"></script>
+	<script type="text/javascript" src="./js/navigation.js"></script>
+	<script type="text/javascript" src="./js/balance.js"></script>
+	<script type="text/javascript" src="./js/orders.js"></script>
+	<script type="text/javascript" src="./js/history.js"></script>
+	<script type="text/javascript" src="./js/trade.js"></script>
+	
+	<!-- Storage Lib -->
+	<script src="./js/libs/crypto-js.4.2.0.min.js"></script>
+	<script type="text/javascript" src="./js/storage.js"></script>
+	
+	<!-- The Chart Graph Panel -->
+	<!--<script type="text/javascript" src="./js/chartgraph.js"></script> -->
+	<script type="text/javascript" src="./js/panels/panel_chart.js"></script>
+					
+	<!--The Panels -->
+	<script type="text/javascript" src="./js/panels/panel_chatroom.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_createorder.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_myorders.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_allorders.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_allmyorders.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_wallet.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_markets.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_history.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_trades.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_init.js"></script>
+			
+	<script type="text/javascript">
+		
+		//Init the DEX
+		initDEX();
+		
+	</script>
+				
+</body>
+</html>
+
