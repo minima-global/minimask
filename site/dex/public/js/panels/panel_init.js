@@ -119,6 +119,7 @@ function init_continueseed(){
 	
 	//Now generate full details..
 	MINIMASK.meg.createseed(id_init_seed.value, function(resp){
+		console.log("Create Seed : "+JSON.stringify(resp));
 		
 		//Set these details..
 		USER_ACCOUNT.SEED 			= resp.data.phrase;
