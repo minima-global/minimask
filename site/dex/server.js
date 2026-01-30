@@ -1,20 +1,69 @@
+/**
+ * Imports
+ */
 import { WebSocketServer } from 'ws';
-
+import { WebSocket } from 'ws';
 import fs from 'fs';
 
-//TEST STUFF
-//import * as clientjs from "./client.cjs";
-//console.log("Random:"+clientjs.getRandomHexString()+" "+clientjs.tester());
-
-//Are we logging..
+/**
+ * Defauilt parameters
+ */
 var DEBUG_LOGS 	= false;
 var SERVER_PORT = 8081;
-
-//How many trades to keep in history log
 var MAX_TRADES 	= 10000;
+var TRADES_FILE = "";
 
-//What file are the trades storeed in
-var TRADES_FILE = "/home/spartacusrex/dextrades.json";
+/**
+ * Command line params..
+ */
+const args = process.argv;
+for(var c=0;c<args.length;c++){
+	var param = args[c];
+	
+	if(param == "-help"){
+		
+		console.log("Usage parameters : ");
+		console.log("-port [port]            : Set the port to listen on");
+		console.log("-tradesfile [file]      : Set the file to store trades");
+		console.log("-maxtrades [maxtrades]  : Max trades to store in file");
+		console.log("-debug                  : Show debug output");
+		console.log("-help                   : Show this help");
+		
+		//And exit
+		process.exit();	
+	
+	}else if(param == "-debug"){
+		DEBUG_LOGS = true;
+	
+	}else if(param == "-tradesfile"){
+		c++;
+		TRADES_FILE = args[c];
+	
+	}else if(param == "-maxtrades"){
+		c++;
+		MAX_TRADES = +args[c];
+	
+	}else if(param == "-port"){
+		c++;
+		SERVER_PORT = +args[c];
+	}
+}
+
+//MUST set a trades file..
+if(TRADES_FILE == ""){
+	console.log("You MUST specify a file to store trades.. Use -help for more info");
+	process.exit();
+}
+
+//Output some info
+console.log('DEX server is running on port '+SERVER_PORT);
+console.log('Trades file '+TRADES_FILE);
+console.log('MAX Trades to store '+MAX_TRADES);
+if(DEBUG_LOGS){
+	console.log('DEBUG logs are ON');
+}else{
+	console.log('DEBUG logs are OFF');
+}
 
 //Create a WebSocket Server
 const server = new WebSocketServer({ 
@@ -104,6 +153,13 @@ server.on('connection', (socket) => {
 				
 				//Broadcast
 				broadcast(createCustomMsg("0x00","trade",trade));	
+			
+			}else if(msgjson.type=="ping"){
+				
+				var pong = createCustomMsg("0x00","pong",{});
+				
+				//Send back a pong message
+				socket.send(pong);		
 				
 			}else{
 				console.log("Unknown message type :"+msgjson.type+" msg:"+strmsg);
@@ -137,8 +193,6 @@ server.on('connection', (socket) => {
 		
     });
 });
-
-console.log('DEX server is running on ws://localhost:'+SERVER_PORT);
 
 //Read in the trades..
 try {

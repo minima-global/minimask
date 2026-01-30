@@ -87,11 +87,9 @@ function mainListenerLoop(){
 				console.log("Message REC error : "+Error);
 			}
 			
-		}else if(msg.type=="trade"){
-		
-			//console.log("NEW TRADE : "+JSON.stringify(msg));
-			
-					
+		}else if(msg.type=="pong"){
+			console.log("Received PONG : ");
+						
 		}else if(msg.type=="closed"){
 			//console.log("UUID CLOSED : "+JSON.stringify(msg));
 			
@@ -137,12 +135,6 @@ function postStartupDex(){
 						
 	//Now connect to server
 	connectToServer();
-	
-	/*wsInitSocket(function(){
-		
-		//Have connected to server - post your orders to it..
-		postMyOrdersToServer();
-	});*/
 }
 
 function loadUserDetails(){

@@ -9,6 +9,7 @@ const init_create_seed		= document.getElementById('id_createseed_panel');
 function showInitPanel(){
 	init_blakout_panel.style.display 	= "block";
 	init_panel.style.display 			= "block";
+	init_create_seed.style.display 		= "none";
 }
 
 function hideInitPanel(){
@@ -26,34 +27,12 @@ function init_passwordcheck(){
 		return;
 	}
 	
-	//Is this MY HACK LOGIN.. (for testing 2 users on same machine..)
-	if(password == "hack"){
-		
-		STORAGE.setPassword("hack");
-		STORAGE.hackAdditionText = "user2";
-		
-		//Set the details automaticcally..
-		USER_ACCOUNT = {};
-		
-		//Set these details..
-		USER_ACCOUNT.SEED 			= HACK_USER_SEED;
-		USER_ACCOUNT.ADDRESS 		= HACK_USER_ADDRESS;
-		USER_ACCOUNT.PUBLICKEY 		= HACK_USER_PUBLICKEY;
-		USER_ACCOUNT.PRIVATEKEY 	= HACK_USER_PRIVATEKEY;
-		USER_ACCOUNT.SCRIPT 		= HACK_USER_SCRIPT;
-		USER_ACCOUNT.KEYUSES 		= 0;
-		
-		//Hide the init panel..
-		hideInitPanel();	
-		
-		//Start the DEX up..
-		postStartupDex();
-		
-		alert("HACK User inited..");
-		
-		return;
-	}
+	//Which wallet..
+	var wallet 		= id_init_wallet.selectedIndex;
+	var walletvalue	= id_init_wallet.options[wallet].value;
 	
+	//Set this as the storage prfix
+	STORAGE.setFilePrfix(walletvalue);
 	
 	//Set this for all the storage
 	STORAGE.setPassword(password);

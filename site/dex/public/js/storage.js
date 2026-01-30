@@ -14,13 +14,20 @@ var STORAGE = {
 	/*
 	 * When testing.. I hack this
  	 */
-	hackAdditionText : "",
+	filePrefixText : "",
 	
 	/**
 	 * Set the main Password
 	 */
 	setPassword : function(password){
 		STORAGE.mainPassword = password;
+	},
+	
+	/**
+	 * Set global File prefix - for multiple stores
+	 */
+	setFilePrfix : function(extratext){
+		STORAGE.filePrefixText = extratext;
 	},
 	
 	/**
@@ -35,7 +42,7 @@ var STORAGE = {
 		var encrypted = CryptoJS.AES.encrypt(datastr, STORAGE.mainPassword);
 		
 		//Now save this
-		localStorage.setItem(STORAGE.hackAdditionText+key,encrypted);		
+		localStorage.setItem(STORAGE.filePrefixText+key,encrypted);		
 	},
 	
 	/**
@@ -44,7 +51,7 @@ var STORAGE = {
 	getData : function(key){
 		
 		//Get the data
-		var encdata = localStorage.getItem(STORAGE.hackAdditionText+key);
+		var encdata = localStorage.getItem(STORAGE.filePrefixText+key);
 		
 		//Check Exists
 		if(encdata == null){

@@ -117,28 +117,50 @@
 	</div>
 	
 	<!-- The INIT Panel-->
-	<div id="id_initpanel" class="centerdiv" style="height:300px;">
-		
+	<div id="id_initpanel" class="centerdiv" style="height:350px;">
 		<div class="greyrounded">
 			<div class="paddedborder">
 		
 				<b>Welcome!</b><br>
 				<br>
-				Your wallet details are encrypted with a password<br>
+				You can use multiple DEX wallets on the same machine<br>
+				<br>
+				Your wallet seed and private keys are encrypted with a password<br>
 				<br>
 				Type that in here or choose one now if this is your first time<br>
 				<br>
 				DO NOT FORGET IT<br>
 				<br>
 				
-				<center>
+				<center>	
+				<table>
 					
-					<input type="password" id="id_init_password"><br>
-					<br>
-					<button class="mybtn" onclick="init_clearall();">Clear All Data</button>&nbsp;&nbsp;&nbsp;
-					<button class="mybtn" onclick="init_passwordcheck();">Continue</button>
+					<tr>
+						<td class="alignright">Wallet : </td>
+						<td>
+							<select style="width:100%" id="id_init_wallet">
+								<option value="wallet_1">Wallet 1</option>
+								<option value="wallet_2">Wallet 2</option>
+								<option value="wallet_3">Wallet 3</option>
+								<option value="wallet_4">Wallet 4</option>	
+							</select>
+						</td>
+					</tr>
 					
-				</center>
+					<tr>
+						<td class="alignright">Password : </td>
+						<td><input type="password" id="id_init_password"></td>
+					</tr>
+					
+				</table>
+				
+				<br>
+				<button class="mybtn" onclick="init_clearall();">Clear All Data</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button class="mybtn" onclick="init_passwordcheck();">Continue</button>
+				
+				</center>	
+								
 			</div>
 		</div>
 	</div>
@@ -160,7 +182,7 @@
 				<table width=100%>
 					<tr>
 						<td class="alignright">Seed Phrase : </td>
-						<td><input type="text" id="id_init_seed" style="width:90%"></td>
+						<td><input type="password" id="id_init_seed" style="width:90%"></td>
 					</tr>
 					<tr>
 						<td class="alignright">Key Uses : </td>
