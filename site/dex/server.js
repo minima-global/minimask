@@ -106,12 +106,15 @@ server.on('connection', (socket) => {
 			
 			//Get the message
 			var strmsg 	= `${message}`;
-			if(DEBUG_LOGS){
-				console.log("Message from:"+socket.id+" msg:"+strmsg);	
-			}
 			
 			//Get the JSON version
 			var msgjson = JSON.parse(strmsg);
+			
+			if(DEBUG_LOGS){
+				if(msgjson.type != "ping"){
+					console.log("Message from:"+socket.id+" msg:"+strmsg);	
+				} 
+			}
 			
 			//What message type is it..
 			if(msgjson.type == "chat"){

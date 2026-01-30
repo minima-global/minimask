@@ -14,13 +14,13 @@ function walletInit(){
 		});	
 		
 	document.getElementById('id_wallet_address').innerHTML		=USER_ACCOUNT.ADDRESS;
-	document.getElementById('id_seedphrasedetails').innerHTML	="Seed : "+USER_ACCOUNT.SEED;
+	document.getElementById('id_seedphrasedetails').innerHTML	=USER_ACCOUNT.SEED;
 }
 
 function showSeedPhrase(){
 	
 	//Set key uses..
-	id_seedphrase_keyuses.innerHTML		= "Key Uses : "+USER_ACCOUNT.KEYUSES;
+	id_seedphrase_keyuses.innerHTML		= USER_ACCOUNT.KEYUSES;
 	
 	seed_blakout_panel.style.display 	= "block";
 	seed_show_panel.style.display 		= "block";
