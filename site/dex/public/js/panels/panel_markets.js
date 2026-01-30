@@ -141,21 +141,26 @@ function updateAllMarkets(){
 			//Get the Users balance
 			var balance = ALL_ORDERS[key].balance;
 			
-			//Cycle through the balance
-			var len = balance.length;
-			for(var i=0;i<len;i++) {
-				
-				var baltok = balance[i];
-				
-				//Is it in the set.. ONLY TOKENS.. Minima is the base 
-				if(!unique_tokenid.has(baltok.tokenid)){
+			try{
+				//Cycle through the balance
+				var len = balance.length;
+				for(var i=0;i<len;i++) {
 					
-					//Add it!
-					unique_tokenid.add(baltok.tokenid);
+					var baltok = balance[i];
 					
-					//Create that market
-					usermarkets.push(createMinimaMarket(baltok));
-				}
+					//Is it in the set.. ONLY TOKENS.. Minima is the base 
+					if(!unique_tokenid.has(baltok.tokenid)){
+						
+						//Add it!
+						unique_tokenid.add(baltok.tokenid);
+						
+						//Create that market
+						usermarkets.push(createMinimaMarket(baltok));
+					}
+				}	
+			}catch(Error){
+				//Hmm.. maybe user sent an invalid order book?
+				console.log("Error reading ALL_USERS book : "+Error);
 			}
 		}
 		

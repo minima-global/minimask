@@ -179,8 +179,6 @@ function loadMyOrders(){
  */
 function findValidOrder(mktuid, tokenid, buyorsell, price, amount){
 	
-	//console.log("findValidOrder : "+mktuid+" "+buyorsell+" "+price+" "+amount);
-	
 	var list = [];
 		
 	//Cycle throuigh ALL_ORDERS users
@@ -189,36 +187,40 @@ function findValidOrder(mktuid, tokenid, buyorsell, price, amount){
 		//Get this users complete book
 		var compbook = ALL_ORDERS[key];
 		
-		//The script
-		var script  = compbook.script;
-		
-		//The address
-		var address  = compbook.address;
-				
-		//The balance - just for the token..
-		var balance = getTokenBalance(tokenid,compbook.balance);
-		
-		//Get the order book
-		var book = compbook.orders;
-		for(var i=0;i<book.length;i++) {
+		try{
+			//The script
+			var script  = compbook.script;
 			
-			//Is it the right Market and right type..
-			if(	book[i].market.mktuid == mktuid && 
-				book[i].type == buyorsell &&
-				+book[i].price == +price &&
-				+book[i].amount >= +amount){
+			//The address
+			var address  = compbook.address;
 					
-					//Found a possible..
-					var possible 		= {};
-					possible.userid		= key;
-					possible.address 	= address;
-					possible.script 	= script;
-					possible.balance 	= balance;
-					possible.book 		= book[i];
-					
-					//Add to our checking list
-					list.push(possible);
-			}
+			//The balance - just for the token..
+			var balance = getTokenBalance(tokenid,compbook.balance);
+			
+			//Get the order book
+			var book = compbook.orders;
+			for(var i=0;i<book.length;i++) {
+				
+				//Is it the right Market and right type..
+				if(	book[i].market.mktuid == mktuid && 
+					book[i].type == buyorsell &&
+					+book[i].price == +price &&
+					+book[i].amount >= +amount){
+						
+						//Found a possible..
+						var possible 		= {};
+						possible.userid		= key;
+						possible.address 	= address;
+						possible.script 	= script;
+						possible.balance 	= balance;
+						possible.book 		= book[i];
+						
+						//Add to our checking list
+						list.push(possible);
+				}
+			}	
+		}catch(Error){
+			
 		}
 	}
 	

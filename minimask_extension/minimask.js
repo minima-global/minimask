@@ -353,7 +353,7 @@ function windowReceiveMessage(evt) {
 	}
 	
 	if(!found){
-		MDS.log("MiniMask Request not found : "+JSON.stringify(msg));
+		console.log("MiniMask Request not found : "+JSON.stringify(msg));
 	}
 	
 	//Now remove that elemnt

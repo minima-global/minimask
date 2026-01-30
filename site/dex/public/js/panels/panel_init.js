@@ -97,25 +97,33 @@ function init_continueseed(){
 	}
 	
 	//Now generate full details..
-	MINIMASK.meg.createseed(id_init_seed.value, function(resp){
-		
-		//Set these details..
-		USER_ACCOUNT.SEED 			= resp.data.phrase;
-		USER_ACCOUNT.ADDRESS 		= resp.data.miniaddress;
-		USER_ACCOUNT.PUBLICKEY 		= resp.data.publickey;
-		USER_ACCOUNT.PRIVATEKEY 	= resp.data.privatekey;
-		USER_ACCOUNT.SCRIPT 		= resp.data.script;
-		USER_ACCOUNT.KEYUSES 		= +id_init_keyuses.value;
-		
-		//Now STORE this..
-		saveUserDetails();
-		
-		//Hide the init panel..
-		hideInitPanel();
+	try{
+		MINIMASK.meg.createseed(id_init_seed.value, function(resp){
 				
-		//Do the startup		
-		postStartupDex();
-	});
+				//Set these details..
+				USER_ACCOUNT.SEED 			= resp.data.phrase;
+				USER_ACCOUNT.ADDRESS 		= resp.data.miniaddress;
+				USER_ACCOUNT.PUBLICKEY 		= resp.data.publickey;
+				USER_ACCOUNT.PRIVATEKEY 	= resp.data.privatekey;
+				USER_ACCOUNT.SCRIPT 		= resp.data.script;
+				USER_ACCOUNT.KEYUSES 		= +id_init_keyuses.value;
+				
+				//Now STORE this..
+				saveUserDetails();
+				
+				//Hide the init panel..
+				hideInitPanel();
+						
+				//Do the startup		
+				postStartupDex();
+			});	
+	
+	}catch(Error){
+		
+		//Hmm. do they have the latest Version..
+		alert("You MUST be Using the latest version of MiniMask (1.9+) for this function to work.. ");
+		
+	}
 }
 
 

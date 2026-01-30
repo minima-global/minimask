@@ -32,18 +32,23 @@ function getOrdersOnly(buysell){
 	//Cycle throuigh ALL_ORDERS users
 	for(const key in ALL_ORDERS) {
 		
-		//Get the order book
-		var book = ALL_ORDERS[key].orders;
-		
-		//Cycle through the book
-		var len = book.length;
-		for(var i=0;i<len;i++) {
+		//Try and add..
+		try{
+			//Get the order book
+			var book = ALL_ORDERS[key].orders;
 			
-			//Is it the right Market and right type..
-			if(book[i].market.mktuid == CURRENT_MARKET.mktuid && book[i].type==buysell){
-				list.push(book[i]);
-			}
-		}
+			//Cycle through the book
+			var len = book.length;
+			for(var i=0;i<len;i++) {
+				
+				//Is it the right Market and right type..
+				if(book[i].market.mktuid == CURRENT_MARKET.mktuid && book[i].type==buysell){
+					list.push(book[i]);
+				}
+			}	
+		}catch(Error){
+			console.log("Could not add user OrderBook to all orders : "+Error);
+		}	
 	}
 	
 	return list;

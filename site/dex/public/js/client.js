@@ -60,7 +60,13 @@ function wsInitSocket(initcallback){
 		var msg = JSON.parse(`${event.data}`);
 		var len = MESSAGE_LISTENERS.length;
 		for(var i=0;i<len;i++){
-			MESSAGE_LISTENERS[i](msg);
+			
+			//Send the message to the listeners..
+			try{
+				MESSAGE_LISTENERS[i](msg);	
+			}catch(Error){
+				console.log("Error forwarding message to WS Listeners : "+Error);
+			}	
 		}
 	};
 
