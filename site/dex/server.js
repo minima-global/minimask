@@ -130,6 +130,15 @@ server.on('connection', (socket) => {
 				//Get the orderbook
 				var orderbook = msgjson.data;
 				
+				//Check is a valid book
+				if(!(	orderbook.address && 
+						orderbook.script && 
+						orderbook.balance && 
+						orderbook.orders)){
+					//Bad Orderbook
+					return;
+				}
+				
 				//Add to our total list
 				orderbooks[socket.id] = orderbook;
 				
