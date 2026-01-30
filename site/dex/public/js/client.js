@@ -33,7 +33,8 @@ function wsInitSocket(initcallback){
 	WEB_SOCKET = new WebSocket(DEX_SERVER);
 	
 	WEB_SOCKET.onopen = () => {
-	    console.log('Connected to server');
+	    console.log('Connected to server..');
+		
 		setDexState("");
 		ERROR_CONNECT_RECONNECT = false;
 		
@@ -43,7 +44,7 @@ function wsInitSocket(initcallback){
 			//Send a PING message
 			pingMessage();
 			
-		}, 10000);
+		}, 20000);
 		
 		if(initcallback){
 			initcallback();

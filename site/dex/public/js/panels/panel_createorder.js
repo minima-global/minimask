@@ -8,10 +8,10 @@ function sendOrder(buysell){
 	
 	//Get the available balance..
 	var available1 = getAvailableBalance(CURRENT_MARKET.token1.tokenid);
-	console.log("Available "+CURRENT_MARKET.token1.name+":"+available1);
+	//console.log("Available "+CURRENT_MARKET.token1.name+":"+available1);
 	
 	var available2 = getAvailableBalance(CURRENT_MARKET.token2.tokenid);
-	console.log("Available "+CURRENT_MARKET.token2.name+":"+available2);
+	//console.log("Available "+CURRENT_MARKET.token2.name+":"+available2);
 	
 	//Check values positive..
 	var amount 	= financial(createamount.value);
