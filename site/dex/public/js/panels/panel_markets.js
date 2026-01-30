@@ -160,7 +160,8 @@ function updateAllMarkets(){
 				}	
 			}catch(Error){
 				//Hmm.. maybe user sent an invalid order book?
-				console.log("Error reading ALL_USERS book : "+Error);
+				console.log("Error reading ALL_USERS book : "+Error+" "+JSON.stringify(ALL_ORDERS[key]));
+				
 			}
 		}
 		
