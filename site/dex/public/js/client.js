@@ -33,7 +33,7 @@ function wsInitSocket(initcallback){
 	WEB_SOCKET = new WebSocket(DEX_SERVER);
 	
 	WEB_SOCKET.onopen = () => {
-	    console.log('Connected to server..');
+	    console.log('Connected to server.. @ '+DEX_SERVER);
 		
 		setDexState("");
 		ERROR_CONNECT_RECONNECT = false;
