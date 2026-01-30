@@ -107,7 +107,9 @@ function wsPostToServer(jsonmsg){
 	
 	//Is the Socket OPEN
 	if (WEB_SOCKET.readyState !== WebSocket.OPEN) {
-		console.log("WS closed.. not sending message "+strmsg);
+		if(LOGGING_ENABLED){
+			console.log("WS closed.. not sending message "+strmsg);
+		}
 		return;
 	}
 	
