@@ -121,7 +121,7 @@ function init_continueseed(){
 	}catch(Error){
 		
 		//Hmm. do they have the latest Version..
-		alert("You MUST be Using the latest version of MiniMask (1.9+) for this function to work.. ");
+		alert("You MUST be Using the latest version of MiniMask (2.0+) for this function to work.. ");
 		
 	}
 }

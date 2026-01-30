@@ -79,6 +79,9 @@ var orderbooks 	= {};
 //All the Trades
 var alltrades	= [];
 
+//Last few Chat messages..
+var allchat	= [];
+
 //What to do on connections
 server.on('connection', (socket) => {
 	
@@ -95,6 +98,7 @@ server.on('connection', (socket) => {
 	var init 		= {};
 	init.trades 	= alltrades;
 	init.orderbooks = orderbooks;
+	init.chat 		= allchat;
 	
 	//Tell the user their uuid and the current orderbooks
 	socket.send(createCustomMsg(socket.id,"init_dex",init));
@@ -122,7 +126,7 @@ server.on('connection', (socket) => {
 				if(msgjson.data.trim() != ""){
 					
 					//Broadcast to all..
-					broadcast(createCustomMsg(socket.id,"chat",msgjson.data));	
+					newChat(socket.id, msgjson);	
 				}
 				
 			}else if(msgjson.type=="update_orderbook"){
@@ -293,6 +297,35 @@ function addTrade(trade){
 	}catch(Error){
 		console.log("Error write file.. : "+Error)
 	}	
+}
+
+/**
+ * Add a Chat message
+ */
+function newChat(fromuuid, msg){
+	
+	//No blank messages
+	if(msg.data.trim() == ""){
+		return;
+	}else if(msg.data.length > 256){
+		//Too long..
+		return;	
+	}
+	
+	//Add the UUID..
+	var shortuuid  = fromuuid.substring(2,10);
+	var nchat = shortuuid+" > "+msg.data;
+	
+	//Push to our list..
+	allchat.push(nchat);
+	
+	//Max number of trades
+	if(allchat.length > 100){
+		allchat.shift();
+	}
+	
+	//Broadcast to all..
+	broadcast(createCustomMsg(fromuuid,"chat",nchat));	
 }
 
 //Create any message

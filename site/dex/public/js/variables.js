@@ -2,6 +2,10 @@
  * User Variables
  */
 var USER_NAME 	= "";
+
+/**
+ * Your server UUID
+ */
 var USER_UUID 	= "";
 
 /**

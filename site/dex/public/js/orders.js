@@ -146,6 +146,15 @@ function postMyOrdersToServer(){
 	myorderbook.balance = USER_BALANCE;
 	myorderbook.orders 	= USER_ORDERS;
 	
+	//Check is VALID
+	if(!(myorderbook.address && myorderbook.script && myorderbook.balance && myorderbook.orders)){
+		
+		console.log("Error : You are creating an INVALID orderbook ? "+JSON.stringify(myorderbook));
+		
+		//Something went wrong.. ?
+		return;
+	}
+	
 	//Send this
 	msg.data = myorderbook;
 	
