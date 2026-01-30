@@ -88,7 +88,7 @@ function mainListenerLoop(){
 			}
 			
 		}else if(msg.type=="pong"){
-			console.log("Received PONG : ");
+			//console.log("Received PONG : ");
 						
 		}else if(msg.type=="closed"){
 			//console.log("UUID CLOSED : "+JSON.stringify(msg));
