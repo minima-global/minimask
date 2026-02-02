@@ -157,14 +157,14 @@ function wallet_sendfunds(){
 }
 
 /**
- * Split token coins back into 10
+ * Split token coins back into 5
  */
 function splitWalletCoins(tokenname, tokenid){
 	
 	//Get the balance..
 	var balance = getConfirmedBalance(tokenid);
 			
-	if(confirm("This will split your "+tokenname+" coins ("+balance+") into 10 equal amounts."
+	if(confirm("This will split your "+tokenname+" coins ("+balance+") into 5 equal amounts."
 				+"\n\nWhile the coins are being split your orders will not be available.."
 				+"\n\nContinue ?")){
 					
@@ -172,7 +172,7 @@ function splitWalletCoins(tokenname, tokenid){
 		setSplitCoinsBalanceZero(tokenid);
 								
 		//Send and split..
-		utility_send(tokenname, tokenid, balance, USER_ACCOUNT.ADDRESS, 10, function(resp){
+		utility_send(tokenname, tokenid, balance, USER_ACCOUNT.ADDRESS, 5, function(resp){
 			if(resp.status){
 				//Add Log
 				addHistoryLog("SPLIT_COINS","User splits "+tokenname, resp.data.txpowid);	
