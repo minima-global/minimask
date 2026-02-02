@@ -40,8 +40,11 @@ function dexChatHistory(allchat){
 			addChatLine(allchat[i]);
 		}	
 	}catch(Error){
-		console.log9("Error importing startup chat.. "+JSON.stringify(allchat));	
+		console.log("Error importing startup chat.. "+JSON.stringify(allchat));	
 	}
+	
+	//Scroll to bottom..
+	chatarea.scrollTop = chatarea.scrollHeight;
 }
 
 //Check not too long..
@@ -57,6 +60,9 @@ function addChatLine(chatline){
 			chatarea.value = chatarea.value.substring(chatlen-MAX_CHAT, chatlen)
 		}
 	}
+
+	//Scroll to bottom..
+	chatarea.scrollTop = chatarea.scrollHeight;
 }
 
 function getSendChat(){

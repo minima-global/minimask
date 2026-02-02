@@ -164,25 +164,41 @@ function splitWalletCoins(tokenname, tokenid){
 	//Get the balance..
 	var balance = getConfirmedBalance(tokenid);
 			
-	if(confirm("This will split your "+tokenname+" coins ("+balance+") into 5 equal amounts."
+	if(confirm("This will split your "+tokenname+" coins ("+balance+") into 10 equal amounts."
 				+"\n\nWhile the coins are being split your orders will not be available.."
 				+"\n\nContinue ?")){
-					
-		//FOR NOW - set the confirmed to 0..
-		setSplitCoinsBalanceZero(tokenid);
 								
 		//Send and split..
-		utility_send(tokenname, tokenid, balance, USER_ACCOUNT.ADDRESS, 5, function(resp){
+		utility_send(tokenname, tokenid, balance, USER_ACCOUNT.ADDRESS, 10, function(resp){
+			console.log("SPLIT : "+JSON.stringify(resp));
+			
 			if(resp.status){
+				//FOR NOW - set the confirmed to 0..
+				setSplitCoinsBalanceZero(tokenid);
+						
 				//Add Log
 				addHistoryLog("SPLIT_COINS","User splits "+tokenname, resp.data.txpowid);	
-				
 				alert("Funds Split!");
+				
 			}else{
 				alert(resp.error);
 			}	
 		});
 	}
+}
+
+function getAndIncrementKeyUses(){
+
+	//Store..	
+	var ku = USER_ACCOUNT.KEYUSES;
+	
+	//Update KEY USES
+	USER_ACCOUNT.KEYUSES = +USER_ACCOUNT.KEYUSES+1;
+	
+	//Save data..
+	saveUserDetails();
+	
+	return ku;
 }
 
 /**
@@ -191,15 +207,11 @@ function splitWalletCoins(tokenname, tokenid){
 function utility_send(tokenname, tokenid, amount, address, split, callback){
 	//Send
 	MINIMASK.meg.send(amount+"", address, tokenid, 
-		USER_ACCOUNT.ADDRESS, USER_ACCOUNT.PRIVATEKEY, 
-		USER_ACCOUNT.SCRIPT, USER_ACCOUNT.KEYUSES, 
+		USER_ACCOUNT.ADDRESS, 
+		USER_ACCOUNT.PRIVATEKEY, 
+		USER_ACCOUNT.SCRIPT, 
+		getAndIncrementKeyUses(), 
 		split, function(resp){
-		
-		//Update KEY USES
-		USER_ACCOUNT.KEYUSES = +USER_ACCOUNT.KEYUSES+1;
-		
-		//Save data..
-		saveUserDetails();
 		
 		//And Auto Update the balance..
 		autoUpdateBalance();
@@ -214,15 +226,8 @@ function utility_send(tokenname, tokenid, amount, address, split, callback){
  */
 function utility_sign(rawtxn, post, callback){
 	
-	//Send
-	MINIMASK.meg.signtxn(rawtxn,  USER_ACCOUNT.PRIVATEKEY, USER_ACCOUNT.KEYUSES, post, function(resp){
-		
-		//Update KEY USES
-		USER_ACCOUNT.KEYUSES = +USER_ACCOUNT.KEYUSES+1;
-		
-		//Save data..
-		saveUserDetails();
-					
+	//Sign
+	MINIMASK.meg.signtxn(rawtxn,  USER_ACCOUNT.PRIVATEKEY, getAndIncrementKeyUses(), post, function(resp){
 		//Callback
 		callback(resp);
 	});

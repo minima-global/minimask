@@ -320,7 +320,7 @@ function newChat(fromuuid, msg){
 	allchat.push(nchat);
 	
 	//Max number of trades
-	if(allchat.length > 100){
+	if(allchat.length > 250){
 		allchat.shift();
 	}
 	
