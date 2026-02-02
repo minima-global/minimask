@@ -52,7 +52,6 @@ function addChatLine(chatline){
 		
 		//Check size
 		var chatlen = chatarea.value.length;
-		console.log("CHAT LEN : "+chatlen);
 		
 		if(chatlen > MAX_CHAT){
 			chatarea.value = chatarea.value.substring(chatlen-MAX_CHAT, chatlen)

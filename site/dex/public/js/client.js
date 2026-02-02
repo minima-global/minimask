@@ -14,12 +14,18 @@ function setDexState(str){
 }
 
 function connectToServer(){
-	//Connect to server
-	wsInitSocket(function(){
-		
-		//Have connected to server - post your orders to it..
-		postMyOrdersToServer();
-	});
+	
+	if(!DEX_DONOT_CONNECT){
+		//Connect to server
+		wsInitSocket(function(){
+			
+			//Have connected to server - post your orders to it..
+			postMyOrdersToServer();
+		});	
+	}else{
+		setDexState("No connect enabled..");
+		console.log("DEX do not connect active!..");
+	}
 }
 
 function wsInitSocket(initcallback){
@@ -108,6 +114,11 @@ function pingMessage(){
 }
 
 function wsPostToServer(jsonmsg){
+	
+	//Are we in no connect mode
+	if(DEX_DONOT_CONNECT){
+		return;
+	}
 	
 	var strmsg = JSON.stringify(jsonmsg);
 	

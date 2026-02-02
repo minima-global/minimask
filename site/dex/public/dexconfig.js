@@ -33,3 +33,8 @@ var DEX_ADD_PRESET_PAIRS = true;
  * Do we allow OTHER Minima markets made up from all tokens of users connected ?
  */
 var DEX_ADD_USER_TOKENS = true;
+
+/**
+ * DEBUG Setting - dont connect as I am playiong wioth the skin.. 
+ */
+var DEX_DONOT_CONNECT = false;

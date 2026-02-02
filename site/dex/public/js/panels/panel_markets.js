@@ -36,6 +36,15 @@ market_select.onchange = function (e) {
 
 function setMarketSelect(){
 	
+	//Are there any Markets..
+	if(ALL_MARKETS.length == 0){
+		var opt 		= document.createElement('option');
+        opt.value 		= "0";
+        opt.innerHTML 	= "No Markets..";
+        market_select.appendChild(opt)
+		return;
+	}
+	
 	//Get the previous mkt..
 	prevmktuid = CURRENT_MARKET.mktuid;
 	
