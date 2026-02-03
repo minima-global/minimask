@@ -238,7 +238,7 @@ function startTrade(){
 		}
 		
 		//Which coins did you use..
-		console.log("Coins used : "+JSON.stringify(CURRENT_TRADE_COINS));
+		//console.log("Coins used : "+JSON.stringify(CURRENT_TRADE_COINS));
 		
 		//Create a RAW Txn..
 		MINIMASK.meg.rawtxn(txn.inputs, txn.outputs, txn.scripts, txn.state, function(rawresp){
@@ -606,7 +606,7 @@ function getMyInputsAndOutputs(txn){
 			mycoins.inputtokenid = input.tokenid;	
 		}
 	}
-	console.log("Input total : "+mycoins.inputtokenid+" "+mycoins.inputtotal);
+	//console.log("Input total : "+mycoins.inputtokenid+" "+mycoins.inputtotal);
 	
 	//Cycle Outputs..
 	var outs = txn.outputs.length;
@@ -618,13 +618,13 @@ function getMyInputsAndOutputs(txn){
 			
 			//Is it the change from the input..
 			if(output.tokenid == mycoins.inputtokenid){
-				console.log("Found change coin output.. ");
+				//console.log("Found change coin output.. ");
 				if(output.tokenid == "0x00"){
 					mycoins.inputtotal = mycoins.inputtotal.minus(new Decimal(output.amount));	
 				}else{
 					mycoins.inputtotal = mycoins.inputtotal.minus(new Decimal(output.tokenamount));
 				}
-				console.log("NEW Input total : "+mycoins.inputtokenid+" "+mycoins.inputtotal);
+				//console.log("NEW Input total : "+mycoins.inputtokenid+" "+mycoins.inputtotal);
 			
 			}else{
 				
@@ -647,7 +647,7 @@ function getMyInputsAndOutputs(txn){
 			}
 		}
 	}
-	console.log("Output total : "+mycoins.outputtokenid+" "+mycoins.outputtotal);
+	//console.log("Output total : "+mycoins.outputtokenid+" "+mycoins.outputtotal);
 	
 	return mycoins;
 }

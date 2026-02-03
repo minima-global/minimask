@@ -55,6 +55,6 @@ function setMyOrdersTable(){
 		cellamount.innerHTML 	= "&nbsp;"+order.amount;
 		cellprice.innerHTML 	= "&nbsp;"+order.price;
 		celltype.innerHTML 		= "&nbsp;"+order.type; 
-		cellaction.innerHTML 	= "<button class='mybtn' onclick='removeMyOrderAndPost(\""+order.uuid+"\")'>Cancel</button>";
+		cellaction.innerHTML 	= "<button class='mybtn' onclick='checkCancelMyOrder(\""+order.uuid+"\")'>Cancel</button>";
 	}
 }

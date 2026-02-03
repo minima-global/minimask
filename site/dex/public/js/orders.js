@@ -26,24 +26,32 @@ function addMyOrderAndPost(order){
 /**
  * Remove an order from Your OrderBook
  */
-function removeMyOrderAndPost(uuid){
+function checkCancelMyOrder(orderuuid){
 	
-	if(confirm("Are you sure you wish to remove this order ? ")){
-		
-		var neworders = [];
-		var len = USER_ORDERS.length;
-		for(var i=0;i<len;i++) {
-			if(USER_ORDERS[i].uuid != uuid){
-				neworders.push(USER_ORDERS[i]);
-			}
+	if(USER_SETTINGS.confirmOrders){
+		if(confirm("Are you sure you wish to remove this order ? ")){
+			removeMyOrderAndPost(orderuuid);	
 		}
-		
-		//Reset User Orders
-		USER_ORDERS = neworders;
-		
-		//Update all relevant
-		updateMyOrders();	
+	}else{
+		removeMyOrderAndPost(orderuuid);
 	}
+}
+
+function removeMyOrderAndPost(uuid){
+		
+	var neworders = [];
+	var len = USER_ORDERS.length;
+	for(var i=0;i<len;i++) {
+		if(USER_ORDERS[i].uuid != uuid){
+			neworders.push(USER_ORDERS[i]);
+		}
+	}
+	
+	//Reset User Orders
+	USER_ORDERS = neworders;
+	
+	//Update all relevant
+	updateMyOrders();	
 }
 
 function getMyOrder(uuid){
@@ -99,12 +107,9 @@ function updateOrderAfterTrade(bookuid, tradecoins){
 		
 		//Update all relevant
 		updateMyOrders();
-	
-		console.log("Updated Order : "+JSON.stringify(order));
-			
+		
 	}else{
-		console.log("Order removed");
-
+		
 		//remove order completely
 		removeMyOrderAndPost(bookuid);
 	}

@@ -111,9 +111,14 @@ function mainListenerLoop(){
 
 function postStartupDex(){
 	
+	//Load User Settings
+	loadUserSettings();
+	
 	//Init each Panel
 	chatroomInit();
 	allordersInit();
+	
+	initCreateOrder();
 	
 	//Wallet
 	walletInit();

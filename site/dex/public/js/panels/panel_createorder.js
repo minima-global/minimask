@@ -3,6 +3,11 @@ const createamount 	= document.getElementById('id_createorder_amount');
 const createprice 	= document.getElementById('id_createorder_price');
 const createbuy 	= document.getElementById('id_createorder_buy');
 const createsell 	= document.getElementById('id_createorder_sell');
+const confirmcheck 	= document.getElementById('id_createorder_confirm');
+
+function initCreateOrder(){
+	confirmcheck.checked = USER_SETTINGS.confirmOrders;
+}
 
 function sendOrder(buysell){
 	
@@ -67,9 +72,12 @@ function sendOrder(buysell){
 				+"\n\nConfirm ? ";
 	} 
 	
-	//Check cnfirm
-	if(!confirm(confmsg)){
-		return;
+	//Is the confirm checked..
+	if(USER_SETTINGS.confirmOrders){
+		//Check cnfirm
+		if(!confirm(confmsg)){
+			return;
+		}	
 	}
 	
 	//Do we already have an order like this..
@@ -101,4 +109,11 @@ createbuy.addEventListener('click', () => {
 
 createsell.addEventListener('click', () => {
 	sendOrder("sell");
+});
+
+confirmcheck.addEventListener('click', () => {
+	
+	USER_SETTINGS.confirmOrders = confirmcheck.checked;
+	
+	saveUserSettings();
 });

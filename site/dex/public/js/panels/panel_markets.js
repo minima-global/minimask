@@ -118,8 +118,6 @@ function createMinimaMarket(userbal){
 	market.token2.tokenid 	= "0x00";	
 	market.token2.decimals 	= 8;
 	
-	console.log("MARKET : "+JSON.stringify(market));
-	
 	return market;
 }
 

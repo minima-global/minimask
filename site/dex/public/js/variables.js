@@ -64,6 +64,25 @@ NULL_MARKET.token2.decimals 	= 8;
  */
 var CURRENT_MARKET 	= NULL_MARKET;
 
+/**
+ * General User Settings
+ */
+var USER_SETTINGS 			= {};
+
+function loadUserSettings(){
+	//Load
+	USER_SETTINGS = STORAGE.getData("**USER_SETTINGS**");
+	
+	//Check if exists
+	if(USER_SETTINGS == null){
+		USER_SETTINGS = {};
+		USER_SETTINGS.confirmOrders = true;
+	}
+}
+
+function saveUserSettings(){
+	STORAGE.setData("**USER_SETTINGS**",USER_SETTINGS);
+}
 
 
 
