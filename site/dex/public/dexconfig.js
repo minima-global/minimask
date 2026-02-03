@@ -2,7 +2,7 @@
  * The DEX server to connect to
  */
 //const DEX_SERVER = "ws://localhost:8081";
-const DEX_SERVER = "wss://minimask:54321";
+const DEX_SERVER = "wss://minimask.org:54321";
 
 /**
  * MxUSD Market
