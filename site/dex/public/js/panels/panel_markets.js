@@ -84,11 +84,12 @@ function setMarketTokenID(){
 	
 	if(CURRENT_MARKET.token1.tokenid == "0x00"){
 		//Use token2
-		market_tokenname.innerHTML 	= CURRENT_MARKET.token2.name;
-		market_tokenid.innerHTML 	= CURRENT_MARKET.token2.tokenid;
+		market_tokenname.innerHTML 	= "<b>"+CURRENT_MARKET.token2.name+"</b>";
+		market_tokenid.innerHTML 	= "<b>"+CURRENT_MARKET.token2.tokenid+"</b>";
+		
 	}else{
-		market_tokenname.innerHTML 	= CURRENT_MARKET.token1.name;
-		market_tokenid.innerHTML 	= CURRENT_MARKET.token1.tokenid;	
+		market_tokenname.innerHTML 	= "<b>"+CURRENT_MARKET.token1.name+"</b>";
+		market_tokenid.innerHTML 	= "<b>"+CURRENT_MARKET.token1.tokenid+"</b>";	
 	}
 }
 

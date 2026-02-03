@@ -5,10 +5,6 @@ const mktamount_slider 	= document.getElementById('id_mktamountrange');
 const mktcurrentamount 	= document.getElementById('id_mktcurrentamount');
 const mkttotal 			= document.getElementById('id_mkttotal');
 
-mktamount_slider.addEventListener("input", (event) => {
-	setCurrentAmount(event.target.value);
-});
-
 var MKT_BUYSELL 			= "";
 
 var MKT_CURRENT_MAXAMOUNT 	= 0;
@@ -17,13 +13,43 @@ var MKT_CURRENT_PRICE 		= 0;
 var MKT_CURRENT_AMOUNT		= 0;
 var MKT_TOTAL_AMOUNT		= 0;
 
+mktamount_slider.addEventListener("input", (event) => {
+	setCurrentAmount(event.target.value);
+});
+
+mktcurrentamount.addEventListener("change", (event) => { 
+	
+	//Set the Amount
+	MKT_CURRENT_AMOUNT = financial(mktcurrentamount.value)
+	MKT_CURRENT_AMOUNT = getToDecimalPlacesRoundDown(MKT_CURRENT_AMOUNT, CURRENT_MARKET.token1.decimals);
+	
+	//Set - decimals may have chjanged
+	mktcurrentamount.value=MKT_CURRENT_AMOUNT;
+	
+	if(MKT_CURRENT_AMOUNT < 0){
+		MKT_CURRENT_AMOUNT = 0;
+		mktcurrentamount.value=0;
+	}else if(MKT_CURRENT_AMOUNT > MKT_CURRENT_MAXAMOUNT){
+		MKT_CURRENT_AMOUNT = MKT_CURRENT_MAXAMOUNT;
+		mktcurrentamount.value=MKT_CURRENT_MAXAMOUNT;
+	}
+	
+	setCurrentTotalAmount();
+});
+
 function setCurrentAmount(perc){
 	
 	//Calculate Amount - ROUND UP and to decimal place
 	MKT_CURRENT_AMOUNT = financial(perc * MKT_CURRENT_MAXAMOUNT);
 	MKT_CURRENT_AMOUNT = getToDecimalPlacesRoundDown(MKT_CURRENT_AMOUNT, CURRENT_MARKET.token1.decimals);
 	
-	mktcurrentamount.innerHTML = MKT_CURRENT_AMOUNT+" "+CURRENT_MARKET.token1.name;
+	mktcurrentamount.value = MKT_CURRENT_AMOUNT;
+	
+	//Calculate 
+	setCurrentTotalAmount();
+}
+
+function setCurrentTotalAmount(){
 	
 	//Calculate 
 	var decmktamount 	= new Decimal(MKT_CURRENT_AMOUNT);
