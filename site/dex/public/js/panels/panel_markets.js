@@ -106,9 +106,19 @@ function createMinimaMarket(userbal){
 	market.token1.name 		= userbal.token.name;
 	market.token1.tokenid 	= userbal.tokenid;
 	
+	//8 decimals max
+	var dec = userbal.details.decimals;
+	if(dec > 8){
+		dec = 8;
+	}
+	market.token1.decimals 	= dec;
+	
 	market.token2 			= {};
 	market.token2.name 		= "Minima";
 	market.token2.tokenid 	= "0x00";	
+	market.token2.decimals 	= 8;
+	
+	console.log("MARKET : "+JSON.stringify(market));
 	
 	return market;
 }

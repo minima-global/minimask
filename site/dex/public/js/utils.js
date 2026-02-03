@@ -26,7 +26,11 @@ function financialDecimal(x) {
 }
 
 function decimalRUp(x) {
-  return x.toDecimalPlaces(MAX_DECIMAL, Decimal.ROUND_UP);		
+  return decimalRUpPrecision(x, MAX_DECIMAL);		
+}
+
+function decimalRUpPrecision(x, decimals) {
+  return x.toDecimalPlaces(decimals, Decimal.ROUND_UP);		
 }
 
 function financialRDown(x) {
@@ -38,7 +42,19 @@ function financialDecimalRDown(x) {
 }
 
 function decimalRDown(x) {
-  return x.toDecimalPlaces(MAX_DECIMAL, Decimal.ROUND_DOWN);		
+  return decimalRDownPrecision(x, MAX_DECIMAL);		
+}
+
+function decimalRDownPrecision(x, decimals) {
+  return x.toDecimalPlaces(decimals, Decimal.ROUND_DOWN);		
+}
+
+function getToDecimalPlacesRoundDown(num, decimals){
+	return decimalRDownPrecision(new Decimal(num), decimals).toNumber();
+}
+
+function getToDecimalPlacesRoundUp(num, decimals){
+	return decimalRUpPrecision(new Decimal(num), decimals).toNumber();
 }
 
 function getTimeMilli(){

@@ -90,7 +90,9 @@ function setTradesTable(){
 				celldate.className 		= "sellorder";	
 			}
 			
-			celltype.innerHTML 		= "&nbsp;"+trade.type; 
+			//celltype.innerHTML 		= "&nbsp;"+trade.type;
+			celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
+			
 			cellamount.innerHTML 	= "&nbsp;"+trade.amount;
 			cellprice.innerHTML 	= "&nbsp;"+trade.price;
 			celltotal.innerHTML 	= "&nbsp;"+trade.total;

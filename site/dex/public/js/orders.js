@@ -19,9 +19,6 @@ function addMyOrderAndPost(order){
 	//Now add this order to our list of prders
 	USER_ORDERS.push(order);
 	
-	//Order!
-	USER_ORDERS.sort(sortUserOrdersAlphabetically);
-	
 	//Update all relevant
 	updateMyOrders();
 }
@@ -115,9 +112,6 @@ function updateOrderAfterTrade(bookuid, tradecoins){
 
 function updateMyOrders(){
 	
-	//Sort my orders
-	USER_ORDERS.sort(sortMyOrders);
-	
 	//Store this locally..
 	storeMyOrders();
 		
@@ -178,9 +172,6 @@ function loadMyOrders(){
 	if(USER_ORDERS == null){
 		USER_ORDERS = [];
 	}
-	
-	//Sort my orders
-	USER_ORDERS.sort(sortMyOrders);
 }
 
 /**

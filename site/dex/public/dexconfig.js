@@ -1,7 +1,8 @@
 /**
  * The DEX server to connect to
  */
-const DEX_SERVER = "wss://minimask.org:54321";
+//const DEX_SERVER = "ws://localhost:8081";
+const DEX_SERVER = "wss://minimask:54321";
 
 /**
  * MxUSD Market
@@ -11,12 +12,16 @@ var MXUSD_TOKENID = "0xFFEEDDFFEEDD";
 const MXUSD_MARKET = {};
 MXUSD_MARKET.mktname			= "Minima / MxUSD";
 MXUSD_MARKET.mktuid				= "0x00 / "+MXUSD_TOKENID;
+
 MXUSD_MARKET.token1 			= {};
 MXUSD_MARKET.token1.name 		= "Minima";
 MXUSD_MARKET.token1.tokenid 	= "0x00";
+MXUSD_MARKET.token1.decimals 	= 8; //8 MAX
+
 MXUSD_MARKET.token2 			= {};
 MXUSD_MARKET.token2.name 		= "MxUSD";
 MXUSD_MARKET.token2.tokenid 	= MXUSD_TOKENID;
+MXUSD_MARKET.token2.decimals 	= 8; //8 MAX
 
 /**
  * Here you add an array of markets that you wish your DEX to support
@@ -35,6 +40,6 @@ var DEX_ADD_PRESET_PAIRS = true;
 var DEX_ADD_USER_TOKENS = true;
 
 /**
- * DEBUG Setting - dont connect as I am playiong wioth the skin.. 
+ * DEBUG Setting - dont connect as I am playing with the skin.. 
  */
 var DEX_DONOT_CONNECT = false;

@@ -16,7 +16,10 @@ function setMyOrdersTable(){
 	row.insertCell(1).outerHTML = "<th class='smalltableheadertext'>Price</th>"; 
 	row.insertCell(2).outerHTML = "<th class='smalltableheadertext'>Type</th>";
 	row.insertCell(3).outerHTML = "<th class='smalltableheadertext' style='width:0%;'>Action</th>";
-		
+	
+	//Sort them..
+	USER_ORDERS.sort(sortMyOrders);
+			
 	//Get my Orders
 	var len = USER_ORDERS.length;
 	for(var i=0;i<len;i++) {

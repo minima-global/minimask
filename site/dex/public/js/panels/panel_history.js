@@ -71,7 +71,5 @@ function checkTxPow(txpowid){
 	MINIMASK.meg.checktxpow(txpowid, function(resp){
 		addTextTradeInfo( JSON.stringify(resp.data, null, 2));	
 	});
-	
-	
 }
 

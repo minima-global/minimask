@@ -8,15 +8,30 @@ function sendOrder(buysell){
 	
 	//Get the available balance..
 	var available1 = getAvailableBalance(CURRENT_MARKET.token1.tokenid);
-	//console.log("Available "+CURRENT_MARKET.token1.name+":"+available1);
-	
 	var available2 = getAvailableBalance(CURRENT_MARKET.token2.tokenid);
-	//console.log("Available "+CURRENT_MARKET.token2.name+":"+available2);
 	
-	//Check values positive..
+	//Check values..
 	var amount 	= financial(createamount.value);
 	var price 	= financial(createprice.value);
-	var tot 	= financial(amount * price) 
+	
+	//Check Decimal Precision.. The AMOUNT is in Token 1
+	if(getToDecimalPlacesRoundDown(amount, CURRENT_MARKET.token1.decimals) != amount){
+		alert("Invalid decimals for Amount"
+				+"\n\n"+CURRENT_MARKET.token1.name
+				+" has "+CURRENT_MARKET.token1.decimals+" decimal places");
+		return;
+	}
+	
+	//The Price is Token 2
+	if(getToDecimalPlacesRoundDown(price, CURRENT_MARKET.token2.decimals) != price){
+		alert("Invalid decimals for Price"
+				+"\n\n"+CURRENT_MARKET.token2.name
+				+" has "+CURRENT_MARKET.token2.decimals+" decimal places");
+		return;
+	}
+	
+	//What is the total
+	var tot = financial(amount * price) 
 	
 	//Check you have enough!
 	var confmsg = "";

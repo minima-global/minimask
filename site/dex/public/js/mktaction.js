@@ -19,8 +19,10 @@ var MKT_TOTAL_AMOUNT		= 0;
 
 function setCurrentAmount(perc){
 	
-	//Calculate Amount - ROUND UP
-	MKT_CURRENT_AMOUNT =financial(perc * MKT_CURRENT_MAXAMOUNT);
+	//Calculate Amount - ROUND UP and to decimal place
+	MKT_CURRENT_AMOUNT = financial(perc * MKT_CURRENT_MAXAMOUNT);
+	MKT_CURRENT_AMOUNT = getToDecimalPlacesRoundDown(MKT_CURRENT_AMOUNT, CURRENT_MARKET.token1.decimals);
+	
 	mktcurrentamount.innerHTML = MKT_CURRENT_AMOUNT+" "+CURRENT_MARKET.token1.name;
 	
 	//Calculate 
@@ -32,13 +34,17 @@ function setCurrentAmount(perc){
 	if(MKT_BUYSELL){
 		
 		//Round UP				
-		MKT_TOTAL_AMOUNT = financialDecimal(decmkttotal);
+		MKT_TOTAL_AMOUNT 	= financialDecimal(decmkttotal);
+		MKT_TOTAL_AMOUNT	= getToDecimalPlacesRoundDown(MKT_TOTAL_AMOUNT, CURRENT_MARKET.token2.decimals);
+				
 		mkttotal.innerHTML = MKT_TOTAL_AMOUNT+" "+CURRENT_MARKET.token2.name;	
 		
 	}else{
 		
-		//Rownd DOWN			
-		MKT_TOTAL_AMOUNT = financialDecimalRDown(decmkttotal);
+		//Round DOWN			
+		MKT_TOTAL_AMOUNT 	= financialDecimalRDown(decmkttotal);
+		MKT_TOTAL_AMOUNT	= getToDecimalPlacesRoundDown(MKT_TOTAL_AMOUNT, CURRENT_MARKET.token2.decimals);
+		
 		mkttotal.innerHTML = MKT_TOTAL_AMOUNT+" "+CURRENT_MARKET.token2.name;
 	}
 }
@@ -52,6 +58,10 @@ function resetMKTValues(){
 		MKT_CURRENT_AMOUNT 	= financialRDown(MKT_CURRENT_MAXAMOUNT); 
 		MKT_TOTAL_AMOUNT 	= financialRDown(MKT_CURRENT_AMOUNT * MKT_CURRENT_PRICE);
 	}
+	
+	//Set decimals
+	MKT_CURRENT_AMOUNT 	= getToDecimalPlacesRoundDown(MKT_CURRENT_AMOUNT, CURRENT_MARKET.token1.decimals);
+	MKT_TOTAL_AMOUNT	= getToDecimalPlacesRoundDown(MKT_TOTAL_AMOUNT, CURRENT_MARKET.token2.decimals);
 }
 
 function showMktActionPanel(buysell, price, maxamount){

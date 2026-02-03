@@ -15,6 +15,9 @@ function setAllMyOrders(){
 	
 	var old_mkt = "";	
 	
+	//Sort them..
+	USER_ORDERS.sort(sortUserOrdersAlphabetically);
+	
 	//Get my Orders
 	var len = USER_ORDERS.length;
 	for(var i=0;i<len;i++) {

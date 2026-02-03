@@ -47,15 +47,17 @@ var ALL_TRADES = [];
 /**
  * NULL Market
  */
-const NULL_MARKET 			= {};
-NULL_MARKET.mktname			= "NULL / NULL";
-NULL_MARKET.mktuid			= "0xFF / 0xFF";
-NULL_MARKET.token1 			= {};
-NULL_MARKET.token1.name 	= "NULL";
-NULL_MARKET.token1.tokenid 	= "0xFF";
-NULL_MARKET.token2 			= {};
-NULL_MARKET.token2.name 	= "NULL";
-NULL_MARKET.token2.tokenid 	= "0xFF";
+const NULL_MARKET 				= {};
+NULL_MARKET.mktname				= "NULL / NULL";
+NULL_MARKET.mktuid				= "0xFF / 0xFF";
+NULL_MARKET.token1 				= {};
+NULL_MARKET.token1.name 		= "NULL";
+NULL_MARKET.token1.tokenid 		= "0xFF";
+NULL_MARKET.token1.decimals 	= 8;
+NULL_MARKET.token2 				= {};
+NULL_MARKET.token2.name 		= "NULL";
+NULL_MARKET.token2.tokenid 		= "0xFF";
+NULL_MARKET.token2.decimals 	= 8;
 
 /**
  * Which Market is this

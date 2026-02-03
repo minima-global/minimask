@@ -83,11 +83,11 @@ function updateBalancePanel(){
 		
 		cellcoins.innerHTML = tokenbal.coins;
 		
-		//if(AUTO_BALANCE_ENABLED){
-		//	cellsplt.innerHTML 	= "<button class=mybtn onclick='splitWalletCoins(\""+tokenname+"\",\""+tokenbal.tokenid+"\");' disabled>Split Coins</button>";
-		//}else{
+		if(AUTO_BALANCE_ENABLED){
+			cellsplt.innerHTML 	= "<button class=mybtn onclick='splitWalletCoins(\""+tokenname+"\",\""+tokenbal.tokenid+"\");' disabled>Split Coins</button>";
+		}else{
 			cellsplt.innerHTML 	= "<button class=mybtn onclick='splitWalletCoins(\""+tokenname+"\",\""+tokenbal.tokenid+"\");'>Split Coins</button>";	
-		//}
+		}
 		
 		
 		//Insert row
@@ -170,7 +170,7 @@ function splitWalletCoins(tokenname, tokenid){
 								
 		//Send and split..
 		utility_send(tokenname, tokenid, balance, USER_ACCOUNT.ADDRESS, 10, function(resp){
-			console.log("SPLIT : "+JSON.stringify(resp));
+			//console.log("SPLIT : "+JSON.stringify(resp));
 			
 			if(resp.status){
 				//FOR NOW - set the confirmed to 0..
@@ -213,8 +213,10 @@ function utility_send(tokenname, tokenid, amount, address, split, callback){
 		getAndIncrementKeyUses(), 
 		split, function(resp){
 		
-		//And Auto Update the balance..
-		autoUpdateBalance();
+		if(resp.status){
+			//And Auto Update the balance..
+			autoUpdateBalance();	
+		}
 					
 		//Callback
 		callback(resp);
