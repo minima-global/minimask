@@ -44,20 +44,38 @@ function dexChatHistory(allchat){
 	}
 	
 	//Scroll to bottom..
-	chatarea.scrollTop = chatarea.scrollHeight;
+	setTimeout(function(){
+		chatarea.scrollTop = chatarea.scrollHeight;
+	}, 100);
 }
 
 //Check not too long..
-var MAX_CHAT = 10000;
-function addChatLine(chatline){
-	if(chatline.trim() != ""){
-		chatarea.value+= chatline+"\n";
+var MAX_CHAT = 50000;
+function addChatLine(chatobj){
+	
+	var msg 	= chatobj.message;
+	var from 	= chatobj.uuid;
+	
+	if(msg.trim() != ""){
+		
+		var uuid 	= from.substring(0,8);
+		var color 	= from.substring(2,8);
+		
+		chatarea.innerHTML += "<span style='color:#"+color+";'>"+msg.trim()+"</span><br>";
 		
 		//Check size
-		var chatlen = chatarea.value.length;
-		
+		var ftext = chatarea.innerHTML;
+		var chatlen = ftext.length;
 		if(chatlen > MAX_CHAT){
-			chatarea.value = chatarea.value.substring(chatlen-MAX_CHAT, chatlen)
+			var newtext = ftext.substring(chatlen-MAX_CHAT, chatlen);
+			
+			//Find the first end span
+			var fspan = newtext.indexOf("</span>");
+			if(fspan != -1){
+				newtext = newtext.substring(fspan);
+			} 
+			
+			chatarea.innerHTML = "(trimmed..)<br>"+newtext;
 		}
 	}
 
@@ -70,7 +88,6 @@ function getSendChat(){
 	msg.type = "chat";
 	
 	msg.data = chatinput.value.trim();
-	
 	chatinput.value = '';
 	
 	if(msg.data == ""){

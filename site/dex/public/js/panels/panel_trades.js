@@ -53,7 +53,10 @@ function setTradesTable(){
 	row.insertCell().outerHTML = "<th>Total</th>";
 	row.insertCell().outerHTML = "<th style='width:0%;'>Date</th>";
 		
-	//Get my Orders
+	//Get all trades
+	var firsttrade = true;
+	setDexState("");
+	
 	var len = ALL_TRADES.length;
 	for(var i=0;i<len;i++) {
 		
@@ -63,6 +66,12 @@ function setTradesTable(){
 			//Is it the right market
 			if(trade.market.mktuid != CURRENT_MARKET.mktuid){
 				continue;
+			}
+			
+			//Is this the first trade..
+			if(firsttrade){
+				firsttrade = false;
+				//setDexState("Last Price : "+trade.price);
 			}
 			
 			//Insert row
