@@ -247,7 +247,8 @@
 								<td>
 									<button class="menubtn" onclick="navigate_dex();">DEX</button>
 									<button class="menubtn" onclick="navigate_wallet();">Wallet</button>
-									<button class="menubtn" onclick="navigate_allorders();">All My Orders</button>
+									<button class="menubtn" onclick="navigate_allorders();">My Orders</button>
+									<button class="menubtn" onclick="navigate_alltrades();">All Trades</button>
 									<button class="menubtn" onclick="navigate_history();">History</button>
 								</td>
 								
@@ -666,6 +667,27 @@
 					</table>
 				</div>
 				
+				<!--All Trades-->
+				<div class="fullwidthheight" id="id_view_alltrades" style="display:none;">
+					<table class="fullwidthheight" style="" border=0>
+						<tr>
+							<td style="padding:10px;">
+								
+								<div class="greyrounded" style="overflow-y: auto;">
+																									
+									<div class="paddedborder">
+										<b>All Trades</b><br>
+										<br>
+										<table id="id_alltrades_table" style="font-size:12px;width:100%;border-spacing:2px;" border=0>
+										</table>
+									</div>
+								
+								</div>			
+							</td>
+						</tr>
+					</table>
+				</div>
+				
 				<!--History-->
 				<div class="fullwidthheight" id="id_view_history" style="display:none;">
 					<table class="fullwidthheight" style="" border=0>
@@ -805,6 +827,7 @@ Enjoy!<br>
 	<script type="text/javascript" src="./js/panels/panel_markets.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_history.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_trades.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_alltrades.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_init.js"></script>
 			
 	<script type="text/javascript">

@@ -69,6 +69,9 @@ function mainListenerLoop(){
 			//Set the trades table..
 			setTradesTable();
 			
+			//Set the ALL trades table
+			setAllTradesTable();
+			
 			//And set the chat
 			dexChatHistory(msg.data.chat);
 			

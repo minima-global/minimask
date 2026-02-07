@@ -6,6 +6,7 @@ function navigate_clear(){
 	id_view_maindex.style.display="none";
 	id_view_wallet.style.display="none";
 	id_view_allorders.style.display="none";
+	id_view_alltrades.style.display="none";
 	id_view_history.style.display="none";
 	id_view_help.style.display="none";
 	id_view_settings.style.display="none";
@@ -29,6 +30,11 @@ function navigate_wallet(){
 function navigate_allorders(){
 	navigate_clear();
 	id_view_allorders.style.display="block";
+}
+
+function navigate_alltrades(){
+	navigate_clear();
+	id_view_alltrades.style.display="block";
 }
 
 function navigate_history(){

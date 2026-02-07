@@ -22,6 +22,9 @@ function tradesInit(){
 						
 			//Reset the table..
 			setTradesTable();
+			
+			//Reset the ALL table..
+			setAllTradesTable();
 		}
 	});	
 	
