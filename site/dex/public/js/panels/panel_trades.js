@@ -65,6 +65,9 @@ function setTradesTable(){
 	setDexState("");
 	
 	var len = ALL_TRADES.length;
+	if(len>250){
+		len = 250;
+	}
 	for(var i=0;i<len;i++) {
 		
 		try{
