@@ -16,6 +16,10 @@ function showHistory(){
 	row.insertCell().outerHTML = "<th class='smalltableheadertext'>Extra</th>";
 	row.insertCell().outerHTML = "<th class='smalltableheadertext'>Check</th>";
 	
+	//Current time
+	var ctime 		= getTimeMilli();
+	var maxfindtime = ctime - HOURS_24;
+	
 	//Get my Orders
 	var len = USER_HISTORY.length;
 	for(var i=0;i<len;i++) {
@@ -37,6 +41,8 @@ function showHistory(){
 		}
 		
 		var cellextra 		= row.insertCell();
+		cellextra.style.fontSize 	= "0.7em";
+		
 		var cellcheck 		= row.insertCell();
 				
 		var dateString 		= getTimeStr(history.time);
@@ -50,11 +56,8 @@ function showHistory(){
 			celldetails.innerHTML 	= "&nbsp;"+history.details;	
 		}
 		
-		if(history.extra.startsWith("0x")){
-			cellextra.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+history.extra+"'>"+history.extra+"</a>";	
-			cellextra.style.fontSize 	= "0.7em";
-			
-			//Put a check button..
+		if(history.extra.startsWith("0x") && history.time>maxfindtime){
+			cellextra.innerHTML 	= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+history.extra+"'>"+history.extra+"</a>";	
 			cellcheck.innerHTML 	= "&nbsp;<button class=mybtn style='font-size:10px;padding: 4px 6px' onclick='checkTxPow(\""+history.extra+"\");'>Check</button>";
 			
 		}else{

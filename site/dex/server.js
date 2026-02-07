@@ -10,7 +10,7 @@ import fs from 'fs';
  */
 var DEBUG_LOGS 	= false;
 var SERVER_PORT = 8081;
-var MAX_TRADES 	= 10000;
+var MAX_TRADES 	= 5000;
 var TRADES_FILE = "./trades.json";
 
 /**

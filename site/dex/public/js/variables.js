@@ -38,7 +38,6 @@ var ALL_ORDERS = {};
  */
 var ALL_MARKETS = [];
 
-
 /**
  * List of all the trades!
  */
@@ -83,6 +82,3 @@ function loadUserSettings(){
 function saveUserSettings(){
 	STORAGE.setData("**USER_SETTINGS**",USER_SETTINGS);
 }
-
-
-

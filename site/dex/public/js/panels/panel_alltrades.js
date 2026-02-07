@@ -18,6 +18,10 @@ function setAllTradesTable(){
 	row.insertCell().outerHTML = "<th>Total</th>";
 	row.insertCell().outerHTML = "<th style='width:0%;'>Date</th>";
 	
+	//Current time
+	var ctime 		= getTimeMilli();
+	var maxfindtime = ctime - HOURS_24;
+	
 	//Max 250 trades
 	var len = ALL_TRADES.length;
 	if(len>500){
@@ -58,7 +62,13 @@ function setAllTradesTable(){
 			}
 			
 			cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
-			celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+			
+			if(trade.date>maxfindtime){
+				celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+			}else{
+				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+			}
+			//celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
 			//celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
 			
 			cellamount.innerHTML 	= "&nbsp;"+trade.amount;

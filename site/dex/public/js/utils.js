@@ -4,6 +4,8 @@
 var DECIMAL_ZERO 	= new Decimal(0);
 const MAX_DECIMAL 	= 8;
 
+var HOURS_24		= 1000 * 60 * 60 * 24;
+
 function getRandomHexString() {
     const hex = '0123456789ABCDEF';
     let output = '';

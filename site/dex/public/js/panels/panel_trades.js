@@ -55,7 +55,11 @@ function setTradesTable(){
 	row.insertCell().outerHTML = "<th>Price</th>";
 	row.insertCell().outerHTML = "<th>Total</th>";
 	row.insertCell().outerHTML = "<th style='width:0%;'>Date</th>";
-		
+	
+	//Current time
+	var ctime 		= getTimeMilli();
+	var maxfindtime = ctime - HOURS_24;
+			
 	//Get all trades
 	var firsttrade = true;
 	setDexState("");
@@ -102,8 +106,14 @@ function setTradesTable(){
 				celldate.className 		= "sellorder";	
 			}
 			
+			
+			if(trade.date>maxfindtime){
+				celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+			}else{
+				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+			}
 			//celltype.innerHTML 		= "&nbsp;"+trade.type;
-			celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
+			//celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
 			
 			cellamount.innerHTML 	= "&nbsp;"+trade.amount;
 			cellprice.innerHTML 	= "&nbsp;"+trade.price;
