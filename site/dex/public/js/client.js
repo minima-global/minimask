@@ -39,9 +39,9 @@ function wsInitSocket(initcallback){
 	WEB_SOCKET = new WebSocket(DEX_SERVER);
 	
 	WEB_SOCKET.onopen = () => {
-	    console.log('Connected to server.. @ '+DEX_SERVER);
+		console.log('Connected to server @ '+DEX_SERVER);
+		setDexState('Connected to server @ '+DEX_SERVER);
 		
-		setDexState("");
 		ERROR_CONNECT_RECONNECT = false;
 		
 		//Start a new one..
@@ -70,8 +70,8 @@ function wsInitSocket(initcallback){
 			//Send the message to the listeners..
 			try{
 				MESSAGE_LISTENERS[i](msg);	
-			}catch(Error){
-				console.log("Error forwarding message to WS Listeners : "+Error);
+			}catch(err){
+				console.log("Error forwarding message to WS Listeners : "+err);
 			}	
 		}
 	};

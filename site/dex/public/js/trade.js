@@ -116,8 +116,8 @@ function startTrade(){
 					addCoins(true, txn, mytokbal, CURRENT_MARKET.token2.tokenid, MKT_TOTAL_AMOUNT, tradeorder.address);
 					addTextTradeInfo("Your coins added..");	
 					
-				}catch(Error){
-					addTextTradeInfo(Error);
+				}catch(err){
+					addTextTradeInfo(err);
 					continue;
 				}
 				
@@ -126,8 +126,8 @@ function startTrade(){
 					addCoins(false, txn, tradeorder.balance, CURRENT_MARKET.token1.tokenid, MKT_CURRENT_AMOUNT, USER_ACCOUNT.ADDRESS);
 					addTextTradeInfo("Counter-party coins added..");
 					
-				}catch(Error){
-					addTextTradeInfo(Error);
+				}catch(err){
+					addTextTradeInfo(err);
 					continue;
 				}
 				
@@ -205,8 +205,8 @@ function startTrade(){
 					addCoins(true, txn, mytokbal, CURRENT_MARKET.token1.tokenid, MKT_CURRENT_AMOUNT, tradeorder.address);
 					addTextTradeInfo("Your coins added..");	
 					
-				}catch(Error){
-					addTextTradeInfo(Error);
+				}catch(err){
+					addTextTradeInfo(err);
 					continue;
 				}
 				
@@ -214,8 +214,8 @@ function startTrade(){
 				try{
 					addCoins(false, txn, tradeorder.balance, CURRENT_MARKET.token2.tokenid, MKT_TOTAL_AMOUNT, USER_ACCOUNT.ADDRESS);
 					addTextTradeInfo("Counter-party coins added..");	
-				}catch(Error){
-					addTextTradeInfo(Error);
+				}catch(err){
+					addTextTradeInfo(err);
 					continue;
 				}
 				
@@ -266,10 +266,10 @@ function startTrade(){
 			});
 		});	
 		
-	}catch(Error){
+	}catch(err){
 		
 		//Something wqent wrong..
-		addTextTradeInfo(Error);
+		addTextTradeInfo(err);
 		
 		return;
 	}
@@ -482,10 +482,10 @@ function checkAndSignTrade(fromuser, tradereq){
 		var insouts = {};
 		try{
 			insouts = getMyInputsAndOutputs(viewresp.data.transaction);	
-		}catch(Error){
+		}catch(err){
 			
 			//Something went wrong..
-			console.log("ERROR TRADE : "+Error);
+			console.log("ERROR TRADE : "+err);
 			
 			//Tell the User
 			postResultToUser(fromuser, false, "",tradereq.tradeuuid);

@@ -46,8 +46,8 @@ function getOrdersOnly(buysell){
 					list.push(book[i]);
 				}
 			}	
-		}catch(Error){
-			console.log("Could not add user OrderBook to all orders : "+Error);
+		}catch(err){
+			console.log("Could not add user OrderBook to all orders : "+err);
 		}	
 	}
 	

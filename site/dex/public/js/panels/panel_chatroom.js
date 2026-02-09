@@ -39,7 +39,7 @@ function dexChatHistory(allchat){
 		for(var i=0;i<allchat.length;i++){
 			addChatLine(allchat[i]);
 		}	
-	}catch(Error){
+	}catch(err){
 		console.log("Error importing startup chat.. "+JSON.stringify(allchat));	
 	}
 	

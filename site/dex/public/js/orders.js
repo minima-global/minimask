@@ -224,7 +224,7 @@ function findValidOrder(mktuid, tokenid, buyorsell, price, amount){
 						list.push(possible);
 				}
 			}	
-		}catch(Error){
+		}catch(err){
 			
 		}
 	}

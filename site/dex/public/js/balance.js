@@ -1,3 +1,8 @@
+var AUTO_BALANCE_INTERVALID 			= 0;
+var AUTO_BALANCE_INTERVAL_COUNTER 		= 0;
+var AUTO_BALANCE_INTERVAL_COUNTER_MAX 	= 20;
+var AUTO_BALANCE_ENABLED 				= false;
+
 /**
  * Fetch the balance for thisa User
  */
@@ -60,14 +65,11 @@ function fetchFullBalance(callback){
 /**
  * Auto check balance for a certain amount of time.. 
  */
-var AUTO_BALANCE_INTERVALID 		= 0;
-var AUTO_BALANCE_INTERVAL_COUNTER 	= 0;
-var AUTO_BALANCE_ENABLED 			= false;
-
 function autoUpdateBalance(){
 	
 	//Disable the refresh button
 	id_refreshbalance.disabled	= true;
+	id_refreshbalance.innerHTML		= "Auto-Refresh (0 / "+AUTO_BALANCE_INTERVAL_COUNTER_MAX+")";
 	
 	//Hide the spli functions..
 	AUTO_BALANCE_ENABLED 		= true;
@@ -77,22 +79,26 @@ function autoUpdateBalance(){
 	clearInterval(AUTO_BALANCE_INTERVALID);
 	
 	//Reset counter
-	AUTO_BALANCE_INTERVAL_COUNTER = 0;
+	AUTO_BALANCE_INTERVAL_COUNTER = 1;
 	
 	//Start a new one..
 	AUTO_BALANCE_INTERVALID = setInterval(function(){
-	
 		//console.log("Auto-Balance checker Called!! "+AUTO_BALANCE_INTERVAL_COUNTER);	
+		
+		id_refreshbalance.innerHTML	= "Auto-Refresh ("+AUTO_BALANCE_INTERVAL_COUNTER+" / "+AUTO_BALANCE_INTERVAL_COUNTER_MAX+")";
 		
 		fetchFullBalance();
 		
 		//Do we stop!!
 		AUTO_BALANCE_INTERVAL_COUNTER++;
-		if(AUTO_BALANCE_INTERVAL_COUNTER > 20){
+		if(AUTO_BALANCE_INTERVAL_COUNTER > AUTO_BALANCE_INTERVAL_COUNTER_MAX){
 			clearInterval(AUTO_BALANCE_INTERVALID);
 			
-			id_refreshbalance.disabled	= false;
 			AUTO_BALANCE_ENABLED 		= false;
+			
+			id_refreshbalance.disabled	= false;
+			id_refreshbalance.innerHTML	= "Auto-Refresh";
+			
 			updateBalancePanel();	
 		}
 		

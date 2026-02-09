@@ -118,7 +118,7 @@ function init_continueseed(){
 				postStartupDex();
 			});	
 	
-	}catch(Error){
+	}catch(err){
 		
 		//Hmm. do they have the latest Version..
 		alert("You MUST be Using the latest version of MiniMask (2.0+) for this function to work.. ");

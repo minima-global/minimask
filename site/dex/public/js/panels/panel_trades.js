@@ -62,7 +62,6 @@ function setTradesTable(){
 			
 	//Get all trades
 	var firsttrade = true;
-	setDexState("");
 	
 	var len = ALL_TRADES.length;
 	if(len>250){
@@ -123,8 +122,8 @@ function setTradesTable(){
 			celltotal.innerHTML 	= "&nbsp;"+trade.total;
 			celldate.innerHTML 		= "&nbsp;"+getTimeStr(trade.date)+"&nbsp;";	
 			
-		}catch(Error){
-			console.log("TRADE error : "+Error);
+		}catch(err){
+			console.log("TRADE error : "+err);
 		}
 	}
 }

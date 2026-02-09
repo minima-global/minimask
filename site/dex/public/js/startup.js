@@ -1,4 +1,15 @@
 
+const user_dex_state	= document.getElementById('id_user_dex_state');
+function setUserDexState(str){
+	user_dex_state.innerHTML = str;
+}
+
+const trade_dex_state	= document.getElementById('id_trade_dex_state');
+function setTradeDexState(str){
+	trade_dex_state.innerHTML = str;
+}
+
+
 /**
  * Called to  init DEX
  */
@@ -89,8 +100,8 @@ function mainListenerLoop(){
 					//Just finished a trade
 					tradeComplete(recmsg.data);	
 				}	
-			}catch(Error){
-				console.log("Message REC error : "+Error);
+			}catch(err){
+				console.log("Message REC error : "+err);
 			}
 			
 		}else if(msg.type=="pong"){
@@ -155,3 +166,28 @@ function loadUserDetails(){
 function saveUserDetails(){
 	STORAGE.setData("**USER_DETAILS**", USER_ACCOUNT);
 }
+
+function setTotalUsersConnected(){
+	setUserDexState("Connected Users : "+Object.keys(ALL_ORDERS).length);
+	
+	//Count the Orders
+	var totorders=0;
+	for(const key in ALL_ORDERS) {
+			
+		//Try and add..
+		try{
+			//Get the order book
+			var book = ALL_ORDERS[key].orders;
+			
+			//Cycle through the book
+			var len 	= book.length;
+			totorders  += len;
+			
+		}catch(err){
+			//console.log("Could not add user OrderBook to all orders : "+Error);
+		}	
+	}
+	setTradeDexState("Total Orders : "+totorders+" / Markets : "+ALL_MARKETS.length);
+}
+
+

@@ -76,8 +76,8 @@ function setAllTradesTable(){
 			celltotal.innerHTML 	= "&nbsp;"+trade.total;
 			celldate.innerHTML 		= "&nbsp;"+getTimeStr(trade.date)+"&nbsp;";	
 			
-		}catch(Error){
-			console.log("TRADE error : "+Error);
+		}catch(err){
+			console.log("TRADE error : "+err);
 		}
 	}
 }

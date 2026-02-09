@@ -70,7 +70,7 @@ var STORAGE = {
 			
 			return dataJSON;	
 			
-		}catch(Error){
+		}catch(err){
 		
 			console.log("Unable to decrypt data.. incorrect password ?");
 			
