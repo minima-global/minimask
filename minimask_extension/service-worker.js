@@ -1,6 +1,8 @@
 /**
- * MEG Host details
+ * MINIMASK VARIABLES
  */
+
+var MINIMASK_VERSION		= 2.1;
 
 //MEG HOST Details
 MINIMASK_MEG_HOST 			= "";
@@ -523,6 +525,10 @@ function _processMiniRequest(request, sender, sendResponse){
 			
 			//Details are in RAM
 			resp.data 			= {};
+			
+			//What version of MiniMask
+			resp.data.version	= MINIMASK_VERSION;
+			
 			resp.data.loggedon 	= MINIMASK_USER_DETAILS.LOGGEDON;
 
 			if(MINIMASK_USER_DETAILS.LOGGEDON){
