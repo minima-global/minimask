@@ -669,7 +669,16 @@
 								<div class="greyrounded" style="overflow-y: auto;">
 																									
 									<div class="paddedborder">
-										<b>All Trades</b><br>
+										<table style="width:100%" border=0>
+											<tr>
+												<td><b>All Trades</b></td>
+												<td style="text-align:right;">
+													<input type="checkbox" id="id_alltrades_time" onclick="setAllTradesTable();">
+														<span style="font-size:0.8em;" ><b>Order By Time</b></span>
+													</input>
+												</td>
+											</tr>
+										<table>
 										<br>
 										<table id="id_alltrades_table" style="font-size:12px;width:100%;border-spacing:2px;" border=0>
 										</table>

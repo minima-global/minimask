@@ -134,6 +134,7 @@ function updateMyOrders(){
  * Post your orders to the server
  */
 function postMyOrdersToServer(){
+	
 	//Now send updated book to server
 	var msg  = {};
 	msg.type = "update_orderbook";

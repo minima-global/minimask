@@ -65,23 +65,7 @@ function mainListenerLoop(){
 			//Store this..
 			ALL_ORDERS = msg.data.orderbooks;
 			
-			//Update the markets 
-			updateAllMarkets();
-						
-			//Set the Table
-			setAllOrdersTable();
-			
-			//Set My Orders - need the markets setup..
-			setMyOrdersTable();
-			
-			//Set ALL my orders table
-			setAllMyOrders();
-		
-			//Set the trades table..
-			setTradesTable();
-			
-			//Set the ALL trades table
-			setAllTradesTable();
+			refreshAllOrders();
 			
 			//And set the chat
 			dexChatHistory(msg.data.chat);
@@ -106,7 +90,14 @@ function mainListenerLoop(){
 			
 		}else if(msg.type=="pong"){
 			//console.log("Received PONG : ");
-						
+		
+		}else if(msg.type=="orderbooks"){
+			
+			//Complete orderbooks..!
+			ALL_ORDERS = msg.data;
+			
+			refreshAllOrders();
+									
 		}else if(msg.type=="closed"){
 			//console.log("UUID CLOSED : "+JSON.stringify(msg));
 			
@@ -118,10 +109,32 @@ function mainListenerLoop(){
 						
 			//Set the table
 			setAllOrdersTable();
+		
+		}else if(msg.type=="error"){
+			console.log("SERVER ERROR : "+JSON.stringify(msg.data));	
 		}
 	});
 }
 
+function refreshAllOrders(){
+	//Update the markets 
+	updateAllMarkets();
+				
+	//Set the Table
+	setAllOrdersTable();
+	
+	//Set My Orders - need the markets setup..
+	setMyOrdersTable();
+	
+	//Set ALL my orders table
+	setAllMyOrders();
+
+	//Set the trades table..
+	setTradesTable();
+	
+	//Set the ALL trades table
+	setAllTradesTable();
+}
 
 function postStartupDex(){
 	
@@ -149,7 +162,8 @@ function postStartupDex(){
 	tradesInit();
 	
 	fetchFullBalance(function(){
-		navigate_dex();	
+		//navigate_dex();
+		navigate_alltrades();	
 	});
 	
 	//Listen for messages..

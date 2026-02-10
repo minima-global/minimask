@@ -11,6 +11,14 @@ function initCreateOrder(){
 
 function sendOrder(buysell){
 	
+	//How many orders do they have..
+	var orderlen = USER_ORDERS.length;
+	if(orderlen >= MAX_ALLOWED_ORDERS){
+		alert("You have reached the maximum allowed orders : "+MAX_ALLOWED_ORDERS);
+		return;
+	}
+	
+	
 	//Get the available balance..
 	var available1 = getAvailableBalance(CURRENT_MARKET.token1.tokenid);
 	var available2 = getAvailableBalance(CURRENT_MARKET.token2.tokenid);

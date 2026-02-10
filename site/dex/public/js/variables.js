@@ -82,3 +82,8 @@ function loadUserSettings(){
 function saveUserSettings(){
 	STORAGE.setData("**USER_SETTINGS**",USER_SETTINGS);
 }
+
+/**
+ * Maximumum orders a User can have (Checked by server)
+ */
+var MAX_ALLOWED_ORDERS = 50;
