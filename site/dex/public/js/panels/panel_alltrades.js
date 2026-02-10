@@ -136,6 +136,11 @@ function setAllTradesTableMarket(){
 		}
 	}
 	
+	//Sort..
+	uniquemarkets.sort(function(a,b){
+		return a.toLowerCase().localeCompare(b.toLowerCase());
+	});
+	
 	//Cycle through tht unique markets
 	for(var mkt=0;mkt<uniquemarkets.length;mkt++){
 	
