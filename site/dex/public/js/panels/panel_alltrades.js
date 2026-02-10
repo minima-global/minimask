@@ -33,10 +33,10 @@ function setAllTradesTableTime(){
 	var ctime 		= getTimeMilli();
 	var maxfindtime = ctime - HOURS_24;
 	
-	//Max 250 trades
+	//Max trades
 	var len = ALL_TRADES.length;
-	if(len>500){
-		len = 500;
+	if(len>MAX_TRADES_STORED){
+		len = MAX_TRADES_STORED;
 	}
 	
 	for(var i=0;i<len;i++) {
@@ -79,8 +79,6 @@ function setAllTradesTableTime(){
 			}else{
 				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
 			}
-			//celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
-			//celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
 			
 			cellamount.innerHTML 	= "&nbsp;"+trade.amount;
 			cellprice.innerHTML 	= "&nbsp;"+trade.price;
@@ -111,10 +109,10 @@ function setAllTradesTableMarket(){
 	var ctime 		= getTimeMilli();
 	var maxfindtime = ctime - HOURS_24;
 	
-	//Max 250 trades
+	//Max trades
 	var len = ALL_TRADES.length;
-	if(len>500){
-		len = 500;
+	if(len>MAX_TRADES_STORED){
+		len = MAX_TRADES_STORED;
 	}
 	
 	if(len == 0){
@@ -208,8 +206,6 @@ function setAllTradesTableMarket(){
 				}else{
 					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
 				}
-				//celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
-				//celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
 				
 				cellamount.innerHTML 	= "&nbsp;"+trade.amount;
 				cellprice.innerHTML 	= "&nbsp;"+trade.price;

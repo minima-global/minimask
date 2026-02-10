@@ -87,3 +87,9 @@ function saveUserSettings(){
  * Maximumum orders a User can have (Checked by server)
  */
 var MAX_ALLOWED_ORDERS = 50;
+/**
+ * Maximumum trades to store and show
+ */
+var MAX_TRADES_STORED = 1000;
+
+

@@ -19,6 +19,9 @@ function tradesInit(){
 			
 			//Order inverse
 			ALL_TRADES.sort(sortTradesByTime);
+			if(ALL_TRADES.length > MAX_TRADES_STORED){
+				ALL_TRADES.pop();
+			} 
 						
 			//Reset the table..
 			setTradesTable();
@@ -64,8 +67,8 @@ function setTradesTable(){
 	var firsttrade = true;
 	
 	var len = ALL_TRADES.length;
-	if(len>250){
-		len = 250;
+	if(len>MAX_TRADES_STORED){
+		len = MAX_TRADES_STORED;
 	}
 	for(var i=0;i<len;i++) {
 		
