@@ -162,8 +162,8 @@ function postStartupDex(){
 	tradesInit();
 	
 	fetchFullBalance(function(){
-		//navigate_dex();
-		navigate_alltrades();	
+		navigate_dex();
+		//navigate_alltrades();	
 	});
 	
 	//Listen for messages..
