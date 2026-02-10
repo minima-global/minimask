@@ -5,14 +5,14 @@
   "manifest_version": 3,
   "action": {
     "default_popup": "./pages/start.html",
-    "default_icon": "./images/minima48.png"
+    "default_icon": "images/minima48.png"
   },
   
   "icons": {
-	"16": "./images/minima16.png",
-	"32": "./images/minima32.png",
-	"48": "./images/minima48.png",
-	"128": "./images/minima128.png"
+	"16": "images/minima16.png",
+	"32": "images/minima32.png",
+	"48": "images/minima48.png",
+	"128": "images/minima128.png"
   },
 
   "background": {
