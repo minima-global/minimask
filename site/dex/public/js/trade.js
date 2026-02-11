@@ -564,6 +564,12 @@ function addTradeHistoryLog(order, insouts, txpowid){
 	}
 	
 	addHistoryLog("TRADE_BOOK", histlog, txpowid);
+	
+	//Do we notify
+	if(USER_SETTINGS.notifytrade){
+		console.log("NOTIFY OF TRADE!")
+		notification(histlog);
+	}
 }
 
 function getMyInputsAndOutputs(txn){

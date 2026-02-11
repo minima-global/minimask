@@ -15,6 +15,7 @@ var CURRENT_BARDATA = [];
 
 //How much time to show
 var CHART_TIME_10MINUTES	= 1000 * 60 * 10;
+var CHART_TIME_30MINUTES	= 1000 * 60 * 30;
 var CHART_TIME_HOUR 		= CHART_TIME_10MINUTES * 6;
 var CHART_TIME_DAY 			= CHART_TIME_HOUR * 24;
 var CHART_TIME_WEEK 		= CHART_TIME_DAY * 7;
@@ -45,6 +46,8 @@ function setPriceChartTimeSpan(spantime){
 		CHART_TIMESPAN = CHART_TIME_DAY; 
 	}else if(spantime == "HOUR"){
 		CHART_TIMESPAN = CHART_TIME_HOUR; 
+	}else if(spantime == "30MINUTES"){
+		CHART_TIMESPAN = CHART_TIME_30MINUTES; 
 	}else if(spantime == "10MINUTES"){
 		CHART_TIMESPAN = CHART_TIME_10MINUTES; 
 	} 
@@ -61,6 +64,8 @@ function setPriceData(){
 		CHART.config.data.datasets[0].label = CURRENT_MARKET.mktname+" (1 Day)";	
 	}else if(CHART_TIMESPAN == CHART_TIME_HOUR){
 		CHART.config.data.datasets[0].label = CURRENT_MARKET.mktname+" (1 Hour)";	
+	}else if(CHART_TIMESPAN == CHART_TIME_30MINUTES){
+		CHART.config.data.datasets[0].label = CURRENT_MARKET.mktname+" (30 Minutes)";	
 	}else if(CHART_TIMESPAN == CHART_TIME_10MINUTES){
 		CHART.config.data.datasets[0].label = CURRENT_MARKET.mktname+" (10 Minutes)";	
 	}

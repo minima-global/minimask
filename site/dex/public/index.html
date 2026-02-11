@@ -29,7 +29,7 @@
 	<div id="id_blackoutdiv" class="blackout"></div>
 	
 	<!-- The BUY SELL Panel-->
-	<div id="id_buyselldiv" class="centerdiv" style="height:340px;">
+	<div id="id_buyselldiv" class="centerdiv" style="height:330px;">
 		
 		<div class="greyrounded">
 			<div class="paddedborder">
@@ -67,16 +67,21 @@
 							</div>
 						</td>
 					</tr>
-					<tr><td>&nbsp;</td></tr>
-					<tr>
-						<td class="alignright">&nbsp;</td>
-						<td style="text-align:left;font-size:0.7em;color:grey;">&nbsp;( press Enter to set manual input )</td></tr>
 					<tr>
 						<td class="alignright">
 							Amount : 
 						</td>
 						<td>
 							<input type="number" id="id_mktcurrentamount">
+						</td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td class="alignright">
+							Available : 
+						</td>
+						<td>
+							<div id="id_mktcurrentavailable"></div>
 						</td>
 					</tr>
 					<tr>
@@ -253,9 +258,9 @@
 								</td>
 								
 								<td style="text-align:right">
+									<button class="menubtn" onclick="navigate_settings();">Settings</button>
 									<button class="menubtn" onclick="navigate_help();">Help</button>
 									<!--<button class="menubtn" onclick="navigate_logout();">Log Out</button>-->
-									<!-- <button class="menubtn" onclick="navigate_settings();">Settings</button> -->
 								</td>
 							
 							</tr>
@@ -315,10 +320,10 @@
 															<td style="text-align:right">Price : </td>
 															<td><input type=number id="id_createorder_price" step="0.0001" min=0 value=1></td>
 														</tr>
-														<tr>
+														<!--<tr>
 															<td style="text-align:right;font-size:0.7em;">Confirm Dialog : </td>
 															<td><input type=checkbox id="id_createorder_confirm"></td>
-														</tr>
+														</tr>-->
 														<tr><td>&nbsp;</td></tr>
 														<tr>
 															<td><button class="mybtn" id="id_createorder_buy">BUY</button></td>
@@ -382,10 +387,11 @@
 														<tr>
 															<td><b>Price Graph</b></td>
 															<td style="text-align:right;">
-																<button onclick="setPriceChartTimeSpan('WEEK')" class=mybtn>Week</button>
-																<button onclick="setPriceChartTimeSpan('DAY')" class=mybtn>Day</button>
-																<button onclick="setPriceChartTimeSpan('HOUR')" class=mybtn>Hour</button>
-																<button onclick="setPriceChartTimeSpan('10MINUTES')" class=mybtn>10 Mins</button>
+																<button onclick="setPriceChartTimeSpan('WEEK')" class=chartbtn>Week</button>
+																<button onclick="setPriceChartTimeSpan('DAY')" class=chartbtn>Day</button>
+																<button onclick="setPriceChartTimeSpan('HOUR')" class=chartbtn>Hour</button>
+																<button onclick="setPriceChartTimeSpan('30MINUTES')" class=chartbtn>30 Mins</button>
+																<button onclick="setPriceChartTimeSpan('10MINUTES')" class=chartbtn>10 Mins</button>
 															</td>
 														</tr>	
 													</table>
@@ -782,6 +788,27 @@ Enjoy!<br>
 																									
 									<div class="paddedborder">
 										<b>Settings</b><br>
+										<br><br>
+										<center>
+											
+											<table width=300>
+												<tr>
+													<td class="alignright"><input type=checkbox id="id_settings_createorder_confirm"></td>
+													<td>Show Confirm Dialog when adding / removing orders</td>
+												</tr>
+												<tr><td>&nbsp;</td></tr>
+												<tr>
+													<td class="alignright"><input type=checkbox id="id_settings_notify_trade"></td>
+													<td>Show notification on new trades</td>
+												</tr>
+												<tr><td>&nbsp;</td></tr>
+												<tr>
+													<td class="alignright"><input type=checkbox id="id_settings_notify_chat"></td>
+													<td>Show notification on any chat messages</td>
+												</tr>
+											</table>
+											
+										</center>
 									</div>
 								
 								</div>			
@@ -812,7 +839,7 @@ Enjoy!<br>
 								<td>
 								
 								<td style="text-align:right">
-									<div id="id_user_dex_state" style="text-align:right;"></div>
+									<div id="id_user_dex_state" style="text-align:right;">DEX v0.9.1</div>
 								</td>
 							
 							</tr>
@@ -861,6 +888,7 @@ Enjoy!<br>
 	<script type="text/javascript" src="./js/panels/panel_history.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_trades.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_alltrades.js"></script>
+	<script type="text/javascript" src="./js/panels/panel_settings.js"></script>
 	<script type="text/javascript" src="./js/panels/panel_init.js"></script>
 			
 	<script type="text/javascript">

@@ -8,10 +8,11 @@ import fs from 'fs';
 /**
  * Defauilt parameters
  */
-var DEBUG_LOGS 	= false;
-var SERVER_PORT = 8081;
-var MAX_TRADES 	= 1000;
-var TRADES_FILE = "./trades.json";
+var DEBUG_LOGS 			= false;
+var SERVER_PORT 		= 8081;
+var MAX_TRADES 			= 1000;
+var MAX_USER_ORDERS 	= 50;
+var TRADES_FILE 		= "./trades.json";
 
 /**
  * Command line params..
@@ -135,11 +136,16 @@ server.on('connection', (socket) => {
 				var orderbook = msgjson.data;
 				
 				//Check is a valid book
-				if(!(	orderbook.address && 
-						orderbook.script && 
-						orderbook.balance && 
-						orderbook.orders)){
-					//Bad Orderbook
+				if(!checkOrderBookMessage(orderbook)){
+					console.log("Invalid orderbook received.. "+JSON.stringify(orderbook));
+					
+					var err 		= {};
+					err.type 		= "INVALID_ORDER";
+					err.message 	= "You have sent an invalid orderbook! MAX ("+MAX_USER_ORDERS+")";
+					
+					//Send them a message.. or disonnect ?
+					socket.send(createCustomMsg("0x00","error","You have sent an invalid orderbook! MAX ("+MAX_USER_ORDERS+")"));
+					
 					return;
 				}
 				
@@ -149,11 +155,33 @@ server.on('connection', (socket) => {
 				//Broadcast this..
 				broadcast(createCustomMsg(socket.id,"update_orderbook",orderbook)); 	
 			
+			}else if(msgjson.type=="update_addorder"){
+							
+				//Remove this order - so server has correct book for User
+				addOrder(socket.id, msgjson.data);
+				
+				//Broadcast this..
+				broadcast(createCustomMsg(socket.id,"update_addorder",msgjson.data));	
+					
+			}else if(msgjson.type=="update_removeorder"){
+				
+				//Remove this order - so server has correct book for User
+				removeOrder(socket.id, msgjson.data);
+				
+				//Broadcast this..
+				broadcast(createCustomMsg(socket.id,"update_removeorder",msgjson.data));	
+					
 			}else if(msgjson.type=="refresh"){
 				
-				//Send the whole orderbook
-				socket.send(createCustomMsg("0x00","orderbooks",orderbooks));
-			
+				//Create an init message
+				var init 		= {};
+				init.trades 	= alltrades;
+				init.orderbooks = orderbooks;
+				init.chat 		= allchat;
+				
+				//Tell the user their uuid and the current orderbooks
+				socket.send(createCustomMsg(socket.id,"init_dex",init));
+				
 			}else if(msgjson.type=="message"){
 				
 				//Get the User..
@@ -321,7 +349,7 @@ function newChat(fromuuid, msg){
 	allchat.push(chatobj);
 	
 	//Max number of trades
-	if(allchat.length > 250){
+	if(allchat.length > 500){
 		allchat.shift();
 	}
 	
@@ -337,6 +365,54 @@ function createCustomMsg(id, type, data){
 	msg.data	= data;
 	
 	return JSON.stringify(msg);
+}
+
+//Check the Update_orderBook message
+function checkOrderBookMessage(orderbook){
+	
+	//Check is a valid book
+	if(!(	orderbook.address && 
+			orderbook.script && 
+			orderbook.balance && 
+			orderbook.orders)){
+		//Bad Orderbook
+		return false;
+	}
+	
+	//How many orders
+	if(orderbook.orders.length >= MAX_USER_ORDERS){
+		return false;
+	}
+	
+	return true;
+	
+}
+
+//Add an order to a Users Orderbook
+function addOrder(fromid, order){
+	//Get that Orderbook
+	var book = orderbooks[fromid].orders;
+	
+	book.push(order);
+}
+
+//Remove an order from a User
+function removeOrder(fromid, bookuuid){
+	
+	//Get that Orderbook
+	var book = orderbooks[fromid].orders;
+	
+	//Now remove that order
+	var neworders = [];
+	var len = book.length;
+	for(var i=0;i<len;i++) {
+		if(book[i].uuid != bookuuid){
+			neworders.push(book[i]);
+		}
+	}
+	
+	//Reset User Orders
+	orderbooks[fromid].orders = neworders;
 }
 
 //Get a random string

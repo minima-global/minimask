@@ -20,7 +20,15 @@ function addMyOrderAndPost(order){
 	USER_ORDERS.push(order);
 	
 	//Update all relevant
-	updateMyOrders();
+	updateMyOrders(false);
+	
+	//Post an add message
+	var msg  = {};
+	msg.type = "update_addorder";
+	msg.data = order;
+	
+	//Post to server
+	wsPostToServer(msg);
 }
 
 /**
@@ -51,7 +59,15 @@ function removeMyOrderAndPost(uuid){
 	USER_ORDERS = neworders;
 	
 	//Update all relevant
-	updateMyOrders();	
+	updateMyOrders(false);
+	
+	//Post a remove message
+	var msg  = {};
+	msg.type = "update_removeorder";
+	msg.data = uuid;
+	
+	//Post to server
+	wsPostToServer(msg);
 }
 
 function getMyOrder(uuid){
@@ -106,7 +122,7 @@ function updateOrderAfterTrade(bookuid, tradecoins){
 		order.amount = financialDecimal(newamt); 
 		
 		//Update all relevant
-		updateMyOrders();
+		updateMyOrders(true);
 		
 	}else{
 		
@@ -115,13 +131,15 @@ function updateOrderAfterTrade(bookuid, tradecoins){
 	}
 }
 
-function updateMyOrders(){
+function updateMyOrders(postallorders){
 	
 	//Store this locally..
 	storeMyOrders();
 		
-	//Send updated book to server
-	postMyOrdersToServer();
+	if(postallorders){
+		//Send updated book to server
+		postMyOrdersToServer();
+	}
 	
 	//And set my orders table
 	setMyOrdersTable();

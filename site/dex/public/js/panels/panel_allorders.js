@@ -11,16 +11,48 @@ function allordersInit(){
 	
 	wsAddListener(function(msg){
 		
-		if(msg.type=="update_orderbook"){
+		try{
+					
+			if(msg.type=="update_orderbook"){
+				
+				//Set this..
+				ALL_ORDERS[msg.uuid] = msg.data;
 			
-			//Set this..
-			ALL_ORDERS[msg.uuid] = msg.data;
+			}else if(msg.type=="update_addorder"){
+				
+				//Get that Orderbook
+				var book = ALL_ORDERS[msg.uuid].orders;
+				
+				//Push the new order
+				book.push(msg.data);
+				
+			}else if(msg.type=="update_removeorder"){
+					
+				//Get that Orderbook
+				var book 		= ALL_ORDERS[msg.uuid].orders;
+				var bookuuid 	= msg.data;
+				
+				//Now remove that order
+				var neworders = [];
+				var len = book.length;
+				for(var i=0;i<len;i++) {
+					if(book[i].uuid != bookuuid){
+						neworders.push(book[i]);
+					}
+				}
+				
+				//Reset User Orders
+				ALL_ORDERS[msg.uuid].orders = neworders;
+			}
 			
-			//Update the markets 
+			//And reset..
 			updateAllMarkets();
 						
 			//Set the table
-			setAllOrdersTable();					
+			setAllOrdersTable();
+			
+		}catch(err){
+			console.log("ERROR All_Orders "+JSON.stringify(msg)+" "+err);
 		}
 	});	
 }
@@ -101,66 +133,6 @@ function addTotalOrdersRows(data){
 		}
 	}
 }
-
-/*function squashListTotals(data){
-	
-	var list 	= [];
-	var len 	= data.length;
-	if(len == 0){
-		return list;
-	}
-	
-	var oldorder 	= data[0];
-	var total 		= 0;
-	var cmax 		= 0;
-	var orders		= 0;
-	
-	for(var i=0;i<len;i++) {
-		var order=data[i];
-		
-		//Is it the same price.. 
-		if(order.price == oldorder.price){
-			total += +order.amount;	
-			
-			if(+order.amount > +cmax){
-				cmax = +order.amount;
-			}
-			
-			orders++;
-			
-		}else{
-			
-			//Add the old..
-			var newrow 			= {};
-			newrow.total 		= total;
-			newrow.maxamount	= cmax;
-			newrow.price		= oldorder.price;
-			newrow.type			= oldorder.type; 
-			newrow.orders 		= orders;
-			
-			list.push(newrow);
-			
-			//And reset
-			total 	= +order.amount;
-			cmax  	= +order.amount;
-			orders 	= 1;
-		}
-		
-		oldorder = order;
-	}
-	
-	//Push the last order
-	var newrow 			= {};
-	newrow.total 		= +total;
-	newrow.maxamount	= +cmax;
-	newrow.price		= +oldorder.price; 
-	newrow.type			= oldorder.type;
-	newrow.orders 		= +orders;
-	
-	list.push(newrow);
-	
-	return list;
-}*/
 
 function squashListTotals(data){
 	

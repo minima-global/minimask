@@ -3,11 +3,6 @@ const createamount 	= document.getElementById('id_createorder_amount');
 const createprice 	= document.getElementById('id_createorder_price');
 const createbuy 	= document.getElementById('id_createorder_buy');
 const createsell 	= document.getElementById('id_createorder_sell');
-const confirmcheck 	= document.getElementById('id_createorder_confirm');
-
-function initCreateOrder(){
-	confirmcheck.checked = USER_SETTINGS.confirmOrders;
-}
 
 function sendOrder(buysell){
 	
@@ -17,7 +12,6 @@ function sendOrder(buysell){
 		alert("You have reached the maximum allowed orders : "+MAX_ALLOWED_ORDERS);
 		return;
 	}
-	
 	
 	//Get the available balance..
 	var available1 = getAvailableBalance(CURRENT_MARKET.token1.tokenid);
@@ -119,9 +113,3 @@ createsell.addEventListener('click', () => {
 	sendOrder("sell");
 });
 
-confirmcheck.addEventListener('click', () => {
-	
-	USER_SETTINGS.confirmOrders = confirmcheck.checked;
-	
-	saveUserSettings();
-});

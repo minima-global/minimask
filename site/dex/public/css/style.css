@@ -125,6 +125,31 @@ p {
   background-color: grey;
 }
 
+/* Chart Time buttons */
+.chartbtn {
+  background-color: #DD4D00; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 4px 4px; /* Some padding */
+  font-size: 10px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+  min-width:40px;
+}
+
+/* Darker background on mouse-over */
+.chartbtn:hover {
+  background-color: #AA2D00;
+}
+
+.chartbtn:active {
+  background-color: red;
+}
+
+.chartbtn:disabled {
+  background-color: grey;
+}
+
 /* Menu buttons */
 .menubtn {
   background-color: DodgerBlue; /* Blue background */

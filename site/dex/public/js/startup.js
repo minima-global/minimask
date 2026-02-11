@@ -9,6 +9,11 @@ function setTradeDexState(str){
 	trade_dex_state.innerHTML = str;
 }
 
+document.getElementById('id_init_password').addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        init_passwordcheck();	
+    }
+});
 
 /**
  * Called to  init DEX
@@ -52,6 +57,8 @@ function mainListenerLoop(){
 		
 		//First start up message
 		if(msg.type=="init_dex"){
+			
+			console.log("Init message received..");
 			
 			//Tells us who we are
 			USER_UUID = msg.uuid;
@@ -140,12 +147,11 @@ function postStartupDex(){
 	
 	//Load User Settings
 	loadUserSettings();
+	initSettings();
 	
 	//Init each Panel
 	chatroomInit();
 	allordersInit();
-	
-	initCreateOrder();
 	
 	//Wallet
 	walletInit();
@@ -171,6 +177,11 @@ function postStartupDex(){
 						
 	//Now connect to server
 	connectToServer();
+	
+	//Refresh the local data completely every 30 mins..
+	setInterval(function(){
+		refreshAllData();
+	}, 60000 * 30);
 }
 
 function loadUserDetails(){
@@ -182,7 +193,7 @@ function saveUserDetails(){
 }
 
 function setTotalUsersConnected(){
-	setUserDexState("Connected Users : "+Object.keys(ALL_ORDERS).length);
+	//setUserDexState("Connected Users : "+Object.keys(ALL_ORDERS).length);
 	
 	//Count the Orders
 	var totorders=0;
@@ -201,7 +212,21 @@ function setTotalUsersConnected(){
 			//console.log("Could not add user OrderBook to all orders : "+Error);
 		}	
 	}
-	setTradeDexState("Total Orders : "+totorders+" / Markets : "+ALL_MARKETS.length);
+	setTradeDexState("Users : "+Object.keys(ALL_ORDERS).length
+					+" / Markets : "+ALL_MARKETS.length
+					+" / Orders : "+totorders);
 }
 
+/**
+ * Refresh all data
+ */
+function refreshAllData(){
+	//Post an add message
+	var msg  = {};
+	msg.type = "refresh";
+	msg.data = "";
+	
+	//Post to server
+	wsPostToServer(msg);
+}
 

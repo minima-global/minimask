@@ -212,3 +212,44 @@ function sortHistoryByTime(a,b){
 	return 0;
 }
 
+function requestNotifications() {
+
+  console.log("Notification Permission : "+Notification.permission);		
+	
+  if (!("Notification" in window)) {
+    // Check if the browser supports notifications
+    alert("This browser does not support desktop notification");
+  } else if (Notification.permission === "granted") {
+    // Check whether notification permissions have already been granted;
+    // if so, create a notification
+	//notification("Thisis a test!!");
+	//const notification = new Notification("Hi there!");
+    // …
+  } else if (Notification.permission !== "denied") {
+    // We need to ask the user for permission
+    Notification.requestPermission().then((permission) => {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+		notification("Notifications Enabled!");
+		//const notification = new Notification("Notifications Enabled!");
+        // …
+      }
+    });
+  }
+
+  // At last, if the user has denied notifications, and you
+  // want to be respectful there is no need to bother them anymore.
+}
+
+function notification(text){
+	if(isPageHidden()){
+		const notification = new Notification("Minima DEX", {
+		  body: text,
+		  icon: "./images/minima128.png",
+		});	
+	}
+}
+
+function isPageHidden(){
+	return document.hidden || document.msHidden || document.webkitHidden || document.mozHidden;
+}

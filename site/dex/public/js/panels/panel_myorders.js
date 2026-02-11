@@ -4,7 +4,6 @@
  */
 const myorderstable = document.getElementById('id_myorders_table');
 
-
 function setMyOrdersTable(){
 	
 	//Clear Table
