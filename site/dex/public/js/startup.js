@@ -68,6 +68,11 @@ function mainListenerLoop(){
 			
 			//Order inverse
 			ALL_TRADES.sort(sortTradesByTime);
+			
+			//All server trades are supposed checked..
+			for(var i=0;i<ALL_TRADES.length;i++){
+				ALL_TRADES[i].checked = true;
+			}
 				
 			//Store this..
 			ALL_ORDERS = safeSanitize(msg.data.orderbooks);

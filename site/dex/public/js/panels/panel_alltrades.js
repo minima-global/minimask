@@ -44,6 +44,10 @@ function setAllTradesTableTime(){
 		try{
 			var trade=ALL_TRADES[i];
 			
+			if(!trade.checked){
+				continue;
+			}
+			
 			//Insert row
 			var row = alltradestable.insertRow();
 			//row.style.fontSize = "0.9em";
@@ -73,6 +77,7 @@ function setAllTradesTableTime(){
 			}
 			
 			cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
+			//cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname+"<br>"+trade.market.mktuid;
 			
 			if(trade.date>maxfindtime){
 				celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
@@ -125,7 +130,8 @@ function setAllTradesTableMarket(){
 		var trade	= ALL_TRADES[i];
 		
 		try{
-			var market 	= trade.market.mktname;
+			//var market 	= trade.market.mktname;
+			var market 	= trade.market.mktuid;
 			if(!uniquemarkets.includes(market)){
 				uniquemarkets.push(market);
 			}	
@@ -139,6 +145,7 @@ function setAllTradesTableMarket(){
 		return a.toLowerCase().localeCompare(b.toLowerCase());
 	});
 	
+	var counter =0;
 	//Cycle through tht unique markets
 	for(var mkt=0;mkt<uniquemarkets.length;mkt++){
 	
@@ -149,6 +156,20 @@ function setAllTradesTableMarket(){
 			
 			try{
 				var trade=ALL_TRADES[i];
+				
+				//Check is a valid trade..
+				if(!trade.txpowid.startsWith("0x00")){
+					continue;
+				}
+				
+				if(!trade.checked){
+					continue;
+				}
+				
+				//Is this a new Market
+				if(trade.market.mktuid != currentmkt){
+					continue;
+				}
 				
 				if(firstrun){
 					firstrun = false;
@@ -163,12 +184,12 @@ function setAllTradesTableMarket(){
 					mktname.style.fontSize 	= "0.9em";
 					mktname.style.color 	= "grey";
 								
-					mktname.innerHTML 		= "&nbsp;"+currentmkt;
+					mktname.innerHTML 		= "&nbsp;"+trade.market.mktname+" [ "+trade.market.mktuid+" ]";
 				}
 				
-				//Is this a new Market
-				if(trade.market.mktname != currentmkt){
-					continue;
+				counter++;
+				if(counter<5){
+					//console.log("TRADE : "+JSON.stringify(trade));
 				}
 				
 				//Insert row

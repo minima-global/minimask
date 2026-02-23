@@ -244,7 +244,28 @@ try {
   	const data = fs.readFileSync(TRADES_FILE, 'utf8');
   
   	//Convert
-  	alltrades = JSON.parse(data);
+  	alltrades 		= JSON.parse(data);
+	var tradelen 	= alltrades.length;
+	
+	console.log("Trades found : "+tradelen);
+	
+	//Check size..
+	if(tradelen > MAX_TRADES){
+		console.log("Trimming Trades to MAX : "+MAX_TRADES);
+		
+		var starttrade = tradelen-MAX_TRADES; 
+		var newarr = [];
+		for(var i=0;i<MAX_TRADES;i++){
+			var trade = alltrades[starttrade + i];
+			newarr.push(trade); 
+		}
+
+		//Set this..
+		alltrades = newarr; 
+		
+		//And save this..
+		fs.writeFileSync(TRADES_FILE, JSON.stringify(alltrades));
+	}
   
   	if(DEBUG_LOGS){
 		console.log('Trades Loaded : ', data);

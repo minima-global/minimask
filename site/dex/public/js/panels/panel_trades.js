@@ -4,6 +4,83 @@
  */
 const tradestable = document.getElementById('id_trades_table');
 
+//TRADE CHECKER..
+var MAX_CHECK_ATTEMPTS 	= 20;
+var CHECK_TRADES 		= [];
+var REFRESH_TRADES 		= false;
+
+setInterval(function(){
+	
+	//Do we need a refresh
+	if(REFRESH_TRADES){
+		REFRESH_TRADES = false;
+		
+		//console.log("Refresh trades..");
+				
+		//Reset the table..
+		setTradesTable();
+		
+		//Reset the ALL table..
+		setAllTradesTable();
+	}
+	
+	if(CHECK_TRADES.length==0){
+		return;
+	}
+	
+	console.log("Check all new trades..");
+	
+	//Check TRADES txpowid..
+	var keeptrades = [];
+	for(var i=0;i<CHECK_TRADES.length;i++){
+		if(!CHECK_TRADES[i].checked && CHECK_TRADES[i].checkedamount<MAX_CHECK_ATTEMPTS){
+			
+			try{
+				//Check if this is a valid trade
+				checkTrade(CHECK_TRADES[i]);
+				
+				//Keeper	
+				keeptrades.push(CHECK_TRADES[i]);	
+			
+			}catch(err){
+				//Do not re-add this trade.. something wrong..
+			}
+		}
+	}
+	
+	//Set new list
+	CHECK_TRADES = keeptrades;
+	
+}, 1000 * 30);
+
+function checkTrade(trade){
+	//console.log("Checking new trade : "+JSON.stringify(trade));
+	
+	//Increment checked amount..
+	trade.checkedamount++;
+	
+	//Check if this trade exists..
+	MINIMASK.meg.checktxpow(trade.txpowid, function(resp){
+		if(resp.status && resp.data.found){
+			trade.checked=true;
+			
+			console.log("Valid trade found : "+JSON.stringify(resp));
+			
+			//Add the trade..
+			ALL_TRADES.push(trade);
+			
+			//Order inverse
+			ALL_TRADES.sort(sortTradesByTime);
+			if(ALL_TRADES.length > MAX_TRADES_STORED){
+				ALL_TRADES.pop();
+			}
+			
+			//Refresh all trades..
+			REFRESH_TRADES = true;
+		}	
+	});
+}
+
 /**
  * Initialise chat area
  */
@@ -14,31 +91,21 @@ function tradesInit(){
 		if(msg.type=="trade"){
 			console.log("New Trade : "+JSON.stringify(msg));
 			
-			//Add the trade..
-			ALL_TRADES.push(safeSanitize(msg.data));
+			//Get a sanitized trade
+			var santrade 	 		= safeSanitize(msg.data);
+			santrade.checked 		= false;
+			santrade.checkedamount 	= 0;
 			
-			//Order inverse
-			ALL_TRADES.sort(sortTradesByTime);
-			if(ALL_TRADES.length > MAX_TRADES_STORED){
-				ALL_TRADES.pop();
-			} 
-						
-			//Reset the table..
-			setTradesTable();
+			//Check is a valid trade..
+			if(!santrade.txpowid.startsWith("0x00")){
+				console.log("INVALID trade received : "+JSON.stringify(santrade));
+				return;
+			}
 			
-			//Reset the ALL table..
-			setAllTradesTable();
+			//Add to our checker list
+			CHECK_TRADES.push(santrade);
 		}
 	});	
-	
-	/*var testtrade = {"txpowid":"0x000086C5340B6AEA19334A1358551E265D8DAFC1F7DB408DD5F3EEF9B014D27E",
-		"market":{"mktname":"aaa / Minima","mktuid":"0x375BA788DDD5F6631681FF9A276CAECC22CDF6458B9EA1D09CBAE6D3A9BA41EC / 0x00","token1":{"name":"aaa","tokenid":"0x375BA788DDD5F6631681FF9A276CAECC22CDF6458B9EA1D09CBAE6D3A9BA41EC"},"token2":{"name":"Minima","tokenid":"0x00"}},
-		"price":"2","type":"sell",
-		"amount":"0.0363","amounttoken":"0x375BA788DDD5F6631681FF9A276CAECC22CDF6458B9EA1D09CBAE6D3A9BA41EC",
-		"total":"0.0726","totaltoken":"0x00", "date":0}
-
-	ALL_TRADES.push(testtrade);
-	*/
 	
 	setTradesTable();
 }
@@ -74,6 +141,15 @@ function setTradesTable(){
 		
 		try{
 			var trade=ALL_TRADES[i];
+			
+			//Check is a valid trade..
+			if(!trade.txpowid.startsWith("0x00")){
+				continue;
+			}
+			
+			if(!trade.checked){
+				continue;
+			}
 					
 			//Is it the right market
 			if(trade.market.mktuid != CURRENT_MARKET.mktuid){
