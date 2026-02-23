@@ -185,7 +185,11 @@ function postStartupDex(){
 	
 	//Refresh the local data completely every 30 mins..
 	setInterval(function(){
+		
+		console.log("Refresh ALL data!");
+		
 		refreshAllData();
+		
 	}, 60000 * 30);
 }
 

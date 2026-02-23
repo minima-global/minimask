@@ -32,7 +32,7 @@ function chatroomInit(){
 function dexChatHistory(allchat){
 	
 	//First wipe..
-	chatarea.value = "";
+	chatarea.innerHTML = "";
 	
 	//Now add the chat
 	try{
