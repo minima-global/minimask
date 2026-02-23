@@ -63,15 +63,15 @@ function mainListenerLoop(){
 			//Tells us who we are
 			USER_UUID = msg.uuid;
 			
-			//Get all the Trades
-			ALL_TRADES = msg.data.trades;
+			//Get all the Trades - and sanitize
+			ALL_TRADES = safeSanitize(msg.data.trades);
 			
 			//Order inverse
 			ALL_TRADES.sort(sortTradesByTime);
 				
 			//Store this..
-			ALL_ORDERS = msg.data.orderbooks;
-			
+			ALL_ORDERS = safeSanitize(msg.data.orderbooks);
+						
 			refreshAllOrders();
 			
 			//And set the chat
@@ -101,7 +101,7 @@ function mainListenerLoop(){
 		}else if(msg.type=="orderbooks"){
 			
 			//Complete orderbooks..!
-			ALL_ORDERS = msg.data;
+			ALL_ORDERS = safeSanitize(msg.data);
 			
 			refreshAllOrders();
 									

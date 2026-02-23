@@ -253,3 +253,10 @@ function notification(text){
 function isPageHidden(){
 	return document.hidden || document.msHidden || document.webkitHidden || document.mozHidden;
 }
+
+//Sanitize JSON arrays
+function safeSanitize(json){
+	var jsonstr 	= JSON.stringify(json);
+	var safejsonstr = DOMPurify.sanitize(jsonstr);
+	return JSON.parse(safejsonstr);
+}

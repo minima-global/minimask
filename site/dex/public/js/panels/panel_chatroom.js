@@ -61,7 +61,11 @@ function addChatLine(chatobj, notify){
 		var uuid 	= from.substring(0,8);
 		var color 	= from.substring(2,8);
 		
-		chatarea.innerHTML += "<span style='color:#"+color+";'>"+msg+"</span><br>";
+		//Sanitize the message
+		var pure = DOMPurify.sanitize(msg);
+		
+		//Add to chat area
+		chatarea.innerHTML += "<span style='color:#"+color+";'>"+pure+"</span><br>";
 		
 		//Check size
 		var ftext = chatarea.innerHTML;

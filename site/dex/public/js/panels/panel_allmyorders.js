@@ -59,9 +59,9 @@ function setAllMyOrders(){
 			celltype.className 		= "sellorder";	
 		}
 		
-		cellamount.innerHTML 	= "&nbsp;"+order.amount;
-		cellprice.innerHTML 	= "&nbsp;"+order.price;
-		celltype.innerHTML 		= "&nbsp;"+order.type; 
-		cellaction.innerHTML 	= "<button class='mybtn' onclick='checkCancelMyOrder(\""+order.uuid+"\")'>Cancel</button>";
+		cellamount.innerHTML 	= "&nbsp;"+DOMPurify.sanitize(order.amount);
+		cellprice.innerHTML 	= "&nbsp;"+DOMPurify.sanitize(order.price);
+		celltype.innerHTML 		= "&nbsp;"+DOMPurify.sanitize(order.type); 
+		cellaction.innerHTML 	= "<button class='mybtn' onclick='checkCancelMyOrder(\""+DOMPurify.sanitize(order.uuid)+"\")'>Cancel</button>";
 	}	
 }

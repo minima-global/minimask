@@ -16,7 +16,7 @@ function allordersInit(){
 			if(msg.type=="update_orderbook"){
 				
 				//Set this..
-				ALL_ORDERS[msg.uuid] = msg.data;
+				ALL_ORDERS[msg.uuid] = safeSanitize(msg.data);
 			
 			}else if(msg.type=="update_addorder"){
 				
@@ -24,7 +24,7 @@ function allordersInit(){
 				var book = ALL_ORDERS[msg.uuid].orders;
 				
 				//Push the new order
-				book.push(msg.data);
+				book.push(safeSanitize(msg.data));
 				
 			}else if(msg.type=="update_removeorder"){
 					

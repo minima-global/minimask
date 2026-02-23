@@ -15,7 +15,7 @@ function tradesInit(){
 			console.log("New Trade : "+JSON.stringify(msg));
 			
 			//Add the trade..
-			ALL_TRADES.push(msg.data);
+			ALL_TRADES.push(safeSanitize(msg.data));
 			
 			//Order inverse
 			ALL_TRADES.sort(sortTradesByTime);
