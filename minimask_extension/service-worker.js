@@ -2,7 +2,7 @@
  * MINIMASK VARIABLES
  */
 
-var MINIMASK_VERSION		= 2.1;
+var MINIMASK_VERSION		= 2.2;
 
 //MEG HOST Details
 MINIMASK_MEG_HOST 			= "";
