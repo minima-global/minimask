@@ -44,10 +44,6 @@ function setAllTradesTableTime(){
 		try{
 			var trade=ALL_TRADES[i];
 			
-			if(!trade.checked){
-				continue;
-			}
-			
 			//Insert row
 			var row = alltradestable.insertRow();
 			//row.style.fontSize = "0.9em";
@@ -77,13 +73,17 @@ function setAllTradesTableTime(){
 			}
 			
 			cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
-			//cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname+"<br>"+trade.market.mktuid;
 			
-			if(trade.date>maxfindtime){
-				celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+			if(!trade.checked){
+				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" (checking..)";
 			}else{
-				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+				if(trade.date>maxfindtime){
+					celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+				}else{
+					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+				}	
 			}
+			
 			
 			cellamount.innerHTML 	= "&nbsp;"+trade.amount;
 			cellprice.innerHTML 	= "&nbsp;"+trade.price;
@@ -162,10 +162,6 @@ function setAllTradesTableMarket(){
 					continue;
 				}
 				
-				if(!trade.checked){
-					continue;
-				}
-				
 				//Is this a new Market
 				if(trade.market.mktuid != currentmkt){
 					continue;
@@ -222,10 +218,14 @@ function setAllTradesTableMarket(){
 				
 				cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
 				
-				if(trade.date>maxfindtime){
-					celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+				if(!trade.checked){
+					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" (checking..)";
 				}else{
-					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+					if(trade.date>maxfindtime){
+						celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+					}else{
+						celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+					}	
 				}
 				
 				cellamount.innerHTML 	= "&nbsp;"+trade.amount;

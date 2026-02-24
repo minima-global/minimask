@@ -33,18 +33,25 @@ setInterval(function(){
 	//Check TRADES txpowid..
 	var keeptrades = [];
 	for(var i=0;i<CHECK_TRADES.length;i++){
-		if(!CHECK_TRADES[i].checked && CHECK_TRADES[i].checkedamount<MAX_CHECK_ATTEMPTS){
-			
-			try{
-				//Check if this is a valid trade
-				checkTrade(CHECK_TRADES[i]);
+		
+		if(!CHECK_TRADES[i].checked){
+			if(CHECK_TRADES[i].checkedamount<MAX_CHECK_ATTEMPTS){
+						
+				try{
+					//Check if this is a valid trade
+					checkTrade(CHECK_TRADES[i]);
+					
+					//Keeper	
+					keeptrades.push(CHECK_TRADES[i]);	
 				
-				//Keeper	
-				keeptrades.push(CHECK_TRADES[i]);	
-			
-			}catch(err){
-				//Do not re-add this trade.. something wrong..
-			}
+				}catch(err){
+					//Do not re-add this trade.. something wrong..
+					updateTradeCheckedState(CHECK_TRADES[i].checkuid,false);
+				}
+			}else{
+				//Remove from list
+				updateTradeCheckedState(CHECK_TRADES[i].checkuid,false);
+			}	
 		}
 	}
 	
@@ -54,7 +61,6 @@ setInterval(function(){
 }, 1000 * 30);
 
 function checkTrade(trade){
-	//console.log("Checking new trade : "+JSON.stringify(trade));
 	
 	//Increment checked amount..
 	trade.checkedamount++;
@@ -66,14 +72,8 @@ function checkTrade(trade){
 			
 			console.log("Valid trade found : "+JSON.stringify(resp));
 			
-			//Add the trade..
-			ALL_TRADES.push(trade);
-			
-			//Order inverse
-			ALL_TRADES.sort(sortTradesByTime);
-			if(ALL_TRADES.length > MAX_TRADES_STORED){
-				ALL_TRADES.pop();
-			}
+			//Update the state
+			updateTradeCheckedState(trade.checkuid,true);
 			
 			//Refresh all trades..
 			REFRESH_TRADES = true;
@@ -81,8 +81,48 @@ function checkTrade(trade){
 	});
 }
 
+function updateTradeCheckedState(checkuid, checked){
+	
+	if(checked){
+		for(var i=0;i<ALL_TRADES.length;i++){
+			if(ALL_TRADES[i].checkuid == checkuid){
+				ALL_TRADES[i].checked = true;
+			}
+		}
+		
+	}else{
+		//Remove from list
+		var newtrades = [];
+		for(var i=0;i<ALL_TRADES.length;i++){
+			if(ALL_TRADES[i].checkuid != checkuid){
+				newtrades.push(ALL_TRADES[i]);
+			}
+		}
+		ALL_TRADES = newtrades; 
+	}
+}
+
+//Add a trade and refresh views..
+function addNewTrade(trade){
+	
+	//Add the trade..
+	ALL_TRADES.push(trade);
+	
+	//Order inverse
+	ALL_TRADES.sort(sortTradesByTime);
+	if(ALL_TRADES.length > MAX_TRADES_STORED){
+		ALL_TRADES.pop();
+	}
+	
+	//Reset the table..
+	setTradesTable();
+	
+	//Reset the ALL table..
+	setAllTradesTable();
+}
+
 /**
- * Initialise chat area
+ * Initialise trades
  */
 function tradesInit(){
 	
@@ -93,8 +133,12 @@ function tradesInit(){
 			
 			//Get a sanitized trade
 			var santrade 	 		= safeSanitize(msg.data);
-			santrade.checked 		= false;
 			santrade.checkedamount 	= 0;
+			
+			//Check set
+			if (typeof(santrade.checked) == "undefined"){
+				santrade.checked = false;
+			}
 			
 			//Check is a valid trade..
 			if(!santrade.txpowid.startsWith("0x00")){
@@ -102,8 +146,13 @@ function tradesInit(){
 				return;
 			}
 			
-			//Add to our checker list
-			CHECK_TRADES.push(santrade);
+			//Add the new trade
+			addNewTrade(santrade);
+			
+			if(!santrade.checked){
+				//Add to our checker list
+				CHECK_TRADES.push(santrade);	
+			}
 		}
 	});	
 	
@@ -146,10 +195,6 @@ function setTradesTable(){
 			if(!trade.txpowid.startsWith("0x00")){
 				continue;
 			}
-			
-			if(!trade.checked){
-				continue;
-			}
 					
 			//Is it the right market
 			if(trade.market.mktuid != CURRENT_MARKET.mktuid){
@@ -187,12 +232,16 @@ function setTradesTable(){
 				celldate.className 		= "sellorder";	
 			}
 			
-			
-			if(trade.date>maxfindtime){
-				celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+			if(!trade.checked){
+				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" (*)";
 			}else{
-				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+				if(trade.date>maxfindtime){
+					celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
+				}else{
+					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase();
+				}	
 			}
+			
 			//celltype.innerHTML 		= "&nbsp;"+trade.type;
 			//celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>"; 
 			

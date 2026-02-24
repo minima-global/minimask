@@ -5,6 +5,9 @@ import { WebSocketServer } from 'ws';
 import { WebSocket } from 'ws';
 import fs from 'fs';
 
+//var http = require('http');
+import * as http from 'http';
+
 /**
  * Defauilt parameters
  */
@@ -13,6 +16,11 @@ var SERVER_PORT 		= 8081;
 var MAX_TRADES 			= 1000;
 var MAX_USER_ORDERS 	= 50;
 var TRADES_FILE 		= "./trades.json";
+
+var MEG_CHECK_TRADES	= false;
+var MEG_SERVER 			= "127.0.0.1";
+var MEG_PORT 			= 8080;
+var MEG_USERPASS 		= "apicaller:apicaller";
 
 /**
  * Command line params..
@@ -24,11 +32,12 @@ for(var c=0;c<args.length;c++){
 	if(param == "-help"){
 		
 		console.log("Usage parameters : ");
-		console.log("-port [port]            : Set the port to listen on");
-		console.log("-tradesfile [file]      : Set the file to store trades");
-		console.log("-maxtrades [maxtrades]  : Max trades to store in file");
-		console.log("-debug                  : Show debug output");
-		console.log("-help                   : Show this help");
+		console.log("-port [port]                            : Set the port to listen on");
+		console.log("-megserver [user:password@host:port]    : Specify a MEG server to check trades");
+		console.log("-tradesfile [file]                      : Set the file to store trades");
+		console.log("-maxtrades [maxtrades]                  : Max trades to store in file");
+		console.log("-debug                                  : Show debug output");
+		console.log("-help                                   : Show this help");
 		
 		//And exit
 		process.exit();	
@@ -44,6 +53,29 @@ for(var c=0;c<args.length;c++){
 		c++;
 		MAX_TRADES = +args[c];
 	
+	}else if(param == "-megserver"){
+		c++;
+		
+		var megserver = args[c];
+		
+		//Break it down into the components
+		var at = megserver.indexOf("@");
+		MEG_USERPASS = megserver.substring(0,at);
+		
+		var hostport = megserver.substring(at+1);
+		at = hostport.indexOf(":");
+		
+		MEG_SERVER 	= hostport.substring(0,at);
+		MEG_PORT 	= +hostport.substring(at+1);
+		
+		MEG_CHECK_TRADES = true; 
+		
+		if(DEBUG_LOGS){
+			console.log("MEG_USER    : "+MEG_USERPASS);
+			console.log("MEG_SERVER  : "+MEG_SERVER);
+			console.log("MEG_PORT    : "+MEG_PORT);
+		}
+			
 	}else if(param == "-port"){
 		c++;
 		SERVER_PORT = +args[c];
@@ -191,13 +223,22 @@ server.on('connection', (socket) => {
 				
 				//There has been a trade
 				var trade = msgjson.data;
+								
+				//NOT checked yet
+				trade.checkuid = getRandomHexString();
+				trade.checked  = false;
 				
-				//Add it to our list
-				addTrade(trade);
+				if(MEG_CHECK_TRADES){
+					addCheckTrade(trade);	
 				
-				//Broadcast
-				broadcast(createCustomMsg("0x00","trade",trade));	
-			
+				}else{
+					//Add it to our list
+					addTrade(trade);
+					
+					//Broadcast
+					broadcast(createCustomMsg("0x00","trade",trade));	
+				}
+				
 			}else if(msgjson.type=="ping"){
 				
 				var pong = createCustomMsg("0x00","pong",{});
@@ -444,4 +485,144 @@ function getRandomHexString() {
         output += HEXVALS.charAt(Math.floor(Math.random() * HEXVALS.length));
     }
     return "0x"+output;
+}
+
+/**
+ * IF a MEG server is spoecified.. will check a Trade before sending on..
+ */
+var MEG_AUTH 			= 'Basic ' + Buffer.from(MEG_USERPASS).toString('base64');;
+var MAX_CHECK_ATTEMPTS 	= 20;
+var CHECK_TRADES 		= [];
+	
+if(MEG_CHECK_TRADES){
+	
+	setInterval(function(){
+		
+		//Any trades to check
+		if(CHECK_TRADES.length==0){
+			return;
+		}
+		
+		if(DEBUG_LOGS){
+			console.log("Check all new trades..");	
+		}
+		
+		//Check TRADES txpowid..
+		var keeptrades = [];
+		for(var i=0;i<CHECK_TRADES.length;i++){
+			
+			if(!CHECK_TRADES[i].checked){
+				if(CHECK_TRADES[i].checkedamount<MAX_CHECK_ATTEMPTS){
+							
+					try{
+						//Check if this is a valid trade
+						checkTrade(CHECK_TRADES[i]);
+						
+						//Keeper	
+						keeptrades.push(CHECK_TRADES[i]);	
+					
+					}catch(err){
+						console.log("Error checking trade : "+JSON.stringify(CHECK_TRADES[i])+" "+err);
+					}
+				}
+			}
+		}
+		
+		//Set new list
+		CHECK_TRADES = keeptrades;
+		
+	}, 1000 * 30);
+	
+	//Run a check
+	postURL("/wallet/block","",function(resp){
+		console.log("MEG check block call : "+JSON.stringify(resp));
+	});
+}
+
+function addCheckTrade(trade){
+	
+	if(DEBUG_LOGS){
+		console.log("Check trade added : "+JSON.stringify(trade));	
+	}
+	
+	//Trade not checked..
+	trade.checked		= false;
+	trade.checkedamount	= 0;
+	
+	//Check it..
+	CHECK_TRADES.push(trade);
+}
+
+function checkTrade(trade){
+		
+	//Increment checked amount..
+	trade.checkedamount++;
+	
+	//Check if this trade exists..
+	checkTxPoW(trade.txpowid, function(resp){
+		console.log("CHECK : "+JSON.stringify(resp));
+		
+		if(resp.status && resp.response.found){
+			trade.checked=true;
+			
+			if(DEBUG_LOGS){
+				console.log("Valid trade found : "+JSON.stringify(resp));
+			}
+			
+			//Add it to our list
+			addTrade(trade);
+			
+			//Broadcast
+			broadcast(createCustomMsg("0x00","trade",trade));
+		}	
+	});
+}
+
+function checkTxPoW(txpowid,callback){
+	postURL("/wallet/checktxpow","txpowid="+txpowid, function(resp){
+		callback(resp);	
+	});
+}
+
+//Make a GET request
+function postURL(url, postData, callback){
+	
+	//Create the AUTH header
+	var header =  { 
+	    'Authorization': MEG_AUTH,
+		'Content-Type': 'application/x-www-form-urlencoded'
+	}
+	
+	var options = {
+	  hostname:	MEG_SERVER,
+	  port:MEG_PORT,
+	  path:url,
+	  method: 'POST',
+	  headers: header
+	};
+	
+	const req = http.request(options, (res) => {
+	  //console.log(`STATUS: ${res.statusCode}`);
+	  //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+	  res.setEncoding('utf8');
+	  res.on('data', (chunk) => {
+	    try{
+			callback(JSON.parse(chunk));	
+		}catch(err){
+			console.log('Error HTTP : '+err+"  @ "+url+" "+postData);
+		}
+		
+	  });
+	  res.on('end', () => {
+	    //console.log('No more data in response.');
+	  });
+	});
+
+	req.on('error', (e) => {
+	  console.error(`problem with request: ${e.message}`);
+	});
+
+	// Write data to request body
+	req.write(postData);
+	req.end();
 }
