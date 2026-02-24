@@ -412,7 +412,6 @@ function postResultToUser(userid, status, txpowid, tradeuuid){
 function tradeComplete(msg){
 	if(msg.status && msg.tradeuuid == CURRENT_TRADE_UUID){
 		addTextTradeInfo("Trade Success! "+msg.txpowid);
-		addTextTradeInfo("Will take a few minutes to appear in trades list..");
 		
 		//Remove these 
 		removeCoinsFromBalance(CURRENT_TRADE_COINS);

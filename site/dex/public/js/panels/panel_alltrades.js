@@ -75,7 +75,7 @@ function setAllTradesTableTime(){
 			cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
 			
 			if(!trade.checked){
-				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" (checking..)";
+				celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" ( checking.. )";
 			}else{
 				if(trade.date>maxfindtime){
 					celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";
@@ -219,7 +219,7 @@ function setAllTradesTableMarket(){
 				cellmkt.innerHTML 		= "&nbsp;"+trade.market.mktname;
 				
 				if(!trade.checked){
-					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" (checking..)";
+					celltype.innerHTML 		= "&nbsp;"+trade.type.toUpperCase()+" ( checking.. )";
 				}else{
 					if(trade.date>maxfindtime){
 						celltype.innerHTML 		= "&nbsp;<a target='history_txpowid' href='https://minimask.org/block/txpow.html?txpowid="+trade.txpowid+"'>"+trade.type.toUpperCase()+"</a>";

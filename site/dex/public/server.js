@@ -225,20 +225,22 @@ server.on('connection', (socket) => {
 				var trade = msgjson.data;
 								
 				//NOT checked yet
-				trade.checkuid = getRandomHexString();
-				trade.checked  = false;
+				trade.checkuid  = getRandomHexString();
+				trade.checked   = false;
+				trade.checking  = MEG_CHECK_TRADES;
 				
 				if(MEG_CHECK_TRADES){
+					//Add to our check list
 					addCheckTrade(trade);	
 				
 				}else{
 					//Add it to our list
 					addTrade(trade);
-					
-					//Broadcast
-					broadcast(createCustomMsg("0x00","trade",trade));	
 				}
 				
+				//Broadcast
+				broadcast(createCustomMsg("0x00","trade",trade));
+									
 			}else if(msgjson.type=="ping"){
 				
 				var pong = createCustomMsg("0x00","pong",{});
@@ -306,10 +308,6 @@ try {
 		
 		//And save this..
 		fs.writeFileSync(TRADES_FILE, JSON.stringify(alltrades));
-	}
-  
-  	if(DEBUG_LOGS){
-		console.log('Trades Loaded : ', data);
 	}
   
 } catch (err) {
@@ -573,7 +571,7 @@ function checkTrade(trade){
 			addTrade(trade);
 			
 			//Broadcast
-			broadcast(createCustomMsg("0x00","trade",trade));
+			broadcast(createCustomMsg("0x00","trade_check",trade));
 		}	
 	});
 }

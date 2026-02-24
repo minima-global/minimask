@@ -135,24 +135,24 @@ function tradesInit(){
 			var santrade 	 		= safeSanitize(msg.data);
 			santrade.checkedamount 	= 0;
 			
-			//Check set
-			if (typeof(santrade.checked) == "undefined"){
-				santrade.checked = false;
-			}
-			
-			//Check is a valid trade..
-			if(!santrade.txpowid.startsWith("0x00")){
-				console.log("INVALID trade received : "+JSON.stringify(santrade));
-				return;
-			}
-			
 			//Add the new trade
 			addNewTrade(santrade);
 			
-			if(!santrade.checked){
+			if(!santrade.checked && !santrade.checking){
+				
 				//Add to our checker list
 				CHECK_TRADES.push(santrade);	
 			}
+		
+		}else if(msg.type=="trade_check"){
+		
+			var trade = safeSanitize(msg.data);
+			
+			//is it valid..
+			updateTradeCheckedState(trade.checkuid,trade.checked);
+			
+			//Refresh all trades..
+			REFRESH_TRADES = true;	
 		}
 	});	
 	
