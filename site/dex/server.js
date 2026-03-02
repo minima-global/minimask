@@ -5,17 +5,21 @@ import { WebSocketServer } from 'ws';
 import { WebSocket } from 'ws';
 import fs from 'fs';
 
-//var http = require('http');
-import * as http from 'http';
+import * as RATE_LIMIT from "./serverlibs/ratelimit.js"
+import * as UTILS from "./serverlibs/serverutils.js"
+
 
 /**
  * Defauilt parameters
  */
 var DEBUG_LOGS 			= false;
+var DEBUG_SHORT			= false;
 var SERVER_PORT 		= 8081;
 var MAX_TRADES 			= 1000;
 var MAX_USER_ORDERS 	= 50;
+
 var TRADES_FILE 		= "./trades.json";
+var RATELIMIT_FILE 		= "./ratelimit.json";
 
 var MEG_CHECK_TRADES	= false;
 var MEG_SERVER 			= "127.0.0.1";
@@ -35,8 +39,10 @@ for(var c=0;c<args.length;c++){
 		console.log("-port [port]                            : Set the port to listen on");
 		console.log("-megserver [user:password@host:port]    : Specify a MEG server to check trades");
 		console.log("-tradesfile [file]                      : Set the file to store trades");
+		console.log("-ratesfile [file]                       : Set the file to store rate limit data");
 		console.log("-maxtrades [maxtrades]                  : Max trades to store in file");
 		console.log("-debug                                  : Show debug output");
+		console.log("-debugshort                             : Show shorter debug output");
 		console.log("-help                                   : Show this help");
 		
 		//And exit
@@ -45,10 +51,18 @@ for(var c=0;c<args.length;c++){
 	}else if(param == "-debug"){
 		DEBUG_LOGS = true;
 	
+	}else if(param == "-debugshort"){
+		DEBUG_LOGS  = true;
+		DEBUG_SHORT = true;
+				
 	}else if(param == "-tradesfile"){
 		c++;
 		TRADES_FILE = args[c];
 	
+	}else if(param == "-ratesfile"){
+		c++;
+		RATELIMIT_FILE = args[c];
+		
 	}else if(param == "-maxtrades"){
 		c++;
 		MAX_TRADES = +args[c];
@@ -82,12 +96,6 @@ for(var c=0;c<args.length;c++){
 	}
 }
 
-//MUST set a trades file..
-if(TRADES_FILE == ""){
-	console.log("You MUST specify a file to store trades.. Use -help for more info");
-	process.exit();
-}
-
 //Output some info
 console.log('DEX server is running on port '+SERVER_PORT);
 console.log('Trades are stored in file '+TRADES_FILE);
@@ -115,14 +123,50 @@ var alltrades	= [];
 //Last few Chat messages..
 var allchat	= [];
 
+//Run a function on exit
+process.on("SIGINT", function(){
+	process.exit(0);
+});
+
+process.on("SIGTERM", function(){
+	process.exit(0);
+});
+
+process.on("exit", function(){
+	shutdown();
+});
+
+function shutdown(){
+	
+	console.log("Running shutdown function..");
+	
+	
+	//Try and write this..
+	try{
+		console.log("Save trades file..");
+		fs.writeFileSync(TRADES_FILE, JSON.stringify(alltrades));
+			
+		console.log("Save rate limit data..");
+		RATE_LIMIT.saveRateLimitData(RATELIMIT_FILE);
+			
+	}catch(Error){
+		console.log("Error writing files.. : "+Error)
+	}
+	
+	
+}
+
 //What to do on connections
 server.on('connection', (socket) => {
 	
 	//Set a unique ID
-	socket.id = getRandomHexString();
+	socket.id = UTILS.getRandomHexString();
 	if(DEBUG_LOGS){
 		console.log("New Connection.. "+socket.id);	
 	}	
+	
+	//We still have to receive the FIRST message
+	socket.firstmessage = false;
 		
 	//Add client to our list
 	clients.add(socket);
@@ -147,11 +191,82 @@ server.on('connection', (socket) => {
 			//Get the JSON version
 			var msgjson = JSON.parse(strmsg);
 			
+			//Get the UUID
+			var uuid = msgjson.uuid;
+			
+			//Blank uuid.. as not to share
+			msgjson.uuid = "0xFF";
+			
 			if(DEBUG_LOGS){
 				if(msgjson.type != "ping"){
-					console.log("Message from:"+socket.id+" msg:"+strmsg);	
+					if(DEBUG_SHORT){
+						console.log("Message from:"+socket.id+" msg:"+strmsg.substring(0,20)+"..");	
+					}else{
+						console.log("Message from:"+socket.id+" msg:"+strmsg);	
+					}	
 				} 
 			}
+			
+			//Check if the User is in the SIN BIN (ping allowed)
+			if(msgjson.type != "ping"){
+				
+				//Check for User
+				if(!RATE_LIMIT.checkForUser(uuid)){
+					console.log("Add new UUID user : "+uuid);
+					
+					//Add this User to the Rate Limiter
+					RATE_LIMIT.addRLUser(uuid);
+					
+					//NEW users automatically go in SIN BIN..
+					sinbin(uuid, socket, "As a NEW USER you are not allowed to send messages for 5 minutes..");
+					
+					socket.firstmessage = true;
+					
+					return;
+					
+				}else if(RATE_LIMIT.checkSinBin(uuid)){
+					console.log("SINBIN Message ignored from:"+socket.id+" msg:"+msgjson.type);
+					
+					//Is this the FIRST message
+					if(!socket.firstmessage){
+						socket.firstmessage = true;
+						
+						console.log("Send sinbin message to User "+uuid);
+						
+						//Tell the user to refresh in 10 minutes..
+						var rateobj 	= {};
+						rateobj.uuid	= "0x000000";
+						rateobj.message = "YOU HAVE EXCEEDED THE MESSAGE RATE LIMIT! (..you are in the SIN BIN for 5 minutes)";
+						
+						//Send them a message..
+						socket.send(createCustomMsg("0x00","ratelimit",rateobj));
+					}
+					
+					return;
+				
+				}else if(!RATE_LIMIT.newValidRLMessage(uuid)){
+									
+					//EXCEEDED..! add to SIN BIN	
+					sinbin(uuid, socket, "YOU HAVE EXCEEDED THE MESSAGE RATE LIMIT! (..added to SIN BIN for 5 minutes)");
+					
+					try{
+						//wipe their orders.. they refresh in 10 minutes
+						var sinorderbook 	= orderbooks[socket.id];
+						sinorderbook.orders = [];
+						
+						//Broadcast this new empty book..
+						broadcast(createCustomMsg(socket.id,"update_orderbook",sinorderbook));	
+						
+					}catch(err){
+						
+					}
+					
+					return;
+				}	
+			}
+			
+			//We have now received the first message
+			socket.firstmessage = true;
 			
 			//What message type is it..
 			if(msgjson.type == "chat"){
@@ -175,7 +290,7 @@ server.on('connection', (socket) => {
 					err.type 		= "INVALID_ORDER";
 					err.message 	= "You have sent an invalid orderbook! MAX ("+MAX_USER_ORDERS+")";
 					
-					//Send them a message.. or disonnect ?
+					//Send them a message.. 
 					socket.send(createCustomMsg("0x00","error","You have sent an invalid orderbook! MAX ("+MAX_USER_ORDERS+")"));
 					
 					return;
@@ -225,7 +340,7 @@ server.on('connection', (socket) => {
 				var trade = msgjson.data;
 								
 				//NOT checked yet
-				trade.checkuid  = getRandomHexString();
+				trade.checkuid  = UTILS.getRandomHexString();
 				trade.checked   = false;
 				trade.checking  = MEG_CHECK_TRADES;
 				
@@ -243,10 +358,8 @@ server.on('connection', (socket) => {
 									
 			}else if(msgjson.type=="ping"){
 				
-				var pong = createCustomMsg("0x00","pong",{});
-				
 				//Send back a pong message
-				socket.send(pong);		
+				socket.send(createCustomMsg("0x00","pong",{}));		
 				
 			}else{
 				console.log("Unknown message type :"+msgjson.type+" msg:"+strmsg);
@@ -264,7 +377,6 @@ server.on('connection', (socket) => {
 		}
 		
 		try{
-			
 			//remove from our client list
 			clients.delete(socket);
 			
@@ -305,15 +417,15 @@ try {
 
 		//Set this..
 		alltrades = newarr; 
-		
-		//And save this..
-		fs.writeFileSync(TRADES_FILE, JSON.stringify(alltrades));
 	}
   
 } catch (err) {
   	//File not found.. first time running..
 	console.error('No Trades found.. yet..');
 }
+
+//Load in the Rate limit..
+RATE_LIMIT.loadRateLimitData(RATELIMIT_FILE);
 
 /**
  * UTILITY FUNCTIONS
@@ -323,7 +435,11 @@ try {
 function broadcast(str){
 	
 	if(DEBUG_LOGS){
-		console.log("Broadcast > "+str);	
+		if(DEBUG_SHORT){
+			console.log("Broadcast > "+str.substring(0,20)+"..");
+		}else{
+			console.log("Broadcast > "+str);
+		}	
 	}
 	
 	//Cycle through all the clients
@@ -342,10 +458,14 @@ function broadcast(str){
 function sendToUser(from, to, data){
 	
 	//Create the message
-	var msg 	= createCustomMsg(from, "message", data);
+	var msg = createCustomMsg(from, "message", data);
 	
 	if(DEBUG_LOGS){
-		console.log("Send To "+to+"> "+msg);	
+		if(DEBUG_SHORT){
+			console.log("Send To "+to+"> "+msg.substring(0,20)+"..");
+		}else{
+			console.log("Send To "+to+"> "+msg);	
+		}
 	}
 	
 	//Cycle through all the clients
@@ -367,6 +487,23 @@ function sendToUser(from, to, data){
 }
 
 /**
+ * RATE LIMIT SIN BIN
+ */
+function sinbin(uuid, socket, message){
+	
+	//Add User to the Sin bin.. 
+	RATE_LIMIT.addUserSinBin(uuid);
+	
+	//Tell the user to refresh in 10 minutes..
+	var rateobj 	= {};
+	rateobj.uuid	= "0x000000";
+	rateobj.message = message;
+	
+	//Send them a message..
+	socket.send(createCustomMsg("0x00","ratelimit",rateobj));
+}
+
+/**
  * Add a trade = only keep the last X many
  */
 function addTrade(trade){
@@ -377,13 +514,6 @@ function addTrade(trade){
 	//Max number of trades
 	if(alltrades.length > MAX_TRADES){
 		alltrades.shift();
-	}
-
-	//Try and write this..
-	try{
-		fs.writeFileSync(TRADES_FILE, JSON.stringify(alltrades));	
-	}catch(Error){
-		console.log("Error write file.. : "+Error)
 	}	
 }
 
@@ -475,15 +605,6 @@ function removeOrder(fromid, bookuuid){
 	orderbooks[fromid].orders = neworders;
 }
 
-//Get a random string
-const HEXVALS = '0123456789ABCDEF';
-function getRandomHexString() {
-    let output = '';
-    for (let i = 0; i < 30; ++i) {
-        output += HEXVALS.charAt(Math.floor(Math.random() * HEXVALS.length));
-    }
-    return "0x"+output;
-}
 
 /**
  * IF a MEG server is spoecified.. will check a Trade before sending on..
@@ -532,7 +653,7 @@ if(MEG_CHECK_TRADES){
 	}, 1000 * 30);
 	
 	//Run a check
-	postURL("/wallet/block","",function(resp){
+	UTILS.postURL(MEG_SERVER, MEG_PORT, MEG_AUTH, "/wallet/block","",function(resp){
 		console.log("MEG check block call : "+JSON.stringify(resp));
 	});
 }
@@ -577,50 +698,7 @@ function checkTrade(trade){
 }
 
 function checkTxPoW(txpowid,callback){
-	postURL("/wallet/checktxpow","txpowid="+txpowid, function(resp){
+	UTILS.postURL(MEG_SERVER, MEG_PORT, MEG_AUTH, "/wallet/checktxpow","txpowid="+txpowid, function(resp){
 		callback(resp);	
 	});
-}
-
-//Make a GET request
-function postURL(url, postData, callback){
-	
-	//Create the AUTH header
-	var header =  { 
-	    'Authorization': MEG_AUTH,
-		'Content-Type': 'application/x-www-form-urlencoded'
-	}
-	
-	var options = {
-	  hostname:	MEG_SERVER,
-	  port:MEG_PORT,
-	  path:url,
-	  method: 'POST',
-	  headers: header
-	};
-	
-	const req = http.request(options, (res) => {
-	  //console.log(`STATUS: ${res.statusCode}`);
-	  //console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-	  res.setEncoding('utf8');
-	  res.on('data', (chunk) => {
-	    try{
-			callback(JSON.parse(chunk));	
-		}catch(err){
-			console.log('Error HTTP : '+err+"  @ "+url+" "+postData);
-		}
-		
-	  });
-	  res.on('end', () => {
-	    //console.log('No more data in response.');
-	  });
-	});
-
-	req.on('error', (e) => {
-	  console.error(`problem with request: ${e.message}`);
-	});
-
-	// Write data to request body
-	req.write(postData);
-	req.end();
 }

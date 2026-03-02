@@ -1,12 +1,6 @@
 
-const confirmcheck 	= document.getElementById('id_settings_createorder_confirm');
 const notifytrade 	= document.getElementById('id_settings_notify_trade');
 const notifychat 	= document.getElementById('id_settings_notify_chat');
-
-confirmcheck.addEventListener('click', () => {
-	USER_SETTINGS.confirmOrders = confirmcheck.checked;
-	saveUserSettings();
-});
 
 notifytrade.addEventListener('click', () => {
 	USER_SETTINGS.notifytrade = notifytrade.checked;
@@ -25,7 +19,6 @@ notifychat.addEventListener('click', () => {
 });
 
 function initSettings(){
-	confirmcheck.checked 	= USER_SETTINGS.confirmOrders;
 	notifytrade.checked 	= USER_SETTINGS.notifytrade;
 	notifychat.checked 		= USER_SETTINGS.notifychat;
 }
@@ -39,16 +32,26 @@ function loadUserSettings(){
 		USER_SETTINGS = {};
 	}
 	
-	if(typeof(USER_SETTINGS.confirmOrders) == "undefined"){
-		USER_SETTINGS.confirmOrders = true;
+	//The USER picks a random UID - that is not shared.. this is for the server
+	var needsave = false;
+	if(typeof(USER_SETTINGS.uuid_rate) == "undefined"){
+		needsave = true;
+		USER_SETTINGS.uuid_rate = getRandomHexString();
 	}
 	
 	if(typeof(USER_SETTINGS.notifytrade) == "undefined"){
+		needsave = true;
 		USER_SETTINGS.notifytrade = false;
 	}
 	
 	if(typeof(USER_SETTINGS.notifychat) == "undefined"){
+		needsave = true;
 		USER_SETTINGS.notifychat = false;
+	}
+	
+	//Save them..
+	if(needsave){
+		saveUserSettings();	
 	}
 }
 

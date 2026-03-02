@@ -8,6 +8,8 @@ var RECONNECT_TIMER 		= 30000;
 
 var AUTO_CLIENT_PINGID 		= 0;
 
+var SINBIN = false;
+
 const dex_state	= document.getElementById('id_dex_state');
 function setDexState(str){
 	dex_state.innerHTML = str;
@@ -91,6 +93,7 @@ function wsInitSocket(initcallback){
 	};
 	
 	WEB_SOCKET.onerror = () => {
+		
 		setDexState("Error.. reconnecting in 30s");
 		console.log('Error connecting to server');
 		
@@ -120,6 +123,15 @@ function wsPostToServer(jsonmsg){
 		return;
 	}
 	
+	//Are we in the SINBIN
+	if(SINBIN){
+		return;
+	}
+	
+	//Add OUR uuid.. 
+	jsonmsg.uuid = USER_SETTINGS.uuid_rate;
+	
+	//Convert to string
 	var strmsg = JSON.stringify(jsonmsg);
 	
 	//Is the Socket OPEN

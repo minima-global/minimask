@@ -43,6 +43,16 @@ function dexChatHistory(allchat){
 		console.log("Error importing startup chat.. "+JSON.stringify(allchat));	
 	}
 	
+	if(SINBIN){
+		chatinput.value = '';
+		
+		var chatobj 		= {};
+		chatobj.uuid 		= "0x000000";
+		chatobj.message 	= "You are currently in the SIN BIN and cannot send messages..";
+		addChatLine(chatobj, false);
+		return;
+	}
+	
 	//Scroll to bottom..
 	setTimeout(function(){
 		chatarea.scrollTop = chatarea.scrollHeight;
@@ -94,6 +104,18 @@ function addChatLine(chatobj, notify){
 }
 
 function getSendChat(){
+	
+	//Are we in the SIN BIN
+	if(SINBIN){
+		chatinput.value = '';
+		
+		var chatobj 		= {};
+		chatobj.uuid 		= "0x000000";
+		chatobj.message 	= "You are currently in the SIN BIN and cannot send messages..";
+		addChatLine(chatobj, false);
+		return;
+	}
+	
 	var msg  = {};
 	msg.type = "chat";
 	

@@ -35,13 +35,8 @@ function addMyOrderAndPost(order){
  * Remove an order from Your OrderBook
  */
 function checkCancelMyOrder(orderuuid){
-	
-	if(USER_SETTINGS.confirmOrders){
-		if(confirm("Are you sure you wish to remove this order ? ")){
-			removeMyOrderAndPost(orderuuid);	
-		}
-	}else{
-		removeMyOrderAndPost(orderuuid);
+	if(confirm("Are you sure you wish to remove this order ? ")){
+		removeMyOrderAndPost(orderuuid);	
 	}
 }
 

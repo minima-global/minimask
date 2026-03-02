@@ -74,13 +74,10 @@ function sendOrder(buysell){
 				+"\n\nConfirm ? ";
 	} 
 	
-	//Is the confirm checked..
-	if(USER_SETTINGS.confirmOrders){
-		//Check cnfirm
-		if(!confirm(confmsg)){
-			return;
-		}	
-	}
+	//Check cnfirm
+	if(!confirm(confmsg)){
+		return;
+	}	
 	
 	//Do we already have an order like this..
 	var prevorder = findMyOrder(buysell, price);
@@ -92,8 +89,8 @@ function sendOrder(buysell){
 		
 		prevorder.amount = ""+pamt.plus(namt);
 		
-		//Update all relevant
-		updateMyOrders();
+		//Update all relevant - and post
+		updateMyOrders(true);
 			
 	}else{
 		//Create the order
