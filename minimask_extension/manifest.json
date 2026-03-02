@@ -1,7 +1,7 @@
 {
   "name": "MiniMask",
   "description": "Minima Wallet and MEG Access",
-  "version": "2.3",
+  "version": "2.4",
   "manifest_version": 3,
   "action": {
     "default_popup": "./pages/start.html",
@@ -19,8 +19,7 @@
       "service_worker": "service-worker.js"
   },
   
-  "permissions": [	"activeTab", 
-  					"storage"],
+  "permissions": [ "storage" ],
 					
   "content_scripts": [
      {
