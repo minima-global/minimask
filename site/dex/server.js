@@ -197,6 +197,8 @@ server.on('connection', (socket) => {
 				//Incorrect message format
 				console.log("MISSING UUID from:"+socket.id);
 				return;
+			}else{
+				console.log("MESSAGE UUID from:"+socket.id+" UUID:"+uuid);
 			}
 			
 			//Blank uuid.. as not to share
