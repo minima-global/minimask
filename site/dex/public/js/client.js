@@ -124,7 +124,7 @@ function wsPostToServer(jsonmsg){
 	}
 	
 	//Are we in the SINBIN
-	if(SINBIN){
+	if(SINBIN && jsonmsg.type!="ping"){
 		return;
 	}
 	
