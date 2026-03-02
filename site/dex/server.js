@@ -193,6 +193,11 @@ server.on('connection', (socket) => {
 			
 			//Get the UUID
 			var uuid = msgjson.uuid;
+			if(!uuid){
+				//Incorrect message format
+				console.log("MISSING UUID from:"+socket.id);
+				return;
+			}
 			
 			//Blank uuid.. as not to share
 			msgjson.uuid = "0xFF";
