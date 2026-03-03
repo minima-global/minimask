@@ -80,6 +80,55 @@ var STORAGE = {
 	},
 	
 	/**
+	 * Set data - Globally
+	 */
+	setDataGlobal : function(key, dataJSON){
+		
+		//First convert the data to a string
+		var datastr = JSON.stringify(dataJSON);
+		
+		//Now Encrypt
+		var encrypted = CryptoJS.AES.encrypt(datastr, STORAGE.mainPassword);
+		
+		//Now save this
+		localStorage.setItem("**GLOBAL**_"+key,encrypted);		
+	},
+	
+	/**
+	 * Get data - Globally
+	 */
+	getDataGlobal : function(key){
+		
+		//Get the data
+		var encdata = localStorage.getItem("**GLOBAL**_"+key);
+		
+		//Check Exists
+		if(encdata == null){
+			return null;
+		}
+		
+		//Now try to decrypt the data
+		try{
+			var decrypted = CryptoJS.AES.decrypt(encdata, STORAGE.mainPassword);
+					
+			//Now convert to readable string
+			var datastr = decrypted.toString(CryptoJS.enc.Utf8);
+			
+			//Convert to JSON
+			var dataJSON = JSON.parse(datastr);
+			
+			return dataJSON;	
+			
+		}catch(err){
+		
+			console.log("Unable to decrypt data.. incorrect password ?");
+			
+			//Exists but password wrong..
+			return -1;
+		}
+	},
+	
+	/**
 	 * Clear data
 	 */
 	clearData : function(){

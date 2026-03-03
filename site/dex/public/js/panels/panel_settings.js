@@ -28,15 +28,14 @@ function loadUserSettings(){
 	USER_SETTINGS = STORAGE.getData("**USER_SETTINGS**");
 	
 	//Check if exists
+	var needsave= false;
 	if(USER_SETTINGS == null){
+		needsave= true;
+		
+		//Default settings..
 		USER_SETTINGS = {};
-	}
-	
-	//The USER picks a random UID - that is not shared.. this is for the server
-	var needsave = false;
-	if(typeof(USER_SETTINGS.uuid_rate) == "undefined"){
-		needsave = true;
-		USER_SETTINGS.uuid_rate = getRandomHexString();
+		USER_SETTINGS.notifytrade 	= false;
+		USER_SETTINGS.notifychat 	= false;
 	}
 	
 	if(typeof(USER_SETTINGS.notifytrade) == "undefined"){
@@ -53,6 +52,24 @@ function loadUserSettings(){
 	if(needsave){
 		saveUserSettings();	
 	}
+	
+	/**
+	 * Global Settings
+	 */
+	
+	//The USER picks a random UID - that is not shared.. this is for the server
+	var user_global = STORAGE.getDataGlobal("**USER_GLOBAL**");
+	if(user_global == null){
+		
+		//Default global..
+		user_global 		= {};
+		user_global.uuid 	= getRandomHexString();
+		
+		STORAGE.setDataGlobal("**USER_GLOBAL**",user_global);
+	}
+	
+	//And set
+	USER_SETTINGS.uuid_rate = user_global.uuid;
 }
 
 function saveUserSettings(){
