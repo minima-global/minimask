@@ -7,10 +7,10 @@ const DEX_SERVER = "wss://minimask.org:54321";
 /**
  * MxUSD Market
  */
-var MXUSD_TOKENID = "0xFFEEDDFFEEDD";
+var MXUSD_TOKENID = "0x7E6E60E033C7F74400B02F270074D0DA99FB863C33F8EA75078219258DCFC6CE";
 
 const MXUSD_MARKET = {};
-MXUSD_MARKET.mktname			= "Minima / MxUSD";
+MXUSD_MARKET.mktname			= "Minima / USDT";
 MXUSD_MARKET.mktuid				= "0x00 / "+MXUSD_TOKENID;
 
 MXUSD_MARKET.token1 			= {};
@@ -19,7 +19,7 @@ MXUSD_MARKET.token1.tokenid 	= "0x00";
 MXUSD_MARKET.token1.decimals 	= 8; //8 MAX
 
 MXUSD_MARKET.token2 			= {};
-MXUSD_MARKET.token2.name 		= "MxUSD";
+MXUSD_MARKET.token2.name 		= "USDT";
 MXUSD_MARKET.token2.tokenid 	= MXUSD_TOKENID;
 MXUSD_MARKET.token2.decimals 	= 8; //8 MAX
 
