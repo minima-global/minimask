@@ -48,7 +48,8 @@ function initDEX(){
 			
 		}else{
 			console.log("MINIMASK extension not active!");	
-			alert("MiniMask Extension Not Active!\n\nThis applicatgion requires MiniMask");
+			navigate_missing();
+			//alert("MiniMask Extension Not Active!\n\nThis applicatgion requires MiniMask");
 		}	
 	}
 }
