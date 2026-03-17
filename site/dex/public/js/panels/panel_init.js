@@ -37,13 +37,21 @@ function init_passwordcheck(){
 	//Set this for all the storage
 	STORAGE.setPassword(password);
 	
+	//Check GLOBAL data..
+	var globaldata = STORAGE.getDataGlobal("**USER_GLOBAL**");
+	if(globaldata == -1){
+		//Could not decode the data..
+		alert("Wrong Password..");
+		return;
+	}
+	
 	//Now load the details..
 	var userdetails = loadUserDetails();	
 	
 	//Do they exist..
 	if(userdetails == -1){
 		//Incorrect password..
-		alert("WRONG PASSWORD..");
+		alert("Wrong Password..");
 	
 	}else if(userdetails == null){
 		
