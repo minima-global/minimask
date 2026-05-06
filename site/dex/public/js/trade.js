@@ -577,12 +577,16 @@ function getMyInputsAndOutputs(txn){
 	var mycoins 		= {};
 	
 	//Total Amounts / TokenID
+	mycoins.inputcoinid		= [];
+		
 	mycoins.inputtokenid 	= "xxx";
 	mycoins.inputtotal 		= DECIMAL_ZERO;
-	mycoins.inputcoinid		= [];
+	mycoins.inputcoins 		= txn.inputs.length;
+	
 	mycoins.outputtokenid 	= "xxx";
 	mycoins.outputtotal 	= DECIMAL_ZERO;
-	
+	mycoins.outputcoins 	= txn.outputs.length;
+		
 	//Cycle Inputs..
 	var ins = txn.inputs.length;
 	for(var i=0;i<ins;i++){
@@ -660,6 +664,15 @@ function getMyInputsAndOutputs(txn){
 
 function checkValid(bookuid, insouts){
 	
+	//Check min inputs and outputs
+	if(insouts.inputcoins < 2){
+		console.log("Wrong input coin num.. <2");
+		return false;
+	}else if(insouts.outputcoins < 2){
+		console.log("Wrong output coin num.. <2");
+		return false;
+	}
+	
 	//Get the book
 	var mybook = getMyOrder(bookuid);
 	if(mybook == null){
@@ -681,6 +694,10 @@ function checkValid(bookuid, insouts){
 		}
 		
 		//Check the price..
+		if(insouts.inputtotal == "0"){
+			console.log("Cannot have ZERO divide for sell..");
+			return false;
+		}
 		var bookprice 	= new Decimal(mybook.price);
 		var price 		= decimalRDown(insouts.outputtotal.dividedBy(insouts.inputtotal));
 		if(!price.greaterThanOrEqualTo(bookprice)){
@@ -710,6 +727,10 @@ function checkValid(bookuid, insouts){
 		}
 		
 		//Check the price..
+		if(insouts.outputtotal == "0"){
+			console.log("Cannot have ZERO divide for buy..");
+			return false;
+		}
 		var bookprice 	= new Decimal(mybook.price);
 		var price 		= decimalRUp(insouts.inputtotal.dividedBy(insouts.outputtotal));
 		if(!price.lessThanOrEqualTo(bookprice)){
