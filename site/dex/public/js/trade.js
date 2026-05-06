@@ -694,7 +694,7 @@ function checkValid(bookuid, insouts){
 		}
 		
 		//Check the price..
-		if(insouts.inputtotal == "0"){
+		if(insouts.inputtotal == DECIMAL_ZERO){
 			console.log("Cannot have ZERO divide for sell..");
 			return false;
 		}
@@ -727,7 +727,7 @@ function checkValid(bookuid, insouts){
 		}
 		
 		//Check the price..
-		if(insouts.outputtotal == "0"){
+		if(insouts.outputtotal == DECIMAL_ZERO){
 			console.log("Cannot have ZERO divide for buy..");
 			return false;
 		}
