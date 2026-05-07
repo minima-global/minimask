@@ -487,6 +487,8 @@ function checkAndSignTrade(fromuser, tradereq){
 			//Something went wrong..
 			console.log("ERROR TRADE : "+err);
 			
+			addErrorHistoryLog("InsOuts mismatch : "+err);
+			
 			//Tell the User
 			postResultToUser(fromuser, false, "",tradereq.tradeuuid);
 							
@@ -513,6 +515,8 @@ function checkAndSignTrade(fromuser, tradereq){
 					//Something went wrong..
 					console.log("ERROR TRADE : "+signedrexp.error);
 					
+					addErrorHistoryLog("Sign Post : "+signedrexp.error);
+					
 					//Tell the User
 					postResultToUser(fromuser, false, "",tradereq.tradeuuid);
 									
@@ -522,6 +526,9 @@ function checkAndSignTrade(fromuser, tradereq){
 				//Get the txpowid..
 				var txpowid = signedrexp.data.txpow.txpowid;	
 				
+				//Add History log
+				addTradeHistoryLog(mytradebook, insouts, txpowid);
+								
 				//Tell the User
 				postResultToUser(fromuser, true, txpowid, tradereq.tradeuuid);
 				
@@ -533,34 +540,38 @@ function checkAndSignTrade(fromuser, tradereq){
 				
 				//Start auto balance refresh..
 				autoUpdateBalance();
-				
-				//Add History log
-				addTradeHistoryLog(mytradebook, insouts, txpowid);
 			});
 			
 		}else{
 			//Invalid..
 			console.log("Invalid Trade.. ");
 			
+			addErrorHistoryLog("Invalid Trade : "+JSON.stringify(insouts));
+			
 			//Tell the User
 			postResultToUser(fromuser, false, "",tradereq.tradeuuid);
-			
-			//Tell User..
-			//..
 		}
 	}); 
+}
+
+function addErrorHistoryLog(error){
+	addHistoryLog("TRADE_ERROR", error, "");
 }
 
 function addTradeHistoryLog(order, insouts, txpowid){
 	
 	var histlog  = "";
-	if(order.type=="buy"){
-		histlog = "BUY "+insouts.outputtotal+" "+order.market.token1.name
-				+" FOR "+insouts.inputtotal+" "+order.market.token2.name+" @ "+order.price;
-		
-	}else{
-		histlog = "SELL "+insouts.inputtotal+" "+order.market.token1.name
-				+" FOR "+insouts.outputtotal+" "+order.market.token2.name+" @ "+order.price;
+	try{
+		if(order.type=="buy"){
+			histlog = "BUY "+insouts.outputtotal+" "+order.market.token1.name
+					+" FOR "+insouts.inputtotal+" "+order.market.token2.name+" @ "+order.price;
+			
+		}else{
+			histlog = "SELL "+insouts.inputtotal+" "+order.market.token1.name
+					+" FOR "+insouts.outputtotal+" "+order.market.token2.name+" @ "+order.price;
+		}	
+	}catch(err){
+		histlog = "Error convert order : "+err;
 	}
 	
 	addHistoryLog("TRADE_BOOK", histlog, txpowid);
