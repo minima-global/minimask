@@ -27,7 +27,16 @@ function init_passwordcheck(){
 	params.seedphrase = password;
 	
 	makePostRequest("seedphrase", params, function(resp){
-		//console.log(JSON.stringify(resp));
+		console.log(JSON.stringify(resp));
+		
+		if(!resp.status){
+			alert("Could not contact host..\n\nPlease try again later");
+			
+			id_init_button_generate.disabled = false;
+			id_init_button_continue.disabled = false;
+				
+			return
+		}
 		
 		//First get all the details..
 		USER_ADDRESS 		= resp.response.miniaddress;

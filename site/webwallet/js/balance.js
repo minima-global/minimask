@@ -70,9 +70,10 @@ function updateBalancePanel(user_balance){
 		celltokenid.innerText 	= tokenbal.tokenid;
 		
 		//Final gap
-		var rowgap 	= baltable.insertRow();
-		var rowgap 	= rowgap.insertCell();
-		rowgap.innerHTML = "&nbsp;";
+		var rowgap 			= baltable.insertRow();
+		var cellgap			= rowgap.insertCell();
+		cellgap.colSpan 	= "3";
+		cellgap.innerHTML 	= "&nbsp;";
 		
 		//And sort the select
 		var opt 		= document.createElement('option');
