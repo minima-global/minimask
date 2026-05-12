@@ -70,7 +70,7 @@ function wallet_sendfunds(){
 	}
 			
 	makePostRequest("send", params, function(resp){
-		console.log(JSON.stringify(resp));
+		//console.log(JSON.stringify(resp));
 		
 		if(resp.status){
 			alert("Funds Sent!");
