@@ -2,7 +2,7 @@
 /**
  * MEG Variables
  */
-var MINIMASK_HOST			="https://minimask.org:8888/";
+var MINIMASK_HOST			="https://minimask.org:8888/wallet/";
 var MINIMASK_MEG_USER		="apicaller";
 var MINIMASK_MEG_PASSWORD	="apicaller";
 
