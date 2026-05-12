@@ -30,8 +30,23 @@ function wallet_sendfunds(){
 	var tokenname 	= id_wallet_tokenselect.options[sel].text;
 	var tokenid 	= id_wallet_tokenselect.value;
 	var address 	= id_wallet_send_address.value.trim();
-	var amount  	= id_wallet_send_amount.value;
-	var keyuses 	= id_wallet_send_keyuses.value;
+	if(address == ""){
+		alert("Cannot have a blank address!");
+		return;
+	}
+	
+	var amount	= id_wallet_send_amount.value.trim();
+	if(amount == ""){
+		alert("Cannot have a blank amount!");
+		return;
+	}
+		
+	var keyuses 	= id_wallet_send_keyuses.value.trim();
+	if(keyuses == ""){
+		alert("Cannot have a blank keyuses!");
+		return;
+	}
+	
 	var split		= id_wallet_send_split.checked;
 	
 	//Confirm..
