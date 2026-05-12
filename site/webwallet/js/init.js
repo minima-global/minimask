@@ -14,7 +14,11 @@ function init_generate(){
 }
 
 function init_passwordcheck(){
-	var password = id_init_password.value;
+	var password = id_init_password.value.trim();
+	if(password == ""){
+		alert("Cannot have a blank seed..");
+		return;
+	}
 	
 	id_init_button_generate.disabled = true;
 	id_init_button_continue.disabled = true;
