@@ -1,133 +1,232 @@
+:root {
+  --background: 220 16% 4%;
+  --foreground: 240 9% 98%;
+  --orange: hsl(19, 100%, 51%);
+  --light-orange: hsl(25, 100%, 59%);
+  --lighter-orange: hsl(32, 100%, 64%);
+  --dark-orange: hsl(20, 100%, 56%);
+  --grey: #66666f;
+  --contrast-1: hsl(216, 10%, 10%);
+  --contrast-2: hsl(210, 7%, 17%);
+  --contrast-3: hsl(225, 7%, 23%);
+  --contrast-4: hsl(233, 5%, 34%);
+  --grey-10: hsl(240, 5%, 96%);
+  --grey-20: hsl(240, 5%, 92%);
+  --grey-40: hsl(240, 6%, 84%);
+  --grey-60: hsl(240, 4%, 48%);
+  --grey-80: hsl(240, 5%, 67%);
+  --grey-highlight: hsl(240, 12%, 22%);
+  --white: hsl(0, 0%, 100%);
+}
+
 @font-face {
-	font-family: Manrope;
-	src: url('./Manrope-Regular.ttf');
+  font-family: Manrope;
+  src: url('./Manrope-Regular.ttf');
 }
 
 body {
-	font-family: Manrope; 
-	font-size: 16;
-	margin: 0;   /* Remove body margins */
-
+  font-family: Manrope;
+  font-size: 16;
+  margin: 0;
+  background: hsl(var(--background));
+  color: var(--grey-10);
+  min-height: 100vh;
 }
 
 td {
-	white-space: nowrap;
+  white-space: nowrap;
+  color: var(--grey-10);
 }
 
 p {
-    word-break: normal;
-    white-space: normal;
+  word-break: normal;
+  white-space: normal;
 }
 
-.maintable{
-	width:100%;
-	height:100%;
-	max-width : 800px;
+a {
+  color: var(--light-orange);
+  text-decoration: none;
 }
 
-.smallgreytext{
-	font-size : 0.8em;
-	color:grey;
+a:hover {
+  color: var(--lighter-orange);
+  text-decoration: underline;
+}
+
+.maintable {
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+}
+
+.smallgreytext {
+  font-size: 0.8em;
+  color: var(--grey-60);
 }
 
 .fullwidthheight {
-	width:100%;
-	height:100%;
+  width: 100%;
+  height: 100%;
 }
 
-.blackout{
-	position: absolute;
-	width:100%;
-	height:100%;
-	background-color:rgba(0, 0, 0, 0.5);
-	z-index: 10;
-	display:none;
+.blackout {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  display: none;
 }
 
-.alignright{
-	text-align:right;
+.alignright {
+  text-align: right;
 }
 
-.centerdiv {    
-	position: absolute;   
-	top: 50%;   
- 	left: 50%;  
-  	transform: translate(-50%, -50%);
-	
-	width:350px;
-	height:280px;
-	
-	z-index: 20;
-	display:none;
+.centerdiv {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  z-index: 20;
+  display: none;
 }
-		
+
 .greyrounded {
-	text-align:left;
-	background-color: #eeeeff;
-  	border-radius: 8px;
-  	border-color: #2222ff;
-	padding:0px;
-	margin:0px;
-	width:100%;
-	height:100%;
+  text-align: left;
+  background-color: var(--contrast-1);
+  border-radius: 8px;
+  border: 1px solid var(--contrast-3);
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
 }
 
 .roundedinput {
-	text-align:left;
-	border-radius: 8px;
-  	padding:8px;
+  text-align: left;
+  background-color: var(--contrast-2);
+  border: 1px solid var(--contrast-4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--grey-10);
+  font-family: Manrope;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
 }
 
-.paddedborder{
-	padding:8px;
+.roundedinput:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px hsla(19, 100%, 51%, 0.25);
 }
 
-/* Normal buttons */
+.roundedinput::placeholder {
+  color: var(--grey-60);
+}
+
+select.roundedinput {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2366666f' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.paddedborder {
+  padding: 12px;
+}
+
 .mybtn {
-  background-color: DodgerBlue; /* Blue background */
-  border: none; /* Remove borders */
-  border-radius: 4px;
-  color: white; /* White text */
-  padding: 6px 8px; /* Some padding */
-  font-size: 12px; /* Set a font size */
-  cursor: pointer; /* Mouse pointer on hover */
-  min-width:60px;
+  background-color: var(--orange);
+  border: none;
+  border-radius: 6px;
+  color: var(--white);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: Manrope;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 60px;
+  transition: background-color 0.2s ease;
 }
 
-/* Darker background on mouse-over */
 .mybtn:hover {
-  background-color: RoyalBlue;
+  background-color: var(--light-orange);
 }
 
 .mybtn:active {
-  background-color: red;
+  background-color: var(--dark-orange);
 }
 
 .mybtn:disabled {
-  background-color: grey;
+  background-color: var(--grey);
+  cursor: not-allowed;
 }
 
-/* Menu buttons */
 .menubtn {
-  background-color: DodgerBlue; /* Blue background */
-  border: none; /* Remove borders */
-  border-radius: 4px;
-  color: white; /* White text */
-  padding: 6px 8px; /* Some padding */
-  font-size: 14px; /* Set a font size */
-  cursor: pointer; /* Mouse pointer on hover */
-  min-width:80px;
+  background-color: transparent;
+  border: 1px solid var(--contrast-4);
+  border-radius: 6px;
+  color: var(--grey-10);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-family: Manrope;
+  cursor: pointer;
+  min-width: 80px;
+  transition: all 0.2s ease;
 }
 
-/* Darker background on mouse-over */
 .menubtn:hover {
-  background-color: RoyalBlue;
+  background-color: var(--contrast-2);
+  border-color: var(--orange);
+  color: var(--white);
 }
 
 .menubtn:active {
-  background-color: green;
+  background-color: var(--contrast-3);
 }
 
 .menubtn:disabled {
-  background-color: RoyalBlue;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#init_generated_seed {
+  color: var(--light-orange);
+  font-size: 0.85em;
+  word-break: break-all;
+  max-width: 300px;
+  padding: 8px;
+  background: var(--contrast-2);
+  border-radius: 6px;
+}
+
+#id_wallet_address {
+  color: var(--grey-80);
+}
+
+#id_balance_table th {
+  color: var(--grey-80);
+  font-weight: 600;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--contrast-3);
+}
+
+#id_balance_table td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--contrast-2);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--orange);
+}
+
+button {
+  font-family: Manrope;
 }

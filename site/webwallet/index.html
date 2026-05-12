@@ -4,6 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		<title>Minima Web Wallet</title>
 		
 		<link rel="stylesheet" href="./css/style.css">
 		
@@ -30,18 +31,18 @@
 			<div class="greyrounded">
 				<div class="paddedborder">
 			
-					<b>Minima Web Wallet</b><br>
-					<br>
-					Please login using your secret seed..<br>
-					<br>
-					WRITE IT DOWN - DO NOT FORGET IT<br>
+				<b style="color:var(--light-orange);font-size:1.1em;">Minima Web Wallet</b><br>
+				<br>
+				Please login using your secret seed<br>
+				<br>
+				<span style="color:var(--grey-60);font-size:0.8em;">Write it down — do not forget it</span><br>
 					<br>
 					
 					<center>	
 					<table>
 						<tr>
 							<td class="alignright">Seed : </td>
-							<td><input type="password" id="id_init_password"></td>
+							<td><input class="roundedinput" type="password" id="id_init_password" style="width:100%;"></td>
 						</tr>
 						
 					</table>
@@ -52,7 +53,7 @@
 					<button id="id_init_button_continue" class="mybtn" onclick="init_passwordcheck();">Continue</button>
 					<br><br>
 					
-					<div id="init_generated_seed"></div>
+					<div id="init_generated_seed">&nbsp;</div>
 					
 					</center>	
 									
@@ -163,7 +164,7 @@
 										</td>			
 									</tr>
 									
-									<tr><td colspan=2 style="text-align:center;font-size:0.7em;color:grey;">( You MUST increment Key Uses for every transaction )</td></tr>
+									<tr><td colspan=2 style="text-align:center;font-size:0.7em;color:var(--grey-60);">( You MUST increment Key Uses for every transaction )</td></tr>
 									
 									<tr><td>&nbsp;</td></tr>
 									
@@ -199,13 +200,13 @@
 							<!-- HELP -->
 							<div class="fullwidthheight" style="display:none;" id="id_view_help" >
 								
-								<p style="width:100%;padding:20dp;">
+								<p style="padding:4px 12px;">
 									<br>
-									<b>Welcome</b> to Web Wallet<br>
+									<b style="color:var(--light-orange);">Welcome</b> to Minima Web Wallet<br>
 									<br>
-									This allows you to have a Minima Wallet where you can send and receive funds..<br>
+									This allows you to have a Minima Wallet where you can send and receive funds.<br>
 									<br>
-									Your Key Uses are ONLY stored locally - so keep track of that number if you need to login from a different machine.<br>
+									Your Key Uses are ONLY stored locally — keep track of that number if you need to login from a different machine.<br>
 									<br>
 									
 								</p>
@@ -230,7 +231,7 @@
 									
 									<td nowrap>
 										<div id="id_dex_state" style="text-align:left;">
-											<a target="_blank" href='https://minima.global'>Minima Global</a>
+											<a target="_blank" href='https://minima.global' style="font-weight:600;">Minima</a>
 										</div>
 									</td>
 									
@@ -239,7 +240,7 @@
 									<td>
 									
 									<td style="text-align:right" nowrap>
-										<div id="id_user_dex_state" style="text-align:right;">Web Wallet v0.4</div>
+										<div id="id_user_dex_state" style="text-align:right;color:var(--grey-60);">Web Wallet v0.4</div>
 									</td>
 								
 								</tr>
