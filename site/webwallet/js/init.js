@@ -16,6 +16,9 @@ function init_generate(){
 function init_passwordcheck(){
 	var password = id_init_password.value;
 	
+	id_init_button_generate.disabled = true;
+	id_init_button_continue.disabled = true;
+	
 	var params = {};
 	params.seedphrase = password;
 	
