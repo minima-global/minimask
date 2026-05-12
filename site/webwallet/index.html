@@ -1,0 +1,269 @@
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		
+		<link rel="stylesheet" href="./css/style.css">
+		
+		<script type="text/javascript" src="./js/meg.js"></script>
+		<script type="text/javascript" src="./js/navigation.js"></script>
+		<script type="text/javascript" src="./js/variables.js"></script>
+		<script type="text/javascript" src="./js/balance.js"></script>
+		<script type="text/javascript" src="./js/send.js"></script>
+		<script type="text/javascript" src="./js/qrcode.min.js"></script>
+		<script type="text/javascript" src="./js/init.js"></script>
+		
+	</head>
+
+	<body>
+		
+		<center>
+		
+		<!-- The BLACKOUT Panel-->
+		<div id="id_blackoutdiv" class="blackout"></div>
+				
+				
+		<!-- The INIT Panel-->
+		<div id="id_initpanel" class="centerdiv">
+			<div class="greyrounded">
+				<div class="paddedborder">
+			
+					<b>Minima Web Wallet</b><br>
+					<br>
+					Please login using your secret seed..<br>
+					<br>
+					WRITE IT DOWN - DO NOT FORGET IT<br>
+					<br>
+					
+					<center>	
+					<table>
+						<tr>
+							<td class="alignright">Seed : </td>
+							<td><input type="password" id="id_init_password"></td>
+						</tr>
+						
+					</table>
+					
+					<br>
+					<button class="mybtn" onclick="init_generate();">Generate Seed</button>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<button class="mybtn" onclick="init_passwordcheck();">Continue</button>
+					<br><br>
+					
+					<div id="init_generated_seed"></div>
+					
+					</center>	
+									
+				</div>
+			</div>
+		</div>
+				
+		<table class="maintable" border=0>
+			
+			<!-- TOP BAR -->
+			<tr>
+				<td style="padding-top:10px;padding-bottom:0px;padding-left:10px;padding-right:10px;">
+								
+					<div class="greyrounded">
+						<div class="paddedborder">
+							
+							<table style="width:100%;" border=0>
+								<tr>
+									
+									<td>
+										<button class="menubtn" onclick="navigate_balance();">Balance</button>
+										<button class="menubtn" onclick="navigate_send();">Send</button>
+										<button class="menubtn" onclick="navigate_receive();">Receive</button>
+									</td>
+									
+									<td style="text-align:right">
+										<!--<button class="menubtn" onclick="navigate_settings();">Settings</button> -->
+										<button class="menubtn" onclick="navigate_help();">Help</button>
+										<!--<button class="menubtn" onclick="navigate_logout();">Log Out</button>-->
+									</td>
+								
+								</tr>
+								
+							</table>											
+		
+						</div>
+					</div>
+					
+				</td>
+				
+			</tr>
+			
+			<!-- MAIN PAGE-->
+			<tr style="height:100%">
+				<td style="padding-left:10px;padding-right:10px;">
+									
+					<div class="greyrounded">
+						<div class="paddedborder">
+							
+							<!-- BALANCE -->
+							<div class="fullwidthheight" style="display:block;" id="id_view_balance" >
+								
+								<table id="id_balance_table" style="width:100%;border-spacing:8px;" border=0>
+									<tr><th>Token</th><th>Amount</tr>
+								</table>
+									
+							</div>
+							
+							<!-- SEND -->
+							<div class="fullwidthheight" style="display:none;" id="id_view_send" >
+
+								<br>
+								<table style="width:90%;padding:8px;border-spacing:8px;" border=0>
+									<tr>
+										<td class="alignright">
+											Token : &nbsp;
+										</td>
+										<td>
+											<select class="roundedinput" id="id_wallet_tokenselect" style="width:100%">	
+											</select>
+										</td>			
+									</tr>
+									
+									<tr>
+										<td class="alignright">
+											Amount : &nbsp; 
+										</td>
+										<td>
+											  <input class="roundedinput" id="id_wallet_send_amount" type="number" step="0.001" style="width:100%" value="0"/>
+										</td>			
+									</tr>
+									
+									<tr>
+										<td class="alignright">
+											Address : &nbsp;
+										</td>
+										<td>
+											<input class="roundedinput" id="id_wallet_send_address"  type="text" style="width:100%">
+										</td>			
+									</tr>
+									
+									<tr>
+										<td class="alignright">
+											Split : &nbsp;
+										</td>
+										<td>
+											<input id="id_wallet_send_split" name="id_wallet_send_split" type="checkbox">
+											<label for="id_wallet_send_split" class="smallgreytext"> Split the output into 5 separate coins</label>
+										</td>			
+									</tr>
+									
+									<tr>
+										<td class="alignright">
+											Key uses : &nbsp;
+										</td>
+										<td>
+											<input class="roundedinput" id="id_wallet_send_keyuses"  type="number" style="width:100%">
+										</td>			
+									</tr>
+									
+									<tr><td colspan=2 style="text-align:center;font-size:0.7em;color:grey;">( You MUST increment Key Uses for every transaction )</td></tr>
+									
+									<tr><td>&nbsp;</td></tr>
+									
+									<tr>
+										<td colspan=2 style="text-align:right;">
+											<button onclick="wallet_sendfunds();" class=mybtn id="id_wallet_sendbutton">&nbsp;&nbsp;Send Funds&nbsp;&nbsp;</button> 
+										</td>			
+									</tr>
+									
+								</table>
+																
+	
+							</div>
+							
+							<!-- RECEIVE -->
+							<div class="fullwidthheight" style="display:none;" id="id_view_receive" >
+								<center>
+								
+									<br>
+									<div id="wallet_receiveqr"></div>
+									<br>
+									
+									<div id="id_wallet_address" style="font-size:0.9em;white-space: wrap;width:300px;overflow-wrap: break-word;"></div>
+								
+								</center>	
+							</div>
+							
+							<!-- SETTINGS -->
+							<div class="fullwidthheight" style="display:none;" id="id_view_settings" >
+								SETTINGS	
+							</div>
+							
+							<!-- HELP -->
+							<div class="fullwidthheight" style="display:none;" id="id_view_help" >
+								
+								<p style="width:100%;padding:20dp;">
+									<br>
+									<b>Welcome</b> to Web Wallet<br>
+									<br>
+									This allows you to have a Minima Wallet where you can send and receive funds..<br>
+									<br>
+									Your Key Uses are ONLY stored locally - so keep track of that number if you need to login from a different machine.<br>
+									<br>
+									
+								</p>
+							</div>
+							
+						</div>
+					</div>
+					
+					
+				</td>
+			</tr>
+			
+			<!-- BOTTOM BAR -->
+			<tr style="height:40px">
+				<td style="padding-top:0px;padding-bottom:10px;padding-left:10px;padding-right:10px;">
+					
+					<div class="greyrounded">
+						<div class="paddedborder">
+							
+							<table style="width:100%;font-size:0.8em;" border=0>
+								<tr>
+									
+									<td nowrap>
+										<div id="id_dex_state" style="text-align:left;">
+											<a target="_blank" href='https://minima.global'>Minima Global</a>
+										</div>
+									</td>
+									
+									<td style="width:100%;">
+											<div id="id_trade_dex_state" style="text-align:center;"></div>
+									<td>
+									
+									<td style="text-align:right" nowrap>
+										<div id="id_user_dex_state" style="text-align:right;">Web Wallet v0.1</div>
+									</td>
+								
+								</tr>
+								
+							</table>
+							
+						</div>
+					</div>
+					
+				</td>
+			</tr>
+			
+		<table>
+		
+		</center>	
+		
+	</body>	
+
+
+	<script type="text/javascript">
+		console.log("Web Wallet startup..");	
+	
+		initWebWallet();
+		
+	</script>	
+
+</html>

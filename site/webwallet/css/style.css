@@ -1,0 +1,133 @@
+@font-face {
+	font-family: Manrope;
+	src: url('./Manrope-Regular.ttf');
+}
+
+body {
+	font-family: Manrope; 
+	font-size: 16;
+	margin: 0;   /* Remove body margins */
+
+}
+
+td {
+	white-space: nowrap;
+}
+
+p {
+    word-break: normal;
+    white-space: normal;
+}
+
+.maintable{
+	width:100%;
+	height:100%;
+	max-width : 800px;
+}
+
+.smallgreytext{
+	font-size : 0.8em;
+	color:grey;
+}
+
+.fullwidthheight {
+	width:100%;
+	height:100%;
+}
+
+.blackout{
+	position: absolute;
+	width:100%;
+	height:100%;
+	background-color:rgba(0, 0, 0, 0.5);
+	z-index: 10;
+	display:none;
+}
+
+.alignright{
+	text-align:right;
+}
+
+.centerdiv {    
+	position: absolute;   
+	top: 50%;   
+ 	left: 50%;  
+  	transform: translate(-50%, -50%);
+	
+	width:350px;
+	height:280px;
+	
+	z-index: 20;
+	display:none;
+}
+		
+.greyrounded {
+	text-align:left;
+	background-color: #eeeeff;
+  	border-radius: 8px;
+  	border-color: #2222ff;
+	padding:0px;
+	margin:0px;
+	width:100%;
+	height:100%;
+}
+
+.roundedinput {
+	text-align:left;
+	border-radius: 8px;
+  	padding:8px;
+}
+
+.paddedborder{
+	padding:8px;
+}
+
+/* Normal buttons */
+.mybtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 12px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+  min-width:60px;
+}
+
+/* Darker background on mouse-over */
+.mybtn:hover {
+  background-color: RoyalBlue;
+}
+
+.mybtn:active {
+  background-color: red;
+}
+
+.mybtn:disabled {
+  background-color: grey;
+}
+
+/* Menu buttons */
+.menubtn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  border-radius: 4px;
+  color: white; /* White text */
+  padding: 6px 8px; /* Some padding */
+  font-size: 14px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+  min-width:80px;
+}
+
+/* Darker background on mouse-over */
+.menubtn:hover {
+  background-color: RoyalBlue;
+}
+
+.menubtn:active {
+  background-color: green;
+}
+
+.menubtn:disabled {
+  background-color: RoyalBlue;
+}
