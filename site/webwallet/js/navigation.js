@@ -40,3 +40,10 @@ function navigate_help(){
 	navigate_clear();
 	id_view_help.style.display="block";
 }
+
+function navigate_logout(){
+	
+	if(confirm("Are you sure you want to Logout ?\n\nMake sure you have a copy of your seed!\n\nYou can view it on the Receive page..")){
+		window.location.reload();	
+	}
+}

@@ -194,6 +194,35 @@ select.roundedinput {
   cursor: not-allowed;
 }
 
+.justicon {
+	min-width: 40px;
+}
+
+
+.id_view_menu_icons {
+  display : block;
+}
+
+.id_view_menu_justicons {
+  display : none;
+}
+
+@media screen and (max-width: 600px) {
+  .id_view_menu_icons {
+    display : none;
+  }
+  .id_view_menu_justicons {
+    display : block;
+  }
+}
+
+/*
+@media screen and (min-width: 501px) {
+  .id_view_menu_icons {
+    display : block;
+  }
+}*/
+
 #init_generated_seed {
   color: var(--light-orange);
   font-size: 0.85em;

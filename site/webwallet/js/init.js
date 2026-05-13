@@ -20,6 +20,9 @@ function init_passwordcheck(){
 		return;
 	}
 	
+	//Set it..
+	id_yourseed.innerText = password;
+	
 	id_init_button_generate.disabled = true;
 	id_init_button_continue.disabled = true;
 	
@@ -56,6 +59,18 @@ function init_passwordcheck(){
 		//Set the account..
 		setUpUserAccount();
 	});
+}
+
+function viewSeed(){
+	//Display the login screen
+	id_seedview_panel.style.display="block";
+	id_blackoutdiv.style.display="block";
+}
+
+function hideSeed(){
+	//Display the login screen
+	id_seedview_panel.style.display="none";
+	id_blackoutdiv.style.display="none";
 }
 
 function setUpUserAccount(){

@@ -16,6 +16,8 @@
 		<script type="text/javascript" src="./js/qrcode.min.js"></script>
 		<script type="text/javascript" src="./js/init.js"></script>
 		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		
 	</head>
 
 	<body>
@@ -61,6 +63,23 @@
 			</div>
 		</div>
 				
+		<!-- Seed View-->
+		<div id="id_seedview_panel" class="centerdiv">
+			<div class="greyrounded">
+				<div class="paddedborder">
+			
+				<b style="color:var(--light-orange);font-size:1.1em;">Web Wallet Seed</b><br>
+				<br>
+				
+				<center>
+					<span style="color:var(--grey-60);font-size:0.8em;" id="id_yourseed"></span><br>
+					<br><br>
+					<button class="mybtn" onclick="hideSeed();">Hide Seed</button><br><br>
+				</center>					
+				</div>
+			</div>
+		</div>
+		
 		<table class="maintable" border=0>
 			
 			<!-- TOP BAR -->
@@ -70,24 +89,49 @@
 					<div class="greyrounded">
 						<div class="paddedborder">
 							
-							<table style="width:100%;" border=0>
-								<tr>
-									
-									<td>
-										<button class="menubtn" onclick="navigate_balance();">Balance</button>
-										<button class="menubtn" onclick="navigate_send();">Send</button>
-										<button class="menubtn" onclick="navigate_receive();">Receive</button>
-									</td>
-									
-									<td style="text-align:right">
-										<!--<button class="menubtn" onclick="navigate_settings();">Settings</button> -->
-										<button class="menubtn" onclick="navigate_help();">Help</button>
-										<!--<button class="menubtn" onclick="navigate_logout();">Log Out</button>-->
-									</td>
+							<div class="fullwidthheight id_view_menu_icons">
 								
-								</tr>
+								<table style="width:100%;" border=0>
+									<tr>
+										
+										<td>
+											<button class="menubtn" onclick="navigate_balance();"><i class="fa fa-balance-scale"></i>&nbsp;Balance</button>
+											<button class="menubtn" onclick="navigate_send();"><i class="fa fa-send"></i>&nbsp;Send</button>
+											<button class="menubtn" onclick="navigate_receive();"><i class="fa fa-money"></i>&nbsp;Receive</button>
+										</td>
+										
+										<td style="text-align:right">
+											<button class="menubtn" onclick="navigate_help();"><i class="fa fa-question"></i>&nbsp;Help</button>
+											<button class="menubtn" onclick="navigate_logout();"><i class="fa fa-external-link"></i>&nbsp;Logout</button>
+										</td>
+									
+									</tr>
+									
+								</table>
 								
-							</table>											
+							</div>
+							
+							<div class="fullwidthheight id_view_menu_justicons">
+															
+								<table style="width:100%;" border=0>
+									<tr>
+										
+										<td>
+											<button title="Balance" class="menubtn justicon" onclick="navigate_balance();">&nbsp;<i class="fa fa-balance-scale"></i>&nbsp;</button>
+											<button title="Send" class="menubtn justicon" onclick="navigate_send();">&nbsp;<i class="fa fa-send"></i>&nbsp;</button>
+											<button title="Receive" class="menubtn justicon" onclick="navigate_receive();">&nbsp;<i class="fa fa-money"></i>&nbsp;</button>
+										</td>
+										
+										<td style="text-align:right">
+											<button title="Help" class="menubtn justicon" onclick="navigate_help();">&nbsp;<i class="fa fa-question"></i>&nbsp;</button>
+											<button title="Logout" class="menubtn justicon" onclick="navigate_logout();">&nbsp;<i class="fa fa-external-link"></i>&nbsp;</button>
+										</td>
+									
+									</tr>
+									
+								</table>
+								
+							</div>											
 		
 						</div>
 					</div>
@@ -187,8 +231,10 @@
 									<div id="wallet_receiveqr"></div>
 									<br>
 									
-									<div id="id_wallet_address" style="font-size:0.9em;white-space: wrap;width:300px;overflow-wrap: break-word;"></div>
-								
+									<div id="id_wallet_address" style="font-size:0.9em;white-space: wrap;width:300px;overflow-wrap: break-word;"></div><br>
+									<br>
+									<button class=mybtn onclick="viewSeed();">&nbsp;&nbsp;View your Seed&nbsp;&nbsp;</button>
+									
 								</center>	
 							</div>
 							
