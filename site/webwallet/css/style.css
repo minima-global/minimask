@@ -30,7 +30,8 @@ body {
   margin: 0;
   background: hsl(var(--background));
   color: var(--grey-10);
-  min-height: 100vh;
+  min-height: 100dvh;
+  min-width:460px;
 }
 
 td {
