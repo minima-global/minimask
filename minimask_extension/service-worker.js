@@ -2,7 +2,7 @@
  * MINIMASK VARIABLES
  */
 
-var MINIMASK_VERSION		= 2.5;
+var MINIMASK_VERSION		= 3.0;
 
 //MEG HOST Details
 MINIMASK_MEG_HOST 			= "";
@@ -75,6 +75,17 @@ function convertMessageToAction(msg){
 		ret.params.keyuses 		= msg.params.keyuses;
 		ret.params.split 		= msg.params.split;
 							
+	}else if(msg.command ==  "createtoken"){
+			
+		ret.webcall 			= true;
+		ret.url 				= getCurrentMEGFunctionCall("wallet/createtoken");
+		ret.params.name 		= msg.params.name;
+		ret.params.amount 		= ""+msg.params.amount;
+		ret.params.fromaddress 	= msg.params.fromaddress;
+		ret.params.privatekey 	= msg.params.privatekey;
+		ret.params.script 		= msg.params.script;				
+		ret.params.keyuses 		= msg.params.keyuses;
+			
 	}else if(msg.command ==  "rawtxn"){
 			
 		ret.webcall 			= true;
@@ -233,6 +244,39 @@ function convertMessageToAction(msg){
 		var newkeyuses = +msg.params.keyuses +1;
 		setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, newkeyuses, function(res){});		
 	
+	}else if(msg.command ==  "account_createtoken"){
+			
+			//Check we are logged in..
+			if(!MINIMASK_USER_DETAILS.LOGGEDON){
+				ret.status 	= false;
+				ret.error 	= "Not logged in..";	
+				return ret;
+			}
+				
+			//Set the main params
+			ret.params.name 		= msg.params.name;
+			ret.params.amount 		= ""+msg.params.amount;
+					
+			//Is this internal.. ?
+			if(msg.external){
+				ret.pending 	= true;
+				ret.pendinguid 	= getRandomHexString();
+				return ret;	
+			}
+			
+			ret.webcall 			= true;
+			ret.url 				= getCurrentMEGFunctionCall("wallet/createtoken");
+			ret.params.fromaddress 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_ADDRESS;
+			ret.params.privatekey 	= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PRIVATEKEY;
+			ret.params.script 		= MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_SCRIPT;				
+			
+			//Set the Key Uses
+			ret.params.keyuses 		= msg.params.keyuses;
+			
+			//Increment
+			var newkeyuses = +msg.params.keyuses +1;
+			setKeyUses(MINIMASK_USER_DETAILS.MINIMASK_ACCOUNT_PUBLICKEY, newkeyuses, function(res){});		
+		
 	}else if(msg.command ==  "account_sign"){
 				
 		//Check we are logged in..

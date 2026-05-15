@@ -24,6 +24,10 @@
   src: url('./Manrope-Regular.ttf');
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Manrope;
   font-size: 16;
@@ -31,7 +35,6 @@ body {
   background: hsl(var(--background));
   color: var(--grey-10);
   min-height: 100dvh;
-  
 }
 
 td {
@@ -88,7 +91,8 @@ a:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 360px;
+  width: 90%;
+  max-width: 360px;
   z-index: 20;
   display: none;
 }
@@ -217,6 +221,13 @@ select.roundedinput {
   }
 }
 
+@media screen and (max-width: 400px) {
+  .menubtn.justicon {
+    padding: 8px 10px;
+    min-width: 36px;
+  }
+}
+
 /*
 @media screen and (min-width: 501px) {
   .id_view_menu_icons {
@@ -236,6 +247,8 @@ select.roundedinput {
 
 #id_wallet_address {
   color: var(--grey-80);
+  max-width: 300px;
+  width: 90%;
 }
 
 #id_balance_table th {

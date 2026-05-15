@@ -84,9 +84,14 @@ function getURLParameter(parameterName){
 }
 
 function shrinkAddress(addr){
-	var strlen = addr.length;
-	if(strlen > 24){
-		return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
+	
+	try{
+		var strlen = addr.length;
+		if(strlen > 24){
+			return addr.substring(0,24)+" .. "+addr.substring(strlen-12,strlen);
+		}	
+	}catch(err){
+		
 	}
 	
 	return addr;

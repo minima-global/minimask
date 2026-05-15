@@ -118,6 +118,14 @@ var MINIMASK = {
 		send : function(amount, address, tokenid, state, callback)
 		
 		/**
+		 * Create a token from this account (Causes a Pending)
+		 *
+		 * Name MUST be a String but you can JSON.stringify a JSON ( MUST have a 'name' parameter )
+		 * Amount MUST be a string.. Number is not precise enough
+		 */
+		createtoken : function(name, amount, callback)
+		
+		/**
 		 * Sign a transaction created with MINIMASK.meg.rawtxn  (Causes a Pending)
 		 *
  		 * Do you post as well as Sign ?
@@ -157,6 +165,18 @@ var MINIMASK = {
 		 */ 
 		send : function(amount, toaddress, tokenid, 
 				fromaddress, privatekey, script, keyuses, split, callback)
+				
+		/*
+		 * Create a token from a created Minima account.
+		 *
+		 * Note that you must use a different keysuses every time. 
+		 * Start with 0 and increment.
+		 *
+		 * Name MUST be a String but you can JSON.stringify a JSON ( MUST have a 'name' parameter )
+		 * Amount MUST be a string.. Number is not precise enough
+		 */ 
+		createtoken : function(name, amount, fromaddress, privatekey, 
+						script, keyuses, callback)
 		
 		/*
 		 * Create a Raw unsigned transaction with 

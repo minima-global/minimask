@@ -26,6 +26,8 @@ function acceptPending(uid, callback){
 		sendAction(uid, callback);
 	}else if(pending.command == "account_sign"){
 		signAction(uid, callback);
+	}else if(pending.command == "account_createtoken"){
+		createtokenAction(uid, callback);
 	}
 }
 
@@ -56,6 +58,39 @@ function sendAction(uid, callback){
 			pendingSent(pending, sendresp, function(){
 			
 				popupAlert("Funds Sent!");
+								
+				//Remove from list..
+				cancelPending(uid);	
+			});
+		});
+	});
+}
+
+function createtokenAction(uid, callback){
+	
+	//Get that value..
+	var pending = getPendingItem(uid)
+		
+	//Send this amount..
+	var msg 			= _createSimpleMessage("account_createtoken");
+	
+	msg.params.name 	= pending.params.name;
+	msg.params.amount 	= pending.params.amount;
+	
+	//And get the latest key uses
+	callSimpleServiceWorker("account_get_key_uses", function(res){
+		msg.params.keyuses = res.data;
+		
+		//And send on..
+		chrome.runtime.sendMessage(msg, (sendresp) => {
+			
+			if(PENDING_DEBUG_LOGGING){
+				console.log("PENDING CREATE TOKEN ACTION : "+JSON.stringify(sendresp));
+			}
+			
+			pendingSent(pending, sendresp, function(){
+			
+				popupAlert("Token Created!");
 								
 				//Remove from list..
 				cancelPending(uid);	
@@ -185,6 +220,37 @@ function setPendingList(callback){
 						'</tr>'+
 					'</table>';	
 			
+		}else if(pending.command == "account_createtoken"){
+		var comm = '<table width=100%>'+
+										
+					'<tr style="background-color: #eeeeee;">'+
+						'<td style="text-align:right" nowrap>Type : </td>'+
+						'<td style="font-size:10;" nowrap>Create Token from account</td>'+
+					'</tr>'+
+								
+					'<tr style="background-color: #eeeeee;">'+
+						'<td style="text-align:right" nowrap>From : </td>'+
+						'<td style="font-size:10;" nowrap>'+sanitizeHTML(shrinkAddress(pending.sender.url))+'</td>'+
+					'</tr>'+
+										
+					'<tr style="background-color: #eeeeee;">'+
+						'<td style="text-align:right" nowrap>Name : </td>'+
+						'<td style="width:100%">'+sanitizeHTML(pending.params.name)+'</td>'+
+					'</tr>'+
+					
+					'<tr style="background-color: #eeeeee;">'+
+						'<td style="text-align:right" nowrap>Amount : </td>'+
+						'<td>'+sanitizeHTML(shrinkAddress(""+pending.params.amount))+'</td>'+
+					'</tr>'+
+					
+					'<tr>'+
+						'<td colspan=2 style="text-align:right;" nowrap>'+
+							'<button class="mybtn" id="id_btn_cancel_'+i+'">Cancel</button>&nbsp;'
+						   +'<button class="mybtn" id="id_btn_accept_'+i+'">Accept</button>'+
+						'</td>'+
+					'</tr>'+
+				'</table>';	
+							
 		}else if(pending.command == "account_sign"){
 			
 			//Are we posting
