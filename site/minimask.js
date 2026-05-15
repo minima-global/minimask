@@ -123,6 +123,29 @@ var MINIMASK = {
 		},
 		
 		/**
+		 * Create a token from this account - will create a PENDING transaction 
+		 */
+		createtoken : function(name, amount, callback){
+			var msg = _createSimpleMessage("account_createtoken");
+			
+			msg.params.name  	= name;
+			msg.params.amount  	= ""+amount;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				
+				//Will result in a pending!
+				if(resp.pending){
+					//Add pending UID to our check list
+					addMiniMaskPendinUID(resp.pendinguid);					
+				
+					//console.log("ADDED PENDING_LIST : "+JSON.stringify(PENDING_UID_LIST));
+				}
+				
+				callback(resp);
+			});
+		},
+		
+		/**
 		 * Sign a transaction created with MINIMASK.meg.rawtxn - will create a Pending transaction
 		 */
 		sign : function(txndata, post, callback){
@@ -203,6 +226,21 @@ var MINIMASK = {
 			});	
 		},
 		
+		createtoken : function(name, amount, fromaddress, privatekey, script, keyuses, callback){
+			var msg = _createSimpleMessage("createtoken");
+			
+			msg.params.name  		= name;
+			msg.params.amount  		= ""+amount;
+			msg.params.fromaddress  = fromaddress;
+			msg.params.privatekey  	= privatekey;
+			msg.params.script  		= script;
+			msg.params.keyuses  	= keyuses;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});	
+		},
+		
 		rawtxn : function(inputs, outputs, scripts, state, callback){
 			var msg = _createSimpleMessage("rawtxn");
 			
@@ -260,6 +298,15 @@ var MINIMASK = {
 			var msg 			= _createSimpleMessage("scanchain");
 			msg.params.offset  	= offset;
 			msg.params.depth  	= depth;
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
+		runscript : function(script, callback){
+			var msg = _createSimpleMessage("runscript");
+			msg.params.script  = script;
+			
 			postMessageToServiceWorker(msg, function(resp){
 				callback(resp);
 			});
