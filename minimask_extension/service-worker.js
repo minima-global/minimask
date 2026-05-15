@@ -129,6 +129,12 @@ function convertMessageToAction(msg){
 		ret.webcall 		= true;
 		ret.url 			= getCurrentMEGFunctionCall("wallet/random");
 	
+	}else if(msg.command ==  "runscript"){
+		ret.webcall 		= true;
+		ret.cached 			= true;
+		ret.url 			= getCurrentMEGFunctionCall("wallet/runscript");
+		ret.params.script 	= msg.params.script;
+					
 	}else if(msg.command ==  "scanchain"){
 		ret.webcall 		= true;
 		ret.cached 			= true;

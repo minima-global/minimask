@@ -303,6 +303,15 @@ var MINIMASK = {
 			});
 		},
 		
+		runscript : function(script, callback){
+			var msg = _createSimpleMessage("runscript");
+			msg.params.script  = script;
+			
+			postMessageToServiceWorker(msg, function(resp){
+				callback(resp);
+			});
+		},
+		
 		gettxpow : function(txpowid, callback){
 			var msg = _createSimpleMessage("gettxpow");
 			msg.params.txpowid  = txpowid;
