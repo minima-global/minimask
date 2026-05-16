@@ -10,6 +10,7 @@ function navigate_clear(){
 	id_view_receive.style.display="none";
 	id_view_settings.style.display="none";
 	id_view_help.style.display="none";
+	id_view_terms.style.display="none";
 }
 
 function navigate_balance(){
@@ -39,6 +40,11 @@ function navigate_settings(){
 function navigate_help(){
 	navigate_clear();
 	id_view_help.style.display="block";
+}
+
+function navigate_terms(){
+	navigate_clear();
+	id_view_terms.style.display="block";
 }
 
 function navigate_logout(){
